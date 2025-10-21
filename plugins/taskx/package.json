@@ -1,0 +1,18 @@
+{
+  "name": "taskx",
+  "version": "0.0.1",
+  "description": "Helpers for Obsidian",
+  "main": "lib/main.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "obsidian-plugin build --with-stylesheet src/styles.css src/main.ts",
+    "dev": "obsidian-plugin dev --with-stylesheet src/styles.css src/main.ts"
+  },
+  "devDependencies": {
+    "@codemirror/state": "6.5.2",
+    "@codemirror/view": "6.38.1",
+    "typescript": "5.9.3",
+    "obsidian-plugin-cli": "0.9.0",
+    "obsidian": "1.10.0"
+  }
+}
