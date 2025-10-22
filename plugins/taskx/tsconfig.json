@@ -1,12 +1,20 @@
 {
   "compilerOptions": {
-    "target": "es2019",
-    "module": "commonjs",
-    "emitDeclarationOnly": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
-    "forceConsistentCasingInFileNames": true
+    "resolveJsonModule": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "declaration": true,
+    "emitDeclarationOnly": false,
+    "declarationDir": "dist-types",
+    "declarationMap": true,
+    "types": ["node"]
   },
   "include": ["src/**/*.ts", "types.d.ts"]
 }

@@ -1,18 +1,21 @@
 {
-  "name": "taskx",
+  "name": "@organon/obsidian-taskx",
+  "description": "Experimental hierarchical task engine",
   "version": "0.0.1",
-  "description": "Helpers for Obsidian",
-  "main": "lib/main.js",
-  "license": "MIT",
+  "main": "dist/main.js",
+  "types": "dist-types/main.d.ts",
   "scripts": {
-    "build": "obsidian-plugin build --with-stylesheet src/styles.css src/main.ts",
-    "dev": "obsidian-plugin dev --with-stylesheet src/styles.css src/main.ts"
+    "dev": "vite build --watch",
+    "build": "tsc && vite build",
+    "clean": "rm -rf dist dist-types",
+    "install": "cp dist/* manifest.json temp/obsidian-taskx"
+  },
+  "dependencies": {
+    "obsidian": "1.8.7"
   },
   "devDependencies": {
-    "@codemirror/state": "6.5.2",
-    "@codemirror/view": "6.38.1",
-    "typescript": "5.9.3",
-    "obsidian-plugin-cli": "0.9.0",
-    "obsidian": "1.10.0"
+    "@types/node": "24.0.10",
+    "typescript": "5.8.3",
+    "vite": "7.0.2"
   }
 }

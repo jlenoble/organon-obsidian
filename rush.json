@@ -435,7 +435,7 @@
     //   "tags": [ "tools" ]
     // }
     {
-      "packageName": "taskx",
+      "packageName": "@organon/obsidian-taskx",
       "projectFolder": "plugins/taskx",
       "shouldPublish": false
     }
