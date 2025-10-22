@@ -14,8 +14,17 @@ importers:
     dependencies:
       obsidian:
         specifier: 1.8.7
-        version: 1.8.7
+        version: 1.8.7(@codemirror/state@6.5.2)(@codemirror/view@6.38.6)
+      obsidian-dataview:
+        specifier: 0.5.68
+        version: 0.5.68
     devDependencies:
+      '@codemirror/state':
+        specifier: 6.5.2
+        version: 6.5.2
+      '@codemirror/view':
+        specifier: 6.38.6
+        version: 6.38.6
       '@types/node':
         specifier: 24.0.10
         version: 24.0.10
@@ -27,6 +36,16 @@ importers:
         version: 7.0.2(@types/node@24.0.10)
 
 packages:
+
+  '@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/a9c3c7efe17dd1d24395ee2a179fe12dd6ed1e76':
+    resolution: {tarball: https://codeload.github.com/lishid/cm-language/tar.gz/a9c3c7efe17dd1d24395ee2a179fe12dd6ed1e76}
+    version: 6.11.2
+
+  '@codemirror/state@6.5.2':
+    resolution: {integrity: sha512-FVqsPqtPWKVVL3dPSxy8wEF/ymIEuVzF1PK3VbUgrxXpJUSHQWWZz4JMToquRxnkw+36LTamCZG2iua2Ptq0fA==}
+
+  '@codemirror/view@6.38.6':
+    resolution: {integrity: sha512-qiS0z1bKs5WOvHIAC0Cybmv4AJSkAXgX5aD6Mqd2epSLlVJsQl8NG23jCVouIgkh4All/mrbdsf2UOLFnJw0tw==}
 
   '@esbuild/aix-ppc64@0.25.11':
     resolution: {integrity: sha512-Xt1dOL13m8u0WE8iplx9Ibbm+hFAO0GsU2P34UNoDGvZYkY8ifSiy6Zuc1lYxfG7svWE2fzqCUmFp5HCn51gJg==}
@@ -184,6 +203,18 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@lezer/common@1.3.0':
+    resolution: {integrity: sha512-L9X8uHCYU310o99L3/MpJKYxPzXPOS7S0NmBaM7UO/x2Kb2WbmMLSkfvdr1KxRIFYOpbY0Jhn7CfLSUDzL8arQ==}
+
+  '@lezer/highlight@1.2.2':
+    resolution: {integrity: sha512-z8TQwaBXXQIvG6i2g3e9cgMwUUXu9Ib7jo2qRRggdhwKpM56Dw3PM3wmexn+EGaaOZ7az0K7sjc3/gcGW7sz7A==}
+
+  '@lezer/lr@1.4.2':
+    resolution: {integrity: sha512-pu0K1jCIdnQ12aWNaAVU5bzi7Bd1w54J3ECgANPmYLtQKP0HBj2cE/5coBD66MT10xbtIuUr7tg0Shbsvk0mDA==}
+
+  '@marijn/find-cluster-break@1.0.2':
+    resolution: {integrity: sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g==}
+
   '@rollup/rollup-android-arm-eabi@4.52.5':
     resolution: {integrity: sha512-8c1vW4ocv3UOMp9K+gToY5zL2XiiVw3k7f1ksf4yO1FlDFQ1C2u72iACFnSOceJFsWskc2WZNqeRhFRPzv+wtQ==}
     cpu: [arm]
@@ -306,6 +337,12 @@ packages:
   '@types/tern@0.23.9':
     resolution: {integrity: sha512-ypzHFE/wBzh+BlH6rrBgS5I/Z7RD21pGhZ2rltb/+ZrVM1awdZwjx7hE5XfuYgHWk9uvV5HLZN3SloevCAp3Bw==}
 
+  crelt@1.0.6:
+    resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
+
+  emoji-regex@10.6.0:
+    resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
+
   esbuild@0.25.11:
     resolution: {integrity: sha512-KohQwyzrKTQmhXDW1PjCv3Tyspn9n5GcY2RTDqeORIdIJY8yKIF7sTSopFmn/wpMPW4rdPXI0UE5LJLuq3bx0Q==}
     engines: {node: '>=18'}
@@ -325,6 +362,19 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
+  immediate@3.0.6:
+    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
+
+  lie@3.1.1:
+    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
+
+  localforage@1.10.0:
+    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
+
+  luxon@3.7.2:
+    resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
+    engines: {node: '>=12'}
+
   moment@2.29.4:
     resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
 
@@ -333,11 +383,34 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  obsidian-calendar-ui@0.3.12:
+    resolution: {integrity: sha512-hdoRqCPnukfRgCARgArXaqMQZ+Iai0eY7f0ZsFHHfywpv4gKg3Tx5p47UsLvRO5DD+4knlbrL7Gel57MkfcLTw==}
+
+  obsidian-daily-notes-interface@0.8.4:
+    resolution: {integrity: sha512-REKQtAuIOKDbvNH/th1C1gWmJWCP5tRn9T/mfZGZt4Zncgko7McXK0aSKFtEInipvgbZJ2nScivvyLdiWluSMw==}
+    hasBin: true
+
+  obsidian-dataview@0.5.68:
+    resolution: {integrity: sha512-eoYVxqgeAUM64fV6/YXWuXvmm9DaVoR1h/O+vBIHS0yQ+n9x5MaVndD3WjcVWuaJmrMM9iwvutkbZ0aCWpLmHw==}
+
   obsidian@1.8.7:
     resolution: {integrity: sha512-h4bWwNFAGRXlMlMAzdEiIM2ppTGlrh7uGOJS6w4gClrsjc+ei/3YAtU2VdFUlCiPuTHpY4aBpFJJW75S1Tl/JA==}
     peerDependencies:
       '@codemirror/state': ^6.0.0
       '@codemirror/view': ^6.0.0
+
+  obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/3a2161f440361a0c5466d5ebc4569998933e665b:
+    resolution: {tarball: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/3a2161f440361a0c5466d5ebc4569998933e665b}
+    version: 1.10.0
+    peerDependencies:
+      '@codemirror/state': 6.5.0
+      '@codemirror/view': 6.38.1
+
+  papaparse@5.5.3:
+    resolution: {integrity: sha512-5QvjGxYVjxO59MGU2lHVYpRWBBtKHnlIAcSe1uNFCkkptUh63NFRj0FJQm7nR67puEruUci/ZkjmEFrjCAyP4A==}
+
+  parsimmon@1.18.1:
+    resolution: {integrity: sha512-u7p959wLfGAhJpSDJVYXoyMCXWYwHia78HhRBWqk7AIbxdmlrfdp5wX0l3xv/iTSH5HvhN9K7o26hwwpgS5Nmw==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -350,6 +423,12 @@ packages:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
 
+  preact@10.27.2:
+    resolution: {integrity: sha512-5SYSgFKSyhCbk6SrXyMpqjb5+MQBgfvEKE/OC+PujcY34sOpqtr+0AZQtPYx5IA6VxynQ7rUPCtKzyovpj9Bpg==}
+
+  remove-markdown@0.5.5:
+    resolution: {integrity: sha512-lMR8tOtDqazFT6W2bZidoXwkptMdF3pCxpri0AEokHg0sZlC2GdoLqnoaxsEj1o7/BtXV1MKtT3YviA1t7rW7g==}
+
   rollup@4.52.5:
     resolution: {integrity: sha512-3GuObel8h7Kqdjt0gxkEzaifHTqLVW56Y/bjN7PSQtkKr0w3V/QYSdt6QWYtd7A1xUtYQigtdUfgj1RvWVtorw==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
@@ -359,9 +438,19 @@ packages:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
+  style-mod@4.1.3:
+    resolution: {integrity: sha512-i/n8VsZydrugj3Iuzll8+x/00GH2vnYsk1eomD8QiRrSAeW6ItbCQDtfXCeJHd0iwiNagqjQkvpvREEPtW3IoQ==}
+
+  svelte@3.35.0:
+    resolution: {integrity: sha512-gknlZkR2sXheu/X+B7dDImwANVvK1R0QGQLd8CNIfxxGPeXBmePnxfzb6fWwTQRsYQG7lYkZXvpXJvxvpsoB7g==}
+    engines: {node: '>= 8'}
+
   tinyglobby@0.2.15:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
     engines: {node: '>=12.0.0'}
+
+  tslib@2.1.0:
+    resolution: {integrity: sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==}
 
   typescript@5.8.3:
     resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
@@ -411,7 +500,30 @@ packages:
       yaml:
         optional: true
 
+  w3c-keyname@2.2.8:
+    resolution: {integrity: sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==}
+
 snapshots:
+
+  '@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/a9c3c7efe17dd1d24395ee2a179fe12dd6ed1e76':
+    dependencies:
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.38.6
+      '@lezer/common': 1.3.0
+      '@lezer/highlight': 1.2.2
+      '@lezer/lr': 1.4.2
+      style-mod: 4.1.3
+
+  '@codemirror/state@6.5.2':
+    dependencies:
+      '@marijn/find-cluster-break': 1.0.2
+
+  '@codemirror/view@6.38.6':
+    dependencies:
+      '@codemirror/state': 6.5.2
+      crelt: 1.0.6
+      style-mod: 4.1.3
+      w3c-keyname: 2.2.8
 
   '@esbuild/aix-ppc64@0.25.11':
     optional: true
@@ -490,6 +602,18 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.11':
     optional: true
+
+  '@lezer/common@1.3.0': {}
+
+  '@lezer/highlight@1.2.2':
+    dependencies:
+      '@lezer/common': 1.3.0
+
+  '@lezer/lr@1.4.2':
+    dependencies:
+      '@lezer/common': 1.3.0
+
+  '@marijn/find-cluster-break@1.0.2': {}
 
   '@rollup/rollup-android-arm-eabi@4.52.5':
     optional: true
@@ -571,6 +695,10 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.8
 
+  crelt@1.0.6: {}
+
+  emoji-regex@10.6.0: {}
+
   esbuild@0.25.11:
     optionalDependencies:
       '@esbuild/aix-ppc64': 0.25.11
@@ -607,14 +735,70 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
+  immediate@3.0.6: {}
+
+  lie@3.1.1:
+    dependencies:
+      immediate: 3.0.6
+
+  localforage@1.10.0:
+    dependencies:
+      lie: 3.1.1
+
+  luxon@3.7.2: {}
+
   moment@2.29.4: {}
 
   nanoid@3.3.11: {}
 
-  obsidian@1.8.7:
+  obsidian-calendar-ui@0.3.12(@codemirror/state@6.5.2)(@codemirror/view@6.38.6):
     dependencies:
+      obsidian-daily-notes-interface: 0.8.4(@codemirror/state@6.5.2)(@codemirror/view@6.38.6)
+      svelte: 3.35.0
+      tslib: 2.1.0
+    transitivePeerDependencies:
+      - '@codemirror/state'
+      - '@codemirror/view'
+
+  obsidian-daily-notes-interface@0.8.4(@codemirror/state@6.5.2)(@codemirror/view@6.38.6):
+    dependencies:
+      obsidian: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/3a2161f440361a0c5466d5ebc4569998933e665b(@codemirror/state@6.5.2)(@codemirror/view@6.38.6)
+      tslib: 2.1.0
+    transitivePeerDependencies:
+      - '@codemirror/state'
+      - '@codemirror/view'
+
+  obsidian-dataview@0.5.68:
+    dependencies:
+      '@codemirror/language': https://codeload.github.com/lishid/cm-language/tar.gz/a9c3c7efe17dd1d24395ee2a179fe12dd6ed1e76
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.38.6
+      emoji-regex: 10.6.0
+      localforage: 1.10.0
+      luxon: 3.7.2
+      obsidian-calendar-ui: 0.3.12(@codemirror/state@6.5.2)(@codemirror/view@6.38.6)
+      papaparse: 5.5.3
+      parsimmon: 1.18.1
+      preact: 10.27.2
+      remove-markdown: 0.5.5
+
+  obsidian@1.8.7(@codemirror/state@6.5.2)(@codemirror/view@6.38.6):
+    dependencies:
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.38.6
       '@types/codemirror': 5.60.8
       moment: 2.29.4
+
+  obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/3a2161f440361a0c5466d5ebc4569998933e665b(@codemirror/state@6.5.2)(@codemirror/view@6.38.6):
+    dependencies:
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.38.6
+      '@types/codemirror': 5.60.8
+      moment: 2.29.4
+
+  papaparse@5.5.3: {}
+
+  parsimmon@1.18.1: {}
 
   picocolors@1.1.1: {}
 
@@ -625,6 +809,10 @@ snapshots:
       nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
+
+  preact@10.27.2: {}
+
+  remove-markdown@0.5.5: {}
 
   rollup@4.52.5:
     dependencies:
@@ -656,10 +844,16 @@ snapshots:
 
   source-map-js@1.2.1: {}
 
+  style-mod@4.1.3: {}
+
+  svelte@3.35.0: {}
+
   tinyglobby@0.2.15:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
+
+  tslib@2.1.0: {}
 
   typescript@5.8.3: {}
 
@@ -676,3 +870,5 @@ snapshots:
     optionalDependencies:
       '@types/node': 24.0.10
       fsevents: 2.3.3
+
+  w3c-keyname@2.2.8: {}

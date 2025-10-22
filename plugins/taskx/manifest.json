@@ -1,8 +1,9 @@
 {
-    "id": "taskx",
-    "name": "TaskX",
-    "version": "0.0.1",
-    "minAppVersion": "1.5.0",
-    "author": "Jason Lenoble",
-    "description": "Experimental hierarchical task engine"
+  "id": "obsidian-taskx",
+  "name": "TaskX",
+  "version": "0.0.1",
+  "minAppVersion": "1.5.0",
+  "author": "Jason Lenoble",
+  "description": "Experimental hierarchical task engine",
+  "dependencies": ["dataview", "obsidian-tasks-plugin"]
 }
