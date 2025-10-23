@@ -9,7 +9,7 @@ export function table({ tasksPlugin, dv }: ExtendedSummaryOptions): void {
 	const today = window.moment().format("YYYY-MM-DD");
 
 	// Filter tasks (respecting excluded folders)
-	const filtered = tasks.filter((t) => {
+	const filtered = tasks.filter(t => {
 		const folder = t.path.split("/").slice(0, -1).join("/");
 		return folder !== "Templates" && folder !== "6 - Archives/Templates";
 	});
@@ -29,9 +29,9 @@ export function table({ tasksPlugin, dv }: ExtendedSummaryOptions): void {
 	const rows = [];
 	for (const [file, fileTasks] of grouped) {
 		const total = fileTasks.length;
-		const done = fileTasks.filter((t) => t.doneDate).length;
+		const done = fileTasks.filter(t => t.doneDate).length;
 		const doneToday = fileTasks.filter(
-			(t) => t.doneDate && t.doneDate.format("YYYY-MM-DD") === today,
+			t => t.doneDate && t.doneDate.format("YYYY-MM-DD") === today,
 		).length;
 		const remaining = total - done;
 

@@ -10,7 +10,7 @@ const config = {
 	singleQuote: false,
 	quoteProps: "as-needed",
 	bracketSpacing: true,
-	arrowParens: "always",
+	arrowParens: "avoid",
 	endOfLine: "lf",
 	printWidth: 100,
 };
