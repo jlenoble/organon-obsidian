@@ -1,20 +1,45 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "lib": ["ES2022", "DOM"],
-    "strict": true,
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
+    /* === Output === */
     "outDir": "dist",
+    "rootDir": "src",
+    "target": "es2022", // modern JS, same as Obsidian’s Electron runtime
+    "module": "esnext", // for rollup/esbuild/Vite bundling
+    "moduleResolution": "bundler",
+    "lib": ["es2022", "dom"],
     "sourceMap": true,
+    "skipLibCheck": true,
+
+    /* === Strictness === */
+    "strict": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* === Imports & Types === */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "types": ["node"],
+
+    /* === Paths === */
+    "baseUrl": ".",
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    /* === Declarations (optional for library builds) === */
     "declaration": true,
-    "emitDeclarationOnly": false,
-    "declarationDir": "dist-types",
     "declarationMap": true,
-    "types": ["node"]
+    "emitDeclarationOnly": false,
+    "declarationDir": "dist-types"
   },
-  "include": ["src/**/*.ts", "types.d.ts"]
+
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "dist-types"]
 }
