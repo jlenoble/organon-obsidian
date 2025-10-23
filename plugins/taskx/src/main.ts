@@ -2,7 +2,7 @@ import { Plugin } from "obsidian";
 import type { DataviewApi, DataviewInlineApi } from "obsidian-dataview";
 
 import { isDataviewInlineApi, isTasksPlugin } from "./guards";
-import { type SummaryOptions } from "./summary-options";
+import { defaultSummaryOptions, SUMMARY_NAMES, type SummaryOptions } from "./summary-options";
 import { table } from "./table";
 
 type TasksPlugin = ObsidianTasks.TasksPlugin;
@@ -69,6 +69,26 @@ export default class TaskXPlugin extends Plugin {
 			return;
 		}
 
-		table({ tasksPlugin: this.tasksPlugin, dv: this.dv, ...options });
+		const extOptions = {
+			...defaultSummaryOptions,
+			tasksPlugin: this.tasksPlugin,
+			dv: this.dv,
+			...options,
+		};
+
+		switch (extOptions.name) {
+			case "hello-world":
+				this.dv.paragraph("Hello World!");
+				break;
+
+			case "table":
+				table(extOptions);
+				break;
+
+			default:
+				this.dv.paragraph(
+					`Usage: taskx.summary({name: ${SUMMARY_NAMES.map(t => '"' + t + '"').join(" | ")} });`,
+				);
+		}
 	}
 }
