@@ -1,9 +1,10 @@
 import { Plugin } from "obsidian";
 import type { DataviewApi, DataviewInlineApi } from "obsidian-dataview";
 
-import { defaultSummaryOptions, type SummaryOptions } from "./summary-options";
+import { isDataviewInlineApi, isTasksPlugin } from "./guards";
+import { type SummaryOptions } from "./summary-options";
+import { table } from "./table";
 
-type Task = ObsidianTasks.Task;
 type TasksPlugin = ObsidianTasks.TasksPlugin;
 
 export default class TaskXPlugin extends Plugin {
@@ -53,83 +54,21 @@ export default class TaskXPlugin extends Plugin {
 		return this.app.plugins?.plugins?.["obsidian-tasks-plugin"] ?? null;
 	}
 
-	static isTasksPlugin(plugin: TasksPlugin | null): plugin is TasksPlugin {
-		return plugin !== null;
-	}
-
-	static isDataviewInlineApi(api: DataviewInlineApi | null): api is DataviewInlineApi {
-		return api !== null;
-	}
-
 	// --- exposed API --------------------------------------------------------
 
-	// this.dv is expected to have been set up at the top of any calling block
-	// with the simple line: taskx.dv = dv; We rely on the block crashing to warn
-	// us of a bug.
-
-	summary(_options: SummaryOptions = defaultSummaryOptions): void {
-		if (!TaskXPlugin.isTasksPlugin(this.tasksPlugin)) {
-			console.warn("Tasks plugin not loaded");
+	summary(options: SummaryOptions = {}): void {
+		if (!isTasksPlugin(this.tasksPlugin)) {
+			console.warn("Tasks plugin not loaded before TaskX");
 			return;
 		}
 
-		const tasks = this.tasksPlugin.getTasks(); // <-- this should return all cached tasks
-
-		// Define today
-		const today = window.moment().format("YYYY-MM-DD");
-
-		// Filter tasks (respecting excluded folders)
-		const filtered = tasks.filter((t) => {
-			const folder = t.path.split("/").slice(0, -1).join("/");
-			return folder !== "Templates" && folder !== "6 - Archives/Templates";
-		});
-
-		// Manually group by file path
-		const grouped: Map<string, Task[]> = new Map();
-		for (const t of filtered) {
-			const group = grouped.get(t.path) ?? [];
-			group.push(t);
-
-			if (!grouped.has(t.path)) {
-				grouped.set(t.path, group);
-			}
-		}
-
-		// Build summary rows
-		const rows = [];
-		for (const [file, fileTasks] of grouped) {
-			const total = fileTasks.length;
-			const done = fileTasks.filter((t) => t.doneDate).length;
-			const doneToday = fileTasks.filter(
-				(t) => t.doneDate && t.doneDate.format("YYYY-MM-DD") === today,
-			).length;
-			const remaining = total - done;
-
-			if (total > 0) {
-				rows.push({
-					file,
-					totalRemaining: remaining,
-					totalDoneToday: doneToday,
-				});
-			}
-		}
-
-		// Collapse into one summary row (like sum(rows.Remaining), sum(rows.DoneToday))
-		const summary = {
-			TotalRemaining: rows.reduce((a, r) => a + r.totalRemaining, 0),
-			TotalDoneToday: rows.reduce((a, r) => a + r.totalDoneToday, 0),
-		};
-
-		// Render table
-
-		if (!TaskXPlugin.isDataviewInlineApi(this.dv)) {
-			console.warn("Dataview inline API not loaded");
+		// this.dv is expected to have been set up at the top of any calling block
+		// with the simple line: taskx.dv = dv
+		if (!isDataviewInlineApi(this.dv)) {
+			console.warn("Dataview inline API not set in TaskX");
 			return;
 		}
 
-		this.dv.table(
-			["Tâches accomplies aujourd'hui", "Tâches restantes"],
-			[[summary.TotalDoneToday, summary.TotalRemaining]],
-		);
+		table({ tasksPlugin: this.tasksPlugin, dv: this.dv, ...options });
 	}
 }
