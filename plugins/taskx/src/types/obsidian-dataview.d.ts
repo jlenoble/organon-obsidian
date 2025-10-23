@@ -1,25 +1,41 @@
 import "obsidian-dataview";
 
 declare module "obsidian-dataview" {
-  interface DataviewApi {
-    // === Add known members here ===
+	interface DataviewApi {
+		/** Return all pages matching a query */
+		pages(query?: string): Value[];
 
-    /** Return all pages matching a query */
-    pages(query?: string): any[];
+		/** Return metadata for a page */
+		page(path: string): Record<string, Value> | null;
 
-    /** Return metadata for a page */
-    page(path: string): Record<string, any> | null;
+		/** Evaluate a Dataview query expression */
+		evaluate(expression: string, context?: unknown): Value;
 
-    /** Evaluate a Dataview query expression */
-    evaluate(expression: string, context?: unknown): any;
+		/** Return current page context */
+		current(): Record<string, Value> | null;
 
-    /** Return current page context */
-    current(): Record<string, any> | null;
+		/** Convert path or link to a Dataview link */
+		fileLink(path: string): unknown;
 
-    /** Convert path or link to a Dataview link */
-    fileLink(path: string): unknown;
+		/** Execute a Dataview query directly */
+		query(query: string): Promise<Value>;
+	}
 
-    /** Execute a Dataview query directly */
-    query(query: string): Promise<any>;
-  }
+	/**
+	 * Inline Dataview API — available in inline JS queries via the global `dv` object.
+	 * It provides rendering helpers and basic query access.
+	 */
+	interface DataviewInlineApi extends DataviewApi {
+		/** Render a Markdown table with optional headers */
+		table(headers: string[] | undefined, rows: Value[][] | Iterable<Value[]>): void;
+
+		/** Render a Markdown list from an array or iterable */
+		list(items: Iterable<string | number | boolean | Record<string, Value>>): void;
+
+		/** Render a Markdown paragraph */
+		paragraph(text: string): void;
+
+		/** Render a task list */
+		taskList(tasks: Iterable<Record<string, Value>>, groupByFile?: boolean): void;
+	}
 }

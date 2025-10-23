@@ -1,6 +1,8 @@
 import { Plugin } from "obsidian";
 import type { DataviewApi, DataviewInlineApi } from "obsidian-dataview";
 
+import { defaultSummaryOptions, type SummaryOptions } from "./summary-options";
+
 type Task = ObsidianTasks.Task;
 type TasksPlugin = ObsidianTasks.TasksPlugin;
 
@@ -8,7 +10,7 @@ export default class TaskXPlugin extends Plugin {
 	dvApi: DataviewApi | null = null;
 	tasksPlugin: TasksPlugin | null = null;
 
-	#dv: DataviewInlineApi | null;
+	#dv: DataviewInlineApi | null = null;
 	get dv(): DataviewInlineApi | null {
 		return this.#dv;
 	}
@@ -51,8 +53,12 @@ export default class TaskXPlugin extends Plugin {
 		return this.app.plugins?.plugins?.["obsidian-tasks-plugin"] ?? null;
 	}
 
-	private static hasTasksPlugin(plugin: TasksPlugin | null): plugin is TasksPlugin {
+	static isTasksPlugin(plugin: TasksPlugin | null): plugin is TasksPlugin {
 		return plugin !== null;
+	}
+
+	static isDataviewInlineApi(api: DataviewInlineApi | null): api is DataviewInlineApi {
+		return api !== null;
 	}
 
 	// --- exposed API --------------------------------------------------------
@@ -61,10 +67,8 @@ export default class TaskXPlugin extends Plugin {
 	// with the simple line: taskx.dv = dv; We rely on the block crashing to warn
 	// us of a bug.
 
-	// Likewise this.tasksPlugin is expected to be properly set thereafter.
-
-	doThis(): void {
-		if (!TaskXPlugin.hasTasksPlugin(this.tasksPlugin)) {
+	summary(_options: SummaryOptions = defaultSummaryOptions): void {
+		if (!TaskXPlugin.isTasksPlugin(this.tasksPlugin)) {
 			console.warn("Tasks plugin not loaded");
 			return;
 		}
@@ -117,13 +121,15 @@ export default class TaskXPlugin extends Plugin {
 		};
 
 		// Render table
+
+		if (!TaskXPlugin.isDataviewInlineApi(this.dv)) {
+			console.warn("Dataview inline API not loaded");
+			return;
+		}
+
 		this.dv.table(
 			["Tâches accomplies aujourd'hui", "Tâches restantes"],
 			[[summary.TotalDoneToday, summary.TotalRemaining]],
 		);
-	}
-
-	doThat(): void {
-		this.dv.paragraph("Do that!");
 	}
 }
