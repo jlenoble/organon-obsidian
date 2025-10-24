@@ -4,6 +4,13 @@ import type { DataviewApi, DataviewInlineApi } from "obsidian-dataview";
 import { isDataviewInlineApi, isTasksPlugin } from "./guards";
 import { defaultSummaryOptions, SUMMARY_NAMES, type SummaryOptions } from "./summary-options";
 import { table } from "./table";
+import { tree } from "./tree";
+
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+
+import "./styles.css";
 
 type TasksPlugin = ObsidianTasks.TasksPlugin;
 
@@ -83,6 +90,10 @@ export default class TaskXPlugin extends Plugin {
 
 			case "table":
 				table(extOptions);
+				break;
+
+			case "tree":
+				tree(extOptions);
 				break;
 
 			default:

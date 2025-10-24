@@ -37,5 +37,22 @@ declare module "obsidian-dataview" {
 
 		/** Render a task list */
 		taskList(tasks: Iterable<Record<string, Value>>, groupByFile?: boolean): void;
+
+		/**
+		 * Render an arbitrary HTML element inside the current Dataview block.
+		 * Returns the created HTMLElement.
+		 *
+		 * @param tag HTML tag name (e.g., 'div', 'span')
+		 * @param options Optional attributes or class list
+		 * @param content Optional initial text content
+		 */
+		el<K extends keyof HTMLElementTagNameMap>(
+			tag: K,
+			options?: {
+				cls?: string | string[];
+				attr?: Record<string, string>;
+			},
+			content?: string,
+		): HTMLElementTagNameMap[K];
 	}
 }

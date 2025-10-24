@@ -15,8 +15,10 @@
 	"dependencies": {
 		"obsidian": "1.10.0",
 		"obsidian-dataview": "0.5.68",
+		"primereact": "10.9.7",
 		"react": "19.2.0",
-		"react-dom": "19.2.0"
+		"react-dom": "19.2.0",
+		"primeicons": "7.0.0"
 	},
 	"devDependencies": {
 		"@codemirror/state": "6.5.2",
