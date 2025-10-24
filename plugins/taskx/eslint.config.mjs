@@ -4,6 +4,9 @@ import prettierPlugin from "eslint-plugin-prettier";
 import unusedImportsPlugin from "eslint-plugin-unused-imports";
 import tseslint from "typescript-eslint";
 
+const ignores = ["node_modules/**", "dist/**", "dist-types/**", ".rush/**", "temp/**"];
+
+/* === Plugins === */
 const plugins = {
 	import: importPlugin,
 	"unused-imports": unusedImportsPlugin,
@@ -14,17 +17,18 @@ const pluginsTs = {
 	"@typescript-eslint": tseslint.plugin,
 };
 
+/* === Shared Rules === */
 const rules = {
-	/* === General Style / Safety === */
+	// --- General style/safety ---
 	"no-var": "error",
 	"prefer-const": "error",
 	eqeqeq: ["error", "always"],
 	curly: ["error", "all"],
 
-	/* === Unused imports cleanup === */
+	// --- Unused imports cleanup ---
 	"unused-imports/no-unused-imports": "error",
 
-	/* === Import hygiene === */
+	// --- Import hygiene ---
 	"import/order": [
 		"error",
 		{
@@ -34,19 +38,17 @@ const rules = {
 		},
 	],
 
-	/* === Prettier integration === */
+	// --- Prettier integration ---
 	"prettier/prettier": ["error"],
 };
 
+/* === TypeScript-specific rules === */
 const rulesTs = {
-	/* === Unused imports cleanup === */
-	"no-unused-vars": "off",
+	"no-unused-vars": "off", // disable base rule
 	"@typescript-eslint/no-unused-vars": [
 		"error",
 		{ argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
 	],
-
-	/* === TypeScript strictness === */
 	"@typescript-eslint/explicit-function-return-type": "error",
 	"@typescript-eslint/no-explicit-any": "error",
 	"@typescript-eslint/consistent-type-imports": [
@@ -55,11 +57,10 @@ const rulesTs = {
 	],
 };
 
-const ignores = ["node_modules/**", "dist/**", "dist-types/**", ".rush/**", "temp/**"];
-
+/* === Export flat config === */
 export default defineConfig(
+	// --- Type-aware linting for src ---
 	{
-		// --- Typed linting for TypeScript in src ---
 		files: ["src/**/*.ts", "src/**/*.tsx"],
 		ignores,
 		languageOptions: {
@@ -69,24 +70,27 @@ export default defineConfig(
 				tsconfigRootDir: import.meta.dirname,
 				sourceType: "module",
 				ecmaVersion: "latest",
+				ecmaFeatures: { jsx: true },
 			},
 			globals: {
-				window: "readonly", // for Obsidian DOM APIs
+				window: "readonly",
 				document: "readonly",
-				process: "readonly", // for Node APIs
+				process: "readonly",
 			},
 		},
 		plugins: { ...plugins, ...pluginsTs },
 		rules: { ...rules, ...rulesTs },
 	},
 
+	// --- Lightweight linting for everything else (no type analysis) ---
 	{
-		// --- Non-typed linting for all other files ---
-		files: ["**/*.js", "**/*.jsx", "**/*.cjs", "**/*.mjs", "**/*.ts", "**/*.tsx"],
+		files: ["**/*.{js,jsx,cjs,mjs,ts,tsx}"],
 		ignores,
 		languageOptions: {
 			parserOptions: {
-				// no `project` here → disables type-aware linting
+				sourceType: "module",
+				ecmaVersion: "latest",
+				ecmaFeatures: { jsx: true },
 			},
 		},
 		plugins,

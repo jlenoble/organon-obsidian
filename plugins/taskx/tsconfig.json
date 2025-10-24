@@ -1,45 +1,52 @@
 {
-  "compilerOptions": {
-    /* === Output === */
-    "outDir": "dist",
-    "rootDir": "src",
-    "target": "es2022", // modern JS, same as Obsidian’s Electron runtime
-    "module": "esnext", // for rollup/esbuild/Vite bundling
-    "moduleResolution": "bundler",
-    "lib": ["es2022", "dom"],
-    "sourceMap": true,
-    "skipLibCheck": true,
+	"compilerOptions": {
+		/* === Output === */
+		"outDir": "dist",
+		"rootDir": "src",
+		"target": "es2022", // modern JS, same as Obsidian’s Electron runtime
+		"module": "esnext", // for rollup/esbuild/Vite bundling
+		"moduleResolution": "bundler",
+		"lib": ["es2022", "dom"],
+		"sourceMap": true,
+		"skipLibCheck": true,
 
-    /* === Strictness === */
-    "strict": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitThis": true,
-    "useUnknownInCatchVariables": true,
-    "forceConsistentCasingInFileNames": true,
+		/* === JSX / React === */
+		"jsx": "react-jsx",
+		"jsxImportSource": "react",
 
-    /* === Imports & Types === */
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "types": ["node"],
+		/* === Strictness === */
+		"strict": true,
+		"noImplicitAny": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitThis": true,
+		"useUnknownInCatchVariables": true,
+		"forceConsistentCasingInFileNames": true,
 
-    /* === Paths === */
-    "baseUrl": ".",
-    "typeRoots": ["./src/types", "./node_modules/@types"],
-    "paths": {
-      "@/*": ["src/*"]
-    },
+		/* === Imports & Types === */
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		// ⚠️ For JSX projects, isolatedModules can sometimes break `const enum` or re-exports.
+		// If you hit "Cannot compile namespaces" or similar, disable it.
+		// "isolatedModules": false,        // safer for mixed .ts/.tsx Obsidian plugin builds
+		"isolatedModules": true,
+		"types": ["node"],
 
-    /* === Declarations (optional for library builds) === */
-    "declaration": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": false,
-    "declarationDir": "dist-types"
-  },
+		/* === Paths === */
+		"baseUrl": ".",
+		"typeRoots": ["./src/types", "./node_modules/@types"],
+		"paths": {
+			"@/*": ["src/*"]
+		},
 
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "dist", "dist-types"]
+		/* === Declarations (optional for library builds) === */
+		"declaration": true,
+		"declarationMap": true,
+		"emitDeclarationOnly": false,
+		"declarationDir": "dist-types"
+	},
+
+	"include": ["src/**/*.ts", "src/**/*.tsx"],
+	"exclude": ["node_modules", "dist", "dist-types"]
 }
