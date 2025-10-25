@@ -98,7 +98,7 @@ export default class TaskXPlugin extends Plugin {
 
 			default:
 				this.dv.paragraph(
-					`Usage: taskx.summary({name: ${SUMMARY_NAMES.map(t => '"' + t + '"').join(" | ")} });`,
+					`Usage: taskx.summary({ name: ${SUMMARY_NAMES.map(t => '"' + t + '"').join(" | ")} });`,
 				);
 		}
 	}
