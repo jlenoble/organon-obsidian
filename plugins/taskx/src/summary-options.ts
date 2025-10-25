@@ -13,6 +13,7 @@ export type SummaryName = (typeof SUMMARY_NAMES)[number];
 
 export interface SummaryOptions {
 	readonly name?: SummaryName;
+	readonly excludeFolders?: string[];
 }
 
 export interface ExtendedSummaryOptions extends Required<SummaryOptions> {
@@ -22,4 +23,5 @@ export interface ExtendedSummaryOptions extends Required<SummaryOptions> {
 
 export const defaultSummaryOptions: Required<SummaryOptions> = {
 	name: "table",
+	excludeFolders: ["Templates"],
 };

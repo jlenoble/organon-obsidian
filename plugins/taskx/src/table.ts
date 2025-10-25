@@ -1,45 +1,24 @@
+import { done, doneToday } from "./filters";
+import { getTasksGroupedByFile } from "./helpers";
 import { type ExtendedSummaryOptions } from "./summary-options";
 
-type Task = ObsidianTasks.Task;
-
-export function table({ tasksPlugin, dv }: ExtendedSummaryOptions): void {
-	const tasks = tasksPlugin.getTasks(); // <-- this should return all cached tasks
-
-	// Define today
-	const today = window.moment().format("YYYY-MM-DD");
-
-	// Filter tasks (respecting excluded folders)
-	const filtered = tasks.filter(t => {
-		const folder = t.path.split("/").slice(0, -1).join("/");
-		return folder !== "Templates" && folder !== "6 - Archives/Templates";
-	});
-
-	// Manually group by file path
-	const grouped: Map<string, Task[]> = new Map();
-	for (const t of filtered) {
-		const group = grouped.get(t.path) ?? [];
-		group.push(t);
-
-		if (!grouped.has(t.path)) {
-			grouped.set(t.path, group);
-		}
-	}
+export function table(options: ExtendedSummaryOptions): void {
+	const { dv } = options;
+	const grouped = getTasksGroupedByFile(options);
 
 	// Build summary rows
 	const rows = [];
 	for (const [file, fileTasks] of grouped) {
 		const total = fileTasks.length;
-		const done = fileTasks.filter(t => t.doneDate).length;
-		const doneToday = fileTasks.filter(
-			t => t.doneDate && t.doneDate.format("YYYY-MM-DD") === today,
-		).length;
-		const remaining = total - done;
+		const totalDone = fileTasks.filter(done).length;
+		const totalDoneToday = fileTasks.filter(doneToday).length;
+		const totalRemaining = total - totalDone;
 
 		if (total > 0) {
 			rows.push({
 				file,
-				totalRemaining: remaining,
-				totalDoneToday: doneToday,
+				totalRemaining,
+				totalDoneToday,
 			});
 		}
 	}

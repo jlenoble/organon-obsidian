@@ -1,3 +1,5 @@
+type TaskDate = moment.Moment | null;
+
 /**
  * Minimal typings for the "obsidian-tasks-plugin".
  *
@@ -15,37 +17,24 @@ declare namespace ObsidianTasks {
 		/** The text of the task, without checkbox or metadata. */
 		description: string;
 
-		/** True if the task is marked as done (checked). */
-		status: string;
-
 		/** The file path (relative to vault root) where the task resides. */
 		path: string;
 
-		/** The line number in the file where this task is defined. */
-		line: number;
-
 		/** ISO string or Date representing when the task was created. */
-		createdDate?: moment.Moment;
+		createdDate: TaskDate;
 
 		/** Due date, if any. */
-		dueDate?: moment.Moment;
+		dueDate: TaskDate;
 
 		/** Completion date, if any. */
-		doneDate?: moment.Moment;
+		doneDate: TaskDate;
 
 		/** Optional scheduled or start date. */
-		scheduledDate?: moment.Moment;
-		startDate?: moment.Moment;
+		scheduledDate: TaskDate;
+		startDate: TaskDate;
 
 		/** Any inline tags (e.g. #work #urgent). */
-		tags?: string[];
-
-		/** Any block link or heading hierarchy info. */
-		blockLink?: string;
-		heading?: string;
-
-		/** True if the task is hidden from standard query results. */
-		hidden?: boolean;
+		tags: string[];
 	}
 
 	/** A query result as returned by the Tasks plugin API. */
