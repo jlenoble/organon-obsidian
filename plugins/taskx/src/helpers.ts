@@ -1,5 +1,5 @@
 import { makeExcludeFolders } from "./filters";
-import { type ExtendedSummaryOptions } from "./summary-options";
+import { SUMMARY_GROUP_BY, type ExtendedSummaryOptions } from "./summary-options";
 
 type Task = ObsidianTasks.Task;
 
@@ -19,13 +19,45 @@ export function groupByFilePath(tasks: readonly Task[]): Map<string, Task[]> {
 	return grouped;
 }
 
-export function getTasksGroupedByFile(options: ExtendedSummaryOptions): Map<string, Task[]> {
-	const { tasksPlugin } = options;
+export function groupByTag(tasks: readonly Task[]): Map<string, Task[]> {
+	// Manually group Task by file path
+	const grouped: Map<string, Task[]> = new Map();
+
+	for (const t of tasks) {
+		for (const tag of t.tags) {
+			const group = grouped.get(tag) ?? [];
+			group.push(t);
+
+			if (!grouped.has(tag)) {
+				grouped.set(tag, group);
+			}
+		}
+	}
+
+	return grouped;
+}
+
+export function getGroupedTasks(options: ExtendedSummaryOptions): Map<string, Task[]> {
+	const { dv, tasksPlugin } = options;
 	const tasks = tasksPlugin.getTasks(); // <-- this should return all cached tasks
 
 	// Filter tasks
 	const filtered = tasks.filter(makeExcludeFolders(options));
 
 	// Group tasks
-	return groupByFilePath(filtered);
+	switch (options.groupBy) {
+		case "none":
+		case "file":
+			return groupByFilePath(filtered);
+
+		case "tag":
+			return groupByTag(filtered);
+
+		default:
+			dv.paragraph(
+				`Usage: taskx.summary({ groupBy: ${SUMMARY_GROUP_BY.map(t => '"' + t + '"').join(" | ")} });`,
+			);
+	}
+
+	return new Map();
 }

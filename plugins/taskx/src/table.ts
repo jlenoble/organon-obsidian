@@ -1,38 +1,58 @@
 import { done, doneToday } from "./filters";
-import { getTasksGroupedByFile } from "./helpers";
+import { getGroupedTasks } from "./helpers";
 import { type ExtendedSummaryOptions } from "./summary-options";
 
 export function table(options: ExtendedSummaryOptions): void {
 	const { dv } = options;
-	const grouped = getTasksGroupedByFile(options);
+	const grouped = getGroupedTasks(options);
 
 	// Build summary rows
 	const rows = [];
-	for (const [file, fileTasks] of grouped) {
-		const total = fileTasks.length;
-		const totalDone = fileTasks.filter(done).length;
-		const totalDoneToday = fileTasks.filter(doneToday).length;
+	for (const [key, tasks] of grouped) {
+		const total = tasks.length;
+		const totalDone = tasks.filter(done).length;
+		const totalDoneToday = tasks.filter(doneToday).length;
 		const totalRemaining = total - totalDone;
 
 		if (total > 0) {
 			rows.push({
-				file,
+				key,
 				totalRemaining,
 				totalDoneToday,
 			});
 		}
 	}
 
-	// Collapse into one summary row (like sum(rows.Remaining), sum(rows.DoneToday))
-	const summary = {
-		TotalRemaining: rows.reduce((a, r) => a + r.totalRemaining, 0),
-		TotalDoneToday: rows.reduce((a, r) => a + r.totalDoneToday, 0),
-	};
+	switch (options.groupBy) {
+		case "file":
+			// Render table
+			dv.table(
+				["File", "Tâches accomplies aujourd'hui", "Tâches restantes"],
+				rows.map(r => ["[[" + r.key + "]]", r.totalDoneToday, r.totalRemaining]),
+			);
+			break;
 
-	// Render table
+		case "tag":
+			// Render table
+			dv.table(
+				["Tag", "Tâches accomplies aujourd'hui", "Tâches restantes"],
+				rows.map(r => [r.key, r.totalDoneToday, r.totalRemaining]),
+			);
+			break;
 
-	dv.table(
-		["Tâches accomplies aujourd'hui", "Tâches restantes"],
-		[[summary.TotalDoneToday, summary.TotalRemaining]],
-	);
+		case "none":
+		default:
+			// Collapse into one summary row (like sum(rows.Remaining), sum(rows.DoneToday))
+			const summary = {
+				TotalRemaining: rows.reduce((a, r) => a + r.totalRemaining, 0),
+				TotalDoneToday: rows.reduce((a, r) => a + r.totalDoneToday, 0),
+			};
+
+			// Render table
+			dv.table(
+				["Tâches accomplies aujourd'hui", "Tâches restantes"],
+				[[summary.TotalDoneToday, summary.TotalRemaining]],
+			);
+			break;
+	}
 }
