@@ -1,5 +1,8 @@
 import { type DataviewInlineApi } from "obsidian-dataview";
 
+import { makeExcludeFolders } from "./filters";
+import { extractId } from "./tree";
+
 export const SUMMARY_NAMES = [
 	"hello-world", // for quick debugging
 	"table", // default keyword to request the default summary table; Actual result will likely vary and introduce breaking changes
@@ -25,6 +28,7 @@ export interface SummaryOptions {
 export interface ExtendedSummaryOptions extends Required<SummaryOptions> {
 	readonly dv: DataviewInlineApi;
 	readonly tasksPlugin: TasksPlugin;
+	readonly taskMap: Map<string, Task>;
 }
 
 export const defaultSummaryOptions: Required<SummaryOptions> = {
@@ -42,11 +46,26 @@ export function buildExtendedSummaryOptions(
 	const groupBy = options.groupBy || defaultSummaryOptions.groupBy;
 	const excludeFolders = options.excludeFolders || defaultSummaryOptions.excludeFolders;
 
+	const tasks = tasksPlugin
+		.getTasks() // <-- this should return all cached tasks
+		.filter(makeExcludeFolders(excludeFolders));
+
+	const taskMap: Map<string, Task> = new Map();
+
+	for (const task of tasks) {
+		const id = extractId(task);
+
+		if (id && !taskMap.has(id)) {
+			taskMap.set(id, task);
+		}
+	}
+
 	return {
 		name,
 		groupBy,
 		excludeFolders,
 		dv,
 		tasksPlugin,
+		taskMap,
 	};
 }
