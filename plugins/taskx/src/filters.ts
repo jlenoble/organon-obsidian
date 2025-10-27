@@ -1,7 +1,5 @@
 import { type ExtendedSummaryOptions } from "./summary-options";
 
-type Task = ObsidianTasks.Task;
-
 export function makeExcludeFolders({
 	excludeFolders,
 }: ExtendedSummaryOptions): (t: Task) => boolean {

@@ -1,8 +1,6 @@
 import { makeExcludeFolders } from "./filters";
 import { SUMMARY_GROUP_BY, type ExtendedSummaryOptions } from "./summary-options";
 
-type Task = ObsidianTasks.Task;
-
 export function getFilteredTasks(options: ExtendedSummaryOptions): Task[] {
 	const { tasksPlugin } = options;
 	const tasks = tasksPlugin.getTasks(); // <-- this should return all cached tasks

@@ -12,8 +12,6 @@ import "primeicons/primeicons.css";
 
 import "./styles.css";
 
-type TasksPlugin = ObsidianTasks.TasksPlugin;
-
 export default class TaskXPlugin extends Plugin {
 	dvApi: DataviewApi | null = null;
 	tasksPlugin: TasksPlugin | null = null;

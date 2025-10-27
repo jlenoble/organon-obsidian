@@ -7,23 +7,6 @@ import { remaining } from "./filters";
 import { getFilteredTasks } from "./helpers";
 import { type ExtendedSummaryOptions } from "./summary-options";
 
-type Task = ObsidianTasks.Task;
-
-interface TaskNode {
-	id: string;
-	children: TaskNode[];
-	parentId: string | null;
-	data: Task;
-}
-
-type TreeNode = {
-	key: string;
-	label: string;
-	icon: string;
-	children: TreeNode[];
-	data: TaskNode;
-};
-
 // Extract the 🆔 value from a task’s text
 export function extractId(task: Task): string | null {
 	const text = task.originalMarkdown ?? "";
