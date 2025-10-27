@@ -32,3 +32,21 @@ export const defaultSummaryOptions: Required<SummaryOptions> = {
 	groupBy: "none",
 	excludeFolders: ["Templates"],
 };
+
+export function buildExtendedSummaryOptions(
+	options: SummaryOptions,
+	dv: DataviewInlineApi,
+	tasksPlugin: TasksPlugin,
+): ExtendedSummaryOptions {
+	const name = options.name || defaultSummaryOptions.name;
+	const groupBy = options.groupBy || defaultSummaryOptions.groupBy;
+	const excludeFolders = options.excludeFolders || defaultSummaryOptions.excludeFolders;
+
+	return {
+		name,
+		groupBy,
+		excludeFolders,
+		dv,
+		tasksPlugin,
+	};
+}

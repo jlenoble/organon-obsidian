@@ -2,7 +2,12 @@ import { Plugin } from "obsidian";
 import type { DataviewApi, DataviewInlineApi } from "obsidian-dataview";
 
 import { isDataviewInlineApi, isTasksPlugin } from "./guards";
-import { defaultSummaryOptions, SUMMARY_NAMES, type SummaryOptions } from "./summary-options";
+import {
+	buildExtendedSummaryOptions,
+	type ExtendedSummaryOptions,
+	SUMMARY_NAMES,
+	type SummaryOptions,
+} from "./summary-options";
 import { table } from "./table";
 import { tree } from "./tree";
 
@@ -74,12 +79,11 @@ export default class TaskXPlugin extends Plugin {
 			return;
 		}
 
-		const extOptions = {
-			...defaultSummaryOptions,
-			tasksPlugin: this.tasksPlugin,
-			dv: this.dv,
-			...options,
-		};
+		const extOptions: ExtendedSummaryOptions = buildExtendedSummaryOptions(
+			options,
+			this.dv,
+			this.tasksPlugin,
+		);
 
 		switch (extOptions.name) {
 			case "hello-world":
