@@ -3,6 +3,14 @@ import { SUMMARY_GROUP_BY, type ExtendedSummaryOptions } from "./summary-options
 
 type Task = ObsidianTasks.Task;
 
+export function getFilteredTasks(options: ExtendedSummaryOptions): Task[] {
+	const { tasksPlugin } = options;
+	const tasks = tasksPlugin.getTasks(); // <-- this should return all cached tasks
+
+	// Filter tasks
+	return tasks.filter(makeExcludeFolders(options));
+}
+
 export function groupByFilePath(tasks: readonly Task[]): Map<string, Task[]> {
 	// Manually group Task by file path
 	const grouped: Map<string, Task[]> = new Map();
@@ -38,11 +46,10 @@ export function groupByTag(tasks: readonly Task[]): Map<string, Task[]> {
 }
 
 export function getGroupedTasks(options: ExtendedSummaryOptions): Map<string, Task[]> {
-	const { dv, tasksPlugin } = options;
-	const tasks = tasksPlugin.getTasks(); // <-- this should return all cached tasks
+	const { dv } = options;
 
 	// Filter tasks
-	const filtered = tasks.filter(makeExcludeFolders(options));
+	const filtered = getFilteredTasks(options);
 
 	// Group tasks
 	switch (options.groupBy) {
