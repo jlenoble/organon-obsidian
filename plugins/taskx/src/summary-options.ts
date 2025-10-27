@@ -1,7 +1,7 @@
 import { type DataviewInlineApi } from "obsidian-dataview";
 
 import { makeExcludeFolders } from "./filters";
-import { extractId } from "./tree";
+import { extractId } from "./helpers";
 
 export const SUMMARY_NAMES = [
 	"hello-world", // for quick debugging
