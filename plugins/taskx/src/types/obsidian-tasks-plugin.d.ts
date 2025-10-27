@@ -31,6 +31,9 @@ declare namespace ObsidianTasks {
 		scheduledDate: TaskDate;
 		startDate: TaskDate;
 
+		//** Dependencies */
+		dependsOn: string[];
+
 		/** Any inline tags (e.g. #work #urgent). */
 		tags: string[];
 	}
