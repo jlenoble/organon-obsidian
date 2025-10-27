@@ -13,22 +13,20 @@ declare namespace ObsidianTasks {
 	interface Task {
 		/** The original markdown line representing the task. */
 		originalMarkdown: string;
-
 		/** The text of the task, without checkbox or metadata. */
 		description: string;
 
 		/** The file path (relative to vault root) where the task resides. */
 		path: string;
+		/** The line number where the task resides. */
+		lineNumber: number;
 
 		/** ISO string or Date representing when the task was created. */
 		createdDate: TaskDate;
-
 		/** Due date, if any. */
 		dueDate: TaskDate;
-
 		/** Completion date, if any. */
 		doneDate: TaskDate;
-
 		/** Optional scheduled or start date. */
 		scheduledDate: TaskDate;
 		startDate: TaskDate;
@@ -46,19 +44,12 @@ declare namespace ObsidianTasks {
 
 	/** The public plugin API, exposed on window.tasksPlugin or via Dataview integration. */
 	interface TasksApi {
-		/** Runs a Tasks-style query and returns matching tasks. */
-		query(query: string): Promise<QueryResult>;
-
-		/** Renders a task as markdown, including its checkbox. */
-		renderTask(task: Task): string;
-
-		/** Marks a task done/undone and updates the underlying file. */
-		toggleDone(task: Task): Promise<void>;
+		executeToggleTaskDoneCommand: (line: string, path: string) => string;
 	}
 
 	/** The public plugin, app.plugins.plugins["obsidian-tasks-plugin"] */
 	interface TasksPlugin {
-		api: TasksApi;
+		apiV1: TasksApi;
 
 		/** Parses all tasks from the vault or a single file. */
 		getTasks(): Task[];
