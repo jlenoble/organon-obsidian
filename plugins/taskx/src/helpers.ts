@@ -9,7 +9,7 @@ export function getFilteredTasks(options: ExtendedSummaryOptions): Task[] {
 	return tasks.filter(makeExcludeFolders(options.excludeFolders));
 }
 
-export function groupByFilePath(tasks: readonly Task[]): Map<string, Task[]> {
+export function groupByFilePath(tasks: Iterable<Task>): Map<string, Task[]> {
 	// Manually group Task by file path
 	const grouped: Map<string, Task[]> = new Map();
 
@@ -25,7 +25,7 @@ export function groupByFilePath(tasks: readonly Task[]): Map<string, Task[]> {
 	return grouped;
 }
 
-export function groupByTag(tasks: readonly Task[]): Map<string, Task[]> {
+export function groupByTag(tasks: Iterable<Task>): Map<string, Task[]> {
 	// Manually group Task by file path
 	const grouped: Map<string, Task[]> = new Map();
 
