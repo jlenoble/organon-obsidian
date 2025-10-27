@@ -6,7 +6,7 @@ import { defaultSummaryOptions, SUMMARY_NAMES, type SummaryOptions } from "./sum
 import { table } from "./table";
 import { tree } from "./tree";
 
-import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/themes/lara-dark-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
