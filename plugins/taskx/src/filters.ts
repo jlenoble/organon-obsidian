@@ -15,6 +15,10 @@ export function done(t: Task): boolean {
 	return t.doneDate !== null;
 }
 
+export function remaining(t: Task): boolean {
+	return t.doneDate === null;
+}
+
 export function doneToday(t: Task): boolean {
 	const today = window.moment().format("YYYY-MM-DD");
 	return !!(t.doneDate && t.doneDate.format("YYYY-MM-DD") === today);
