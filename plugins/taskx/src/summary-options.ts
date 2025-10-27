@@ -2,6 +2,7 @@ import { type DataviewInlineApi } from "obsidian-dataview";
 
 import { makeExcludeFolders } from "./filters";
 import { extractId } from "./helpers";
+import { buildTaskNodes } from "./task-node";
 
 export const SUMMARY_NAMES = [
 	"hello-world", // for quick debugging
@@ -29,6 +30,7 @@ export interface ExtendedSummaryOptions extends Required<SummaryOptions> {
 	readonly dv: DataviewInlineApi;
 	readonly tasksPlugin: TasksPlugin;
 	readonly taskMap: Map<string, Task>;
+	readonly taskNodes: TaskNode[];
 }
 
 export const defaultSummaryOptions: Required<SummaryOptions> = {
@@ -60,6 +62,8 @@ export function buildExtendedSummaryOptions(
 		}
 	}
 
+	const taskNodes: TaskNode[] = buildTaskNodes(taskMap);
+
 	return {
 		name,
 		groupBy,
@@ -67,5 +71,6 @@ export function buildExtendedSummaryOptions(
 		dv,
 		tasksPlugin,
 		taskMap,
+		taskNodes,
 	};
 }
