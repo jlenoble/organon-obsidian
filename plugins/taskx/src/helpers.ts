@@ -1,4 +1,3 @@
-import { makeExcludeFolders } from "./filters";
 import { SUMMARY_GROUP_BY, type ExtendedSummaryOptions } from "./summary-options";
 
 // Extract the 🆔 value from a task’s text
@@ -13,14 +12,6 @@ export function extractParentId(task: Task): string | null {
 	const text = task.description ?? task.originalMarkdown ?? "";
 	const m = text.match(/🌿\s*([A-Za-z0-9_-]+)/);
 	return m ? m[1] : null;
-}
-
-export function getFilteredTasks(options: ExtendedSummaryOptions): Task[] {
-	const { tasksPlugin } = options;
-	const tasks = tasksPlugin.getTasks(); // <-- this should return all cached tasks
-
-	// Filter tasks
-	return tasks.filter(makeExcludeFolders(options.excludeFolders));
 }
 
 export function groupByFilePath(tasks: Iterable<Task>): Map<string, Task[]> {
@@ -58,10 +49,10 @@ export function groupByTag(tasks: Iterable<Task>): Map<string, Task[]> {
 }
 
 export function getGroupedTasks(options: ExtendedSummaryOptions): Map<string, Task[]> {
-	const { dv } = options;
+	const { dv, taskMap } = options;
 
 	// Filter tasks
-	const filtered = getFilteredTasks(options);
+	const filtered = taskMap.values();
 
 	// Group tasks
 	switch (options.groupBy) {

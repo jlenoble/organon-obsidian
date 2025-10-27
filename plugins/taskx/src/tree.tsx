@@ -4,7 +4,7 @@ import { type JSX } from "react";
 import { createRoot } from "react-dom/client";
 
 import { remaining } from "./filters";
-import { extractId, extractParentId, getFilteredTasks } from "./helpers";
+import { extractId, extractParentId } from "./helpers";
 import { type ExtendedSummaryOptions } from "./summary-options";
 
 function buildTaskNodes(tasks: Task[]): TaskNode[] {
@@ -49,10 +49,10 @@ function convertTaskNodesToTreeNodes(tasks: TaskNode[]): TreeNode[] {
 }
 
 export function tree(options: ExtendedSummaryOptions): void {
-	const { dv } = options;
+	const { dv, taskMap } = options;
 	const container = dv.el("div", { cls: "taskx-tree" });
 
-	const tasks = getFilteredTasks(options).filter(remaining);
+	const tasks = Array.from(taskMap.values()).filter(remaining);
 	const taskNodes = buildTaskNodes(tasks);
 	const treeNodes = convertTaskNodesToTreeNodes(taskNodes);
 
