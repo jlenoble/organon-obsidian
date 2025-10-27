@@ -6,7 +6,7 @@ export function getFilteredTasks(options: ExtendedSummaryOptions): Task[] {
 	const tasks = tasksPlugin.getTasks(); // <-- this should return all cached tasks
 
 	// Filter tasks
-	return tasks.filter(makeExcludeFolders(options));
+	return tasks.filter(makeExcludeFolders(options.excludeFolders));
 }
 
 export function groupByFilePath(tasks: readonly Task[]): Map<string, Task[]> {

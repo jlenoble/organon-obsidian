@@ -1,8 +1,4 @@
-import { type ExtendedSummaryOptions } from "./summary-options";
-
-export function makeExcludeFolders({
-	excludeFolders,
-}: ExtendedSummaryOptions): (t: Task) => boolean {
+export function makeExcludeFolders(excludeFolders: string[]): (t: Task) => boolean {
 	return (t: Task): boolean => {
 		const dir = t.path.split("/").slice(0, -1).join("/");
 		return !excludeFolders.contains(dir);
