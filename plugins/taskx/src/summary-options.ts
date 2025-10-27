@@ -30,10 +30,12 @@ export interface ExtendedSummaryOptions extends Required<SummaryOptions> {
 	readonly dv: DataviewInlineApi;
 	readonly tasksPlugin: TasksPlugin;
 	readonly taskMap: Map<string, Task>;
+	readonly tasksMissingIds: Task[];
+	readonly tasksUsurpingIds: Task[];
 	readonly taskNodes: TaskNode[];
 }
 
-export const defaultSummaryOptions: Required<SummaryOptions> = {
+const defaultSummaryOptions: Required<SummaryOptions> = {
 	name: "table",
 	groupBy: "none",
 	excludeFolders: ["Templates"],
@@ -53,12 +55,18 @@ export function buildExtendedSummaryOptions(
 		.filter(makeExcludeFolders(excludeFolders));
 
 	const taskMap: Map<string, Task> = new Map();
+	const tasksMissingIds: Task[] = [];
+	const tasksUsurpingIds: Task[] = [];
 
 	for (const task of tasks) {
 		const id = extractId(task);
 
-		if (id && !taskMap.has(id)) {
+		if (id === null) {
+			tasksMissingIds.push(task);
+		} else if (!taskMap.has(id)) {
 			taskMap.set(id, task);
+		} else {
+			tasksUsurpingIds.push(task);
 		}
 	}
 
@@ -71,6 +79,8 @@ export function buildExtendedSummaryOptions(
 		dv,
 		tasksPlugin,
 		taskMap,
+		tasksMissingIds,
+		tasksUsurpingIds,
 		taskNodes,
 	};
 }
