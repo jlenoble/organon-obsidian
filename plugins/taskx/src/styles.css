@@ -1,3 +1,10 @@
 /*
 * Add any styles you want to be included w/ your plugin here
 */
+
+/* Prevent Obsidian's from affecting PrimeReact trees */
+.taskx-tree-container input[type="checkbox"].p-checkbox-input {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
