@@ -8,7 +8,7 @@ import {
 	SUMMARY_NAMES,
 	type SummaryOptions,
 } from "./summary-options";
-import { table } from "./table";
+import { summaryTable } from "./summary-table";
 import { tree } from "./tree";
 
 import "primereact/resources/themes/lara-dark-indigo/theme.css";
@@ -91,7 +91,7 @@ export default class TaskXPlugin extends Plugin {
 				break;
 
 			case "table":
-				table(extOptions);
+				summaryTable(extOptions);
 				break;
 
 			case "tree":
