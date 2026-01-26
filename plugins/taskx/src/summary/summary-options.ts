@@ -1,8 +1,8 @@
 import { type DataviewInlineApi } from "obsidian-dataview";
 
-import { makeExcludeFolders } from "./filters";
-import { extractId } from "./helpers";
-import { buildTaskNodes } from "./task-node";
+import { makeExcludeFolders } from "../utils/filters";
+import { extractId } from "../utils/helpers";
+import { buildTaskNodes } from "../utils/task-node";
 
 export const SUMMARY_NAMES = [
 	"hello-world", // for quick debugging

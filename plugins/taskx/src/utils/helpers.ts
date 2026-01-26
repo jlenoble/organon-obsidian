@@ -1,4 +1,4 @@
-import { SUMMARY_GROUP_BY, type ExtendedSummaryOptions } from "./summary-options";
+import { SUMMARY_GROUP_BY, type ExtendedSummaryOptions } from "../summary/summary-options";
 
 // Extract the 🆔 value from a task’s text
 export function extractId(task: Task): string | null {

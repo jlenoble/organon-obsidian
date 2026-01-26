@@ -1,15 +1,15 @@
 import { Plugin } from "obsidian";
 import type { DataviewApi, DataviewInlineApi } from "obsidian-dataview";
 
-import { isDataviewInlineApi, isTasksPlugin } from "./guards";
 import {
 	buildExtendedSummaryOptions,
 	type ExtendedSummaryOptions,
 	SUMMARY_NAMES,
 	type SummaryOptions,
-} from "./summary-options";
-import { summaryTable } from "./summary-table";
-import { tree } from "./tree";
+} from "./summary/summary-options";
+import { summaryTable } from "./summary/summary-table";
+import { tree } from "./summary/tree";
+import { isDataviewInlineApi, isTasksPlugin } from "./utils/guards";
 
 import "primereact/resources/themes/lara-dark-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
