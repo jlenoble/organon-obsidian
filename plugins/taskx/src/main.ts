@@ -2,6 +2,13 @@ import { Plugin } from "obsidian";
 import type { DataviewApi, DataviewInlineApi } from "obsidian-dataview";
 
 import {
+	buildExtendedDecisionOptions,
+	DECISION_VIEW_NAMES,
+	decisionCell,
+	type DecisionOptions,
+	type ExtendedDecisionOptions,
+} from "./decision";
+import {
 	buildExtendedSummaryOptions,
 	type ExtendedSummaryOptions,
 	SUMMARY_NAMES,
@@ -112,6 +119,37 @@ export default class TaskXPlugin extends Plugin {
 			this.dv.paragraph(
 				`There are ${extOptions.tasksUsurpingIds.length} tasks sharing the same ID`,
 			);
+		}
+	}
+
+	decision(options: DecisionOptions = {}): void {
+		if (!isTasksPlugin(this.tasksPlugin)) {
+			console.warn("Tasks plugin not loaded before TaskX");
+			return;
+		}
+
+		// this.dv is expected to have been set up at the top of any calling block
+		// with the simple line: taskx.dv = dv
+		if (!isDataviewInlineApi(this.dv)) {
+			console.warn("Dataview inline API not set in TaskX");
+			return;
+		}
+
+		const extOptions: ExtendedDecisionOptions = buildExtendedDecisionOptions(
+			options,
+			this.dv,
+			this.tasksPlugin,
+		);
+
+		switch (extOptions.viewName) {
+			case "cell":
+				decisionCell(extOptions);
+				break;
+
+			default:
+				this.dv.paragraph(
+					`Usage: taskx.decision({ viewName: ${DECISION_VIEW_NAMES.map(t => '"' + t + '"').join(" | ")} });`,
+				);
 		}
 	}
 }

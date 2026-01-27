@@ -20,7 +20,7 @@ function convertTaskNodesToTreeNodes(tasks: TaskNode[]): TreeNode[] {
 
 export function tree(options: ExtendedSummaryOptions): void {
 	const { dv, tasksPlugin, taskNodes } = options;
-	const container = dv.el("div", { cls: "taskx-tree" });
+	const container = dv.el("div", "", { cls: "taskx-tree" });
 
 	const treeNodes = convertTaskNodesToTreeNodes(taskNodes.filter(n => n.data.doneDate === null));
 

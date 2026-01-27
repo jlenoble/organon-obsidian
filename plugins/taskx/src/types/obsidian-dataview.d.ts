@@ -12,18 +12,61 @@ declare module "obsidian-dataview" {
 		| Value[]
 		| { [key: string]: Value };
 
+	/** Values Dataview can render in tables/lists. */
+	type RenderValue = Value | HTMLElement;
+
+	/** Dataview's chainable array type. */
+	interface DataArray<T> extends Array<T> {
+		where(predicate: (value: T, index: number, array: T[]) => boolean): DataArray<T>;
+		map<U>(mapper: (value: T, index: number, array: T[]) => U): DataArray<U>;
+		flatMap<U>(mapper: (value: T, index: number, array: T[]) => U[] | DataArray<U>): DataArray<U>;
+
+		/**
+		 * Dataview-style field projection.
+		 * Allows dv.pages().file to work as a projected column.
+		 */
+		readonly file: T extends DvPage ? DataArray<DvFile> : never;
+
+		/**
+		 * Dataview-style field projection.
+		 * Allows dv.pages().file.tasks to work.
+		 */
+		readonly tasks: T extends DvFile ? DataArray<DvTask> : never;
+	}
+
+	/** A Dataview task. */
+	interface DvTask {
+		text: string;
+		completed?: boolean;
+		checked?: boolean; // some versions use checked
+		line?: number;
+		path?: string;
+	}
+
+	/** Dataview file metadata. */
+	interface DvFile {
+		path: string;
+		name: string;
+		tasks: DataArray<DvTask>;
+	}
+
+	/** Dataview page object. */
+	interface DvPage {
+		file: DvFile;
+	}
+
 	interface DataviewApi {
 		/** Return all pages matching a query */
-		pages(query?: string): Value[];
+		pages(query?: string): DataArray<DvPage>;
 
 		/** Return metadata for a page */
-		page(path: string): Record<string, Value> | null;
+		page(path: string): DvPage | null;
 
 		/** Evaluate a Dataview query expression */
 		evaluate(expression: string, context?: unknown): Value;
 
 		/** Return current page context */
-		current(): Record<string, Value> | null;
+		current(): DvPage | null;
 
 		/** Convert path or link to a Dataview link */
 		fileLink(path: string): unknown;
@@ -38,16 +81,22 @@ declare module "obsidian-dataview" {
 	 */
 	interface DataviewInlineApi extends DataviewApi {
 		/** Render a Markdown table with optional headers */
-		table(headers: string[] | undefined, rows: Value[][] | Iterable<Value[]>): void;
+		table(headers: string[] | undefined, rows: RenderValue[][] | Iterable<RenderValue[]>): void;
 
 		/** Render a Markdown list from an array or iterable */
-		list(items: Iterable<string | number | boolean | Record<string, Value>>): void;
+		list(items: Iterable<RenderValue>): void;
+
+		/** Render a Markdown header */
+		header(n: number, text: string): void;
 
 		/** Render a Markdown paragraph */
 		paragraph(text: string): void;
 
 		/** Render a task list */
-		taskList(tasks: Iterable<Record<string, Value>>, groupByFile?: boolean): void;
+		taskList(tasks: Iterable<DvTask>, groupByFile?: boolean): void;
+
+		/** Render an inline string */
+		span(text: string): HTMLElement;
 
 		/**
 		 * Render an arbitrary HTML element inside the current Dataview block.
@@ -59,11 +108,11 @@ declare module "obsidian-dataview" {
 		 */
 		el<K extends keyof HTMLElementTagNameMap>(
 			tag: K,
+			content?: string,
 			options?: {
 				cls?: string | string[];
 				attr?: Record<string, string>;
 			},
-			content?: string,
 		): HTMLElementTagNameMap[K];
 	}
 }
