@@ -1,4 +1,4 @@
-import { extractParentId } from "./extractors";
+import { extractParentId } from "../utils";
 
 export function buildTaskNodes(taskMap: Map<string, Task>): TaskNode[] {
 	const taskNodeMap: Map<string, TaskNode> = new Map();
