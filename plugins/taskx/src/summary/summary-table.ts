@@ -1,6 +1,6 @@
 import { type ExtendedSummaryOptions } from "./summary-options";
 import { done, doneToday } from "../utils";
-import { getGroupedTasks } from "../utils/helpers";
+import { getGroupedTasks } from "../utils/groups";
 export function summaryTable(options: ExtendedSummaryOptions): void {
 	const { dv } = options;
 	const grouped = getGroupedTasks(options);
