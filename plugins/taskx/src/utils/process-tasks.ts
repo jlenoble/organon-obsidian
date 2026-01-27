@@ -1,4 +1,5 @@
 import { extractId, extractParentId } from "./extractors";
+import { makeTempTaskId } from "./temp-id";
 
 export interface ProcessedTasks {
 	readonly taskMap: Map<string, Task>;
@@ -13,11 +14,14 @@ export function processTasks(tasks: Array<Task>): ProcessedTasks {
 	const tasksUsurpingIds: Task[] = [];
 
 	for (const task of tasks) {
-		const id = extractId(task.originalMarkdown ?? "");
+		let id = extractId(task.originalMarkdown ?? "");
 
 		if (id === null) {
 			tasksMissingIds.push(task);
-		} else if (!taskMap.has(id)) {
+			id = makeTempTaskId(task.path, task.originalMarkdown);
+		}
+
+		if (!taskMap.has(id)) {
 			taskMap.set(id, task);
 		} else {
 			tasksUsurpingIds.push(task);
