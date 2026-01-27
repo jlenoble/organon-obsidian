@@ -151,5 +151,7 @@ export default class TaskXPlugin extends Plugin {
 					`Usage: taskx.decision({ viewName: ${DECISION_VIEW_NAMES.map(t => '"' + t + '"').join(" | ")} });`,
 				);
 		}
+
+		this.dv.paragraph(`There are ${extOptions.taskMap.size} tasks in total.`);
 	}
 }
