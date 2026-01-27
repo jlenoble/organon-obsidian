@@ -1,3 +1,4 @@
+export * from "./extended-options";
 export * from "./extractors";
 export * from "./filters";
 export * from "./groups";

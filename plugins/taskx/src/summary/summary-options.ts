@@ -1,6 +1,6 @@
 import { type DataviewInlineApi } from "obsidian-dataview";
 
-import { makeExcludeFolders, type ProcessedTasks, processTasks } from "../utils";
+import { buildExtendedOptions, defaultOptions, type ExtendedOptions, type Options } from "../utils";
 
 export const SUMMARY_NAMES = [
 	"hello-world", // for quick debugging
@@ -18,21 +18,17 @@ export const SUMMARY_GROUP_BY = [
 export type SummaryName = (typeof SUMMARY_NAMES)[number];
 export type SummaryGroupBy = (typeof SUMMARY_GROUP_BY)[number];
 
-export interface SummaryOptions {
+export interface SummaryOptions extends Options {
 	readonly name?: SummaryName;
 	readonly groupBy?: SummaryGroupBy;
-	readonly excludeFolders?: string[];
 }
 
-export interface ExtendedSummaryOptions extends Required<SummaryOptions>, ProcessedTasks {
-	readonly dv: DataviewInlineApi;
-	readonly tasksPlugin: TasksPlugin;
-}
+export interface ExtendedSummaryOptions extends Required<SummaryOptions>, ExtendedOptions {}
 
 const defaultSummaryOptions: Required<SummaryOptions> = {
 	name: "table",
 	groupBy: "none",
-	excludeFolders: ["Templates"],
+	excludeFolders: defaultOptions.excludeFolders,
 };
 
 export function buildExtendedSummaryOptions(
@@ -42,18 +38,10 @@ export function buildExtendedSummaryOptions(
 ): ExtendedSummaryOptions {
 	const name = options.name || defaultSummaryOptions.name;
 	const groupBy = options.groupBy || defaultSummaryOptions.groupBy;
-	const excludeFolders = options.excludeFolders || defaultSummaryOptions.excludeFolders;
-
-	const tasks = tasksPlugin
-		.getTasks() // <-- this should return all cached tasks
-		.filter(makeExcludeFolders(excludeFolders));
 
 	return {
 		name,
 		groupBy,
-		excludeFolders,
-		dv,
-		tasksPlugin,
-		...processTasks(tasks),
+		...buildExtendedOptions(options, dv, tasksPlugin),
 	};
 }
