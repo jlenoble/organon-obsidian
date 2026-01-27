@@ -1,7 +1,6 @@
 import { type DataviewInlineApi } from "obsidian-dataview";
 
-import { extractId, makeExcludeFolders } from "../utils";
-import { buildTaskNodes } from "./task-node";
+import { makeExcludeFolders, type ProcessedTasks, processTasks } from "../utils";
 
 export const SUMMARY_NAMES = [
 	"hello-world", // for quick debugging
@@ -25,13 +24,9 @@ export interface SummaryOptions {
 	readonly excludeFolders?: string[];
 }
 
-export interface ExtendedSummaryOptions extends Required<SummaryOptions> {
+export interface ExtendedSummaryOptions extends Required<SummaryOptions>, ProcessedTasks {
 	readonly dv: DataviewInlineApi;
 	readonly tasksPlugin: TasksPlugin;
-	readonly taskMap: Map<string, Task>;
-	readonly tasksMissingIds: Task[];
-	readonly tasksUsurpingIds: Task[];
-	readonly taskNodes: TaskNode[];
 }
 
 const defaultSummaryOptions: Required<SummaryOptions> = {
@@ -53,33 +48,12 @@ export function buildExtendedSummaryOptions(
 		.getTasks() // <-- this should return all cached tasks
 		.filter(makeExcludeFolders(excludeFolders));
 
-	const taskMap: Map<string, Task> = new Map();
-	const tasksMissingIds: Task[] = [];
-	const tasksUsurpingIds: Task[] = [];
-
-	for (const task of tasks) {
-		const id = extractId(task.originalMarkdown ?? "");
-
-		if (id === null) {
-			tasksMissingIds.push(task);
-		} else if (!taskMap.has(id)) {
-			taskMap.set(id, task);
-		} else {
-			tasksUsurpingIds.push(task);
-		}
-	}
-
-	const taskNodes: TaskNode[] = buildTaskNodes(taskMap);
-
 	return {
 		name,
 		groupBy,
 		excludeFolders,
 		dv,
 		tasksPlugin,
-		taskMap,
-		tasksMissingIds,
-		tasksUsurpingIds,
-		taskNodes,
+		...processTasks(tasks),
 	};
 }

@@ -1,6 +1,6 @@
 import { type DataviewInlineApi } from "obsidian-dataview";
 
-import { extractId, makeExcludeFolders } from "../utils";
+import { makeExcludeFolders, processTasks, type ProcessedTasks } from "../utils";
 
 export const DECISION_VIEW_NAMES = [
 	"cell", // one cell from the decision table, with fixed Gain × Pressure
@@ -22,12 +22,9 @@ export interface DecisionOptions {
 	readonly excludeFolders?: string[];
 }
 
-export interface ExtendedDecisionOptions extends Required<DecisionOptions> {
+export interface ExtendedDecisionOptions extends Required<DecisionOptions>, ProcessedTasks {
 	readonly dv: DataviewInlineApi;
 	readonly tasksPlugin: TasksPlugin;
-	readonly taskMap: Map<string, Task>;
-	readonly tasksMissingIds: Task[];
-	readonly tasksUsurpingIds: Task[];
 }
 
 const defaultDecisionOptions: Required<DecisionOptions> = {
@@ -50,30 +47,12 @@ export function buildExtendedDecisionOptions(
 		.getTasks() // <-- this should return all cached tasks
 		.filter(makeExcludeFolders(excludeFolders));
 
-	const taskMap: Map<string, Task> = new Map();
-	const tasksMissingIds: Task[] = [];
-	const tasksUsurpingIds: Task[] = [];
-
-	for (const task of tasks) {
-		const id = extractId(task.originalMarkdown ?? "");
-
-		if (id === null) {
-			tasksMissingIds.push(task);
-		} else if (!taskMap.has(id)) {
-			taskMap.set(id, task);
-		} else {
-			tasksUsurpingIds.push(task);
-		}
-	}
-
 	return {
 		viewName,
 		scoreMode,
 		excludeFolders,
 		dv,
 		tasksPlugin,
-		tasksMissingIds,
-		tasksUsurpingIds,
-		taskMap,
+		...processTasks(tasks),
 	};
 }
