@@ -9,7 +9,7 @@ import {
 } from "./summary/summary-options";
 import { summaryTable } from "./summary/summary-table";
 import { tree } from "./summary/tree";
-import { isDataviewInlineApi, isTasksPlugin } from "./utils/guards";
+import { isDataviewInlineApi, isTasksPlugin } from "./utils";
 
 import "primereact/resources/themes/lara-dark-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
