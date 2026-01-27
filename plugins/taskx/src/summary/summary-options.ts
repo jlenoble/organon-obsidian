@@ -1,7 +1,7 @@
 import { type DataviewInlineApi } from "obsidian-dataview";
 
+import { extractId } from "../utils";
 import { makeExcludeFolders } from "../utils/filters";
-import { extractId } from "../utils/helpers";
 import { buildTaskNodes } from "../utils/task-node";
 
 export const SUMMARY_NAMES = [
