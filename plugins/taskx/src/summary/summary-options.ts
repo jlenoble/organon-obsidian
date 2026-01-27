@@ -58,7 +58,7 @@ export function buildExtendedSummaryOptions(
 	const tasksUsurpingIds: Task[] = [];
 
 	for (const task of tasks) {
-		const id = extractId(task);
+		const id = extractId(task.originalMarkdown ?? "");
 
 		if (id === null) {
 			tasksMissingIds.push(task);

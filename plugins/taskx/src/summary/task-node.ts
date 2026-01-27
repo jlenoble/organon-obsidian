@@ -5,7 +5,7 @@ export function buildTaskNodes(taskMap: Map<string, Task>): TaskNode[] {
 
 	// Build lookup by ID
 	for (const [id, task] of taskMap) {
-		const parentId = extractParentId(task);
+		const parentId = extractParentId(task.originalMarkdown ?? "");
 		taskNodeMap.set(id, { id, parentId, children: [], data: task });
 	}
 
