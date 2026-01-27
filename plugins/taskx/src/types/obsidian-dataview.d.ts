@@ -1,6 +1,17 @@
 import "obsidian-dataview";
 
 declare module "obsidian-dataview" {
+	/** Minimal scalar-ish value used by Dataview. */
+	type Value =
+		| string
+		| number
+		| boolean
+		| null
+		| undefined
+		| Date
+		| Value[]
+		| { [key: string]: Value };
+
 	interface DataviewApi {
 		/** Return all pages matching a query */
 		pages(query?: string): Value[];
