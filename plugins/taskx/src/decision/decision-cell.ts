@@ -1,16 +1,14 @@
+import { Taskx } from "../utils";
 import { type ExtendedDecisionOptions } from "./decision-options";
-import { makeExcludeFolders, Taskx } from "../utils";
 
 export function decisionCell(options: ExtendedDecisionOptions): void {
-	const { dv, excludeFolders } = options;
+	const { dv, dvTasks } = options;
 
 	dv.taskList(
-		dv
-			.pages()
-			.file.tasks.where(makeExcludeFolders(excludeFolders))
-			.map(t => {
-				return Taskx.fromDvTask(t) || t;
-			}),
+		dvTasks.map(t => {
+			const task = Taskx.getTaskxFromDvTask(t);
+			return { ...t, visual: task?.markdown };
+		}),
 		false,
 	);
 }

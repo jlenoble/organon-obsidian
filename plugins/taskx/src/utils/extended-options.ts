@@ -26,11 +26,12 @@ export function buildExtendedOptions(
 	const tasks = tasksPlugin
 		.getTasks() // <-- this should return all cached tasks
 		.filter(makeExcludeFolders(excludeFolders));
+	const dvTasks = dv.pages().file.tasks.where(makeExcludeFolders(excludeFolders));
 
 	return {
 		excludeFolders,
 		dv,
 		tasksPlugin,
-		...processTasks(tasks),
+		...processTasks(tasks, dvTasks),
 	};
 }
