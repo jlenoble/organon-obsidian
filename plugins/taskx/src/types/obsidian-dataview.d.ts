@@ -39,8 +39,8 @@ declare module "obsidian-dataview" {
 		text: string;
 		completed?: boolean;
 		checked?: boolean; // some versions use checked
-		line?: number;
-		path?: string;
+		line: number;
+		path: string;
 	}
 
 	/** Dataview file metadata. */

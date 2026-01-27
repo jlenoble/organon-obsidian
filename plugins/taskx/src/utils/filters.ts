@@ -1,7 +1,14 @@
-export function makeExcludeFolders(excludeFolders: string[]): (t: Task) => boolean {
-	return (t: Task): boolean => {
+type HasPath = { path: string };
+
+export function makeExcludeFolders<T extends HasPath>(
+	excludeFolders: readonly string[],
+): (t: T) => boolean {
+	const excluded = excludeFolders.map(f => f.replace(/\/+$/, "")); // normalize
+
+	return (t: T): boolean => {
 		const dir = t.path.split("/").slice(0, -1).join("/");
-		return !excludeFolders.contains(dir);
+
+		return !excluded.some(ex => dir === ex || dir.startsWith(ex + "/"));
 	};
 }
 
