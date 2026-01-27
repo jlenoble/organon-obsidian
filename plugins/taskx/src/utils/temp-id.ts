@@ -8,13 +8,13 @@ function fnv1a32(str: string): string {
 	return (h >>> 0).toString(16).padStart(8, "0");
 }
 
-function normalizePath(p: string): string {
+export function normalizePath(p: string): string {
 	return p.replace(/\\/g, "/").trim();
 }
 
-function normalizeTaskText(s: string): string {
+export function normalizeTaskText(s: string): string {
 	return s
-		.replace(/^\s*- \[ \]\s*/, "")
+		.replace(/^\s*- \[[ xX]\]\s*/, "")
 		.replace(/\r\n/g, "\n")
 		.replace(/[ \t]+/g, " ") // collapse spaces
 		.replace(/\s+\n/g, "\n") // clean end-of-line spaces

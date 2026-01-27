@@ -34,8 +34,13 @@ declare module "obsidian-dataview" {
 		readonly tasks: T extends DvFile ? DataArray<DvTask> : never;
 	}
 
+	/** What's between the brackets in a task */
+	type DvTaskStatus = " " | "x" | "X";
+
 	/** A Dataview task. */
 	interface DvTask {
+		task: true;
+		status: DvTaskStatus;
 		text: string;
 		completed?: boolean;
 		checked?: boolean; // some versions use checked

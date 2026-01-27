@@ -1,8 +1,9 @@
+import { type Taskx } from "./process-tasks";
 import { SUMMARY_GROUP_BY, type ExtendedSummaryOptions } from "../summary/summary-options";
 
-export function groupByFilePath(tasks: Iterable<Task>): Map<string, Task[]> {
-	// Manually group Task by file path
-	const grouped: Map<string, Task[]> = new Map();
+export function groupByFilePath(tasks: Iterable<Taskx>): Map<string, Taskx[]> {
+	// Manually group Taskx by file path
+	const grouped: Map<string, Taskx[]> = new Map();
 
 	for (const t of tasks) {
 		const group = grouped.get(t.path) ?? [];
@@ -16,9 +17,9 @@ export function groupByFilePath(tasks: Iterable<Task>): Map<string, Task[]> {
 	return grouped;
 }
 
-export function groupByTag(tasks: Iterable<Task>): Map<string, Task[]> {
-	// Manually group Task by file path
-	const grouped: Map<string, Task[]> = new Map();
+export function groupByTag(tasks: Iterable<Taskx>): Map<string, Taskx[]> {
+	// Manually group Taskx by file path
+	const grouped: Map<string, Taskx[]> = new Map();
 
 	for (const t of tasks) {
 		for (const tag of t.tags) {
@@ -34,7 +35,7 @@ export function groupByTag(tasks: Iterable<Task>): Map<string, Task[]> {
 	return grouped;
 }
 
-export function getGroupedTasks(options: ExtendedSummaryOptions): Map<string, Task[]> {
+export function getGroupedTasks(options: ExtendedSummaryOptions): Map<string, Taskx[]> {
 	const { dv, taskMap } = options;
 
 	// Filter tasks
