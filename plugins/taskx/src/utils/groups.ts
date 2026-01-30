@@ -1,4 +1,4 @@
-import { type Taskx } from "./process-tasks";
+import { type Taskx } from "./taskx";
 import { SUMMARY_GROUP_BY, type ExtendedSummaryOptions } from "../summary/summary-options";
 
 export function groupByFilePath(tasks: Iterable<Taskx>): Map<string, Taskx[]> {

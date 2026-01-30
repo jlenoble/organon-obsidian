@@ -1,4 +1,4 @@
-import { type Taskx } from "./process-tasks";
+import { type Taskx } from "./taskx";
 
 type HasPath = { path: string };
 
