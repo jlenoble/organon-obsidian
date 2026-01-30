@@ -8,8 +8,8 @@ export class Taskx {
 	#dvTask: DvTask;
 
 	#children: Taskx[];
-	#markdown: string;
-	#path: string;
+	#markdown: TaskxMarkdown;
+	#path: TaskxPath;
 
 	// Must be reset on every refresh, currently processTasks() is the single point of entry
 	static taskMap: Map<string, Task> = new Map();
@@ -37,7 +37,7 @@ export class Taskx {
 	get originalMarkdown(): string {
 		return this.#task.originalMarkdown;
 	}
-	get path(): string {
+	get path(): TaskxPath {
 		return this.#path;
 	}
 	get status(): DvTaskStatus {

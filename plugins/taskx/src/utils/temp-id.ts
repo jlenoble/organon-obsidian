@@ -8,17 +8,22 @@ function fnv1a32(str: string): string {
 	return (h >>> 0).toString(16).padStart(8, "0");
 }
 
-export function normalizePath(p: string): string {
-	return p.replace(/\\/g, "/").trim();
+export function normalizePath(p: string): TaskxPath {
+	p = p
+		.replace(/\\/g, "/")
+		.replace(/^\.\/+/, "")
+		.replace(/\/{2,}/g, "/");
+
+	return (p.endsWith(".md") ? p : `${p}.md`) as TaskxPath;
 }
 
-export function normalizeTaskText(s: string): string {
+export function normalizeTaskText(s: string): TaskxMarkdown {
 	return s
 		.replace(/^\s*- \[[ xX]\]\s*/, "")
 		.replace(/\r\n/g, "\n")
 		.replace(/[ \t]+/g, " ") // collapse spaces
 		.replace(/\s+\n/g, "\n") // clean end-of-line spaces
-		.trim();
+		.trim() as TaskxMarkdown;
 }
 
 export function makeTempTaskId(path: string, textLike: string): string {
