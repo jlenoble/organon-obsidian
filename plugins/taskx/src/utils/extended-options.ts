@@ -5,6 +5,7 @@ import { processTasks, type ProcessedTasks } from "./process-tasks";
 
 export interface Options {
 	readonly excludeFolders?: string[];
+	readonly keepDone?: boolean;
 }
 
 export interface ExtendedOptions extends Required<Options>, ProcessedTasks {
@@ -14,6 +15,7 @@ export interface ExtendedOptions extends Required<Options>, ProcessedTasks {
 
 export const defaultOptions: Required<Options> = {
 	excludeFolders: ["Templates"],
+	keepDone: false,
 };
 
 export function buildExtendedOptions(
@@ -22,14 +24,21 @@ export function buildExtendedOptions(
 	tasksPlugin: TasksPlugin,
 ): ExtendedOptions {
 	const excludeFolders = options.excludeFolders || defaultOptions.excludeFolders;
+	const keepDone = options.keepDone || defaultOptions.keepDone;
 
-	const tasks = tasksPlugin
+	let tasks = tasksPlugin
 		.getTasks() // <-- this should return all cached tasks
 		.filter(makeExcludeFolders(excludeFolders));
-	const dvTasks = dv.pages().file.tasks.where(makeExcludeFolders(excludeFolders));
+	let dvTasks = dv.pages().file.tasks.where(makeExcludeFolders(excludeFolders));
+
+	if (!keepDone) {
+		tasks = tasks.filter(t => !t.status.isCompleted());
+		dvTasks = dvTasks.where(t => !t.completed);
+	}
 
 	return {
 		excludeFolders,
+		keepDone,
 		dv,
 		tasksPlugin,
 		...processTasks(tasks, dvTasks),

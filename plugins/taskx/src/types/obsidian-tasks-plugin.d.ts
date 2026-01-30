@@ -36,6 +36,11 @@ declare namespace ObsidianTasks {
 
 		/** Any inline tags (e.g. #work #urgent). */
 		tags: string[];
+
+		/** Status oj the task */
+		status: {
+			isCompleted(): boolean;
+		};
 	}
 
 	/** A query result as returned by the Tasks plugin API. */

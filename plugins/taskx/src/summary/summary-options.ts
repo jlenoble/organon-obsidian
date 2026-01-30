@@ -28,7 +28,7 @@ export interface ExtendedSummaryOptions extends Required<SummaryOptions>, Extend
 const defaultSummaryOptions: Required<SummaryOptions> = {
 	name: "table",
 	groupBy: "none",
-	excludeFolders: defaultOptions.excludeFolders,
+	...defaultOptions,
 };
 
 export function buildExtendedSummaryOptions(

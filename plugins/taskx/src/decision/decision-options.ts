@@ -25,8 +25,7 @@ export interface ExtendedDecisionOptions extends Required<DecisionOptions>, Exte
 const defaultDecisionOptions: Required<DecisionOptions> = {
 	viewName: "cell",
 	scoreMode: "mode1",
-
-	excludeFolders: defaultOptions.excludeFolders,
+	...defaultOptions,
 };
 
 export function buildExtendedDecisionOptions(
