@@ -1,6 +1,8 @@
 import type { DvTaskStatus, DvTask, DataArray } from "obsidian-dataview";
 
+import { type Options } from "./extended-options";
 import { extractId, extractParentId } from "./extractors";
+import { makeExcludeFolders } from "./filters";
 import { makeTempTaskId, normalizePath, normalizeTaskText } from "./temp-id";
 
 export class Taskx {
@@ -116,10 +118,16 @@ export interface ProcessedTasks {
 	readonly dvTasks: DataArray<DvTask>;
 }
 
-export function processTasks(tasks: Array<Task>, dvTasks: DataArray<DvTask>): ProcessedTasks {
+export function processTasks(
+	tasks0: Array<Task>,
+	dvTasks0: DataArray<DvTask>,
+	options: Required<Options>,
+): ProcessedTasks {
 	const taskMap: Map<string, Taskx> = new Map();
 	const tasksMissingIds: Task[] = [];
 	const tasksUsurpingIds: Task[] = [];
+
+	const { tasks, dvTasks } = filterTasks(tasks0, dvTasks0, options);
 
 	Taskx.taskMap = new Map();
 	Taskx.dvTaskMap = new Map();
@@ -180,6 +188,24 @@ export function processTasks(tasks: Array<Task>, dvTasks: DataArray<DvTask>): Pr
 		tasks,
 		dvTasks,
 	};
+}
+
+export function filterTasks(
+	tasks: Array<Task>,
+	dvTasks: DataArray<DvTask>,
+	{ excludeFolders, keepDone }: Required<Options>,
+): { tasks: Array<Task>; dvTasks: DataArray<DvTask> } {
+	if (excludeFolders) {
+		tasks = tasks.filter(makeExcludeFolders(excludeFolders));
+		dvTasks = dvTasks.where(makeExcludeFolders(excludeFolders));
+	}
+
+	if (!keepDone) {
+		tasks = tasks.filter(t => !t.status.isCompleted());
+		dvTasks = dvTasks.where(t => !t.completed);
+	}
+
+	return { tasks, dvTasks };
 }
 
 export function buildTaskNodes(taskMap: Map<string, Task>): TaskNode[] {

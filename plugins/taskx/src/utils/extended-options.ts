@@ -1,6 +1,5 @@
 import { type DataviewInlineApi } from "obsidian-dataview";
 
-import { makeExcludeFolders } from "./filters";
 import { processTasks, type ProcessedTasks } from "./process-tasks";
 
 export interface Options {
@@ -23,24 +22,15 @@ export function buildExtendedOptions(
 	dv: DataviewInlineApi,
 	tasksPlugin: TasksPlugin,
 ): ExtendedOptions {
-	const excludeFolders = options.excludeFolders || defaultOptions.excludeFolders;
-	const keepDone = options.keepDone || defaultOptions.keepDone;
+	const opts: Required<Options> = { ...defaultOptions, ...options };
 
-	let tasks = tasksPlugin
-		.getTasks() // <-- this should return all cached tasks
-		.filter(makeExcludeFolders(excludeFolders));
-	let dvTasks = dv.pages().file.tasks.where(makeExcludeFolders(excludeFolders));
-
-	if (!keepDone) {
-		tasks = tasks.filter(t => !t.status.isCompleted());
-		dvTasks = dvTasks.where(t => !t.completed);
-	}
+	const tasks = tasksPlugin.getTasks(); // <-- this should return all cached tasks
+	const dvTasks = dv.pages().file.tasks;
 
 	return {
-		excludeFolders,
-		keepDone,
+		...opts,
 		dv,
 		tasksPlugin,
-		...processTasks(tasks, dvTasks),
+		...processTasks(tasks, dvTasks, opts),
 	};
 }
