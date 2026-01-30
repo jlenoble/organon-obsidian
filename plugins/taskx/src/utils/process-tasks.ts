@@ -6,7 +6,10 @@ import { makeTempTaskId, normalizePath, normalizeTaskText } from "./temp-id";
 export class Taskx {
 	#task: Task;
 	#dvTask: DvTask;
-	#children: Taskx[] = [];
+
+	#children: Taskx[];
+	#markdown: string;
+	#path: string;
 
 	// Must be reset on every refresh, currently processTasks() is the single point of entry
 	static taskMap: Map<string, Task> = new Map();
@@ -29,13 +32,13 @@ export class Taskx {
 		return this.#dvTask.line;
 	}
 	get markdown(): string {
-		return normalizeTaskText(this.#task.originalMarkdown);
+		return this.#markdown;
 	}
 	get originalMarkdown(): string {
 		return this.#task.originalMarkdown;
 	}
 	get path(): string {
-		return normalizePath(this.#task.path);
+		return this.#path;
 	}
 	get status(): DvTaskStatus {
 		return this.#dvTask.status;
@@ -53,6 +56,10 @@ export class Taskx {
 	constructor(task: Task, dvTask: DvTask) {
 		this.#task = task;
 		this.#dvTask = dvTask;
+
+		this.#children = [];
+		this.#markdown = normalizeTaskText(this.#task.originalMarkdown);
+		this.#path = normalizePath(this.#task.path);
 	}
 
 	static getId(text: string, path: string): string {
