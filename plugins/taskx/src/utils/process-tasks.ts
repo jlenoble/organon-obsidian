@@ -1,8 +1,9 @@
 import type { DvTaskStatus, DvTask, DataArray } from "obsidian-dataview";
 
 import { type Options } from "./extended-options";
-import { extractId, extractParentId } from "./extractors";
+import { extractId } from "./extractors";
 import { makeExcludeFolders } from "./filters";
+import { buildTaskNodes, type TaskNode } from "./nodes";
 import { makeTempTaskId, normalizePath, normalizeTaskText } from "./temp-id";
 
 export class Taskx {
@@ -206,31 +207,4 @@ export function filterTasks(
 	}
 
 	return { tasks, dvTasks };
-}
-
-export function buildTaskNodes(taskMap: Map<string, Task>): TaskNode[] {
-	const taskNodeMap: Map<string, TaskNode> = new Map();
-
-	// Build lookup by ID
-	for (const [id, task] of taskMap) {
-		const parentId = extractParentId(task.originalMarkdown ?? "");
-		taskNodeMap.set(id, { id, parentId, children: [], data: task });
-	}
-
-	const taskNodes: TaskNode[] = [];
-
-	// Construct hierarchy
-	for (const taskNode of taskNodeMap.values()) {
-		if (!taskNode.parentId) {
-			taskNodes.push(taskNode);
-		} else {
-			const parentTaskNode = taskNodeMap.get(taskNode.parentId);
-
-			if (parentTaskNode) {
-				parentTaskNode.children.push(taskNode);
-			}
-		}
-	}
-
-	return taskNodes;
 }

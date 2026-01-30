@@ -4,6 +4,7 @@ import { useState, type JSX } from "react";
 import { createRoot } from "react-dom/client";
 
 import { type ExtendedSummaryOptions } from "./summary-options";
+import type { TreeNode, TaskNode } from "../utils";
 
 /**
  * Converts TaskNode structure into PrimeReact's TreeNode format.
