@@ -6,5 +6,6 @@ type TasksPlugin = ObsidianTasks.TasksPlugin;
 
 type Brand<T, B> = T & { readonly __brand: B };
 
+type TaskxId = Brand<string, "TaskxId">;
 type TaskxMarkdown = Brand<string, "Markdown">;
 type TaskxPath = Brand<string, "Path">;

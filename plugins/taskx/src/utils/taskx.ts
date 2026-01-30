@@ -8,6 +8,8 @@ export class Taskx {
 	#dvTask: DvTask;
 
 	#children: Taskx[];
+
+	#id: TaskxId;
 	#markdown: TaskxMarkdown;
 	#path: TaskxPath;
 
@@ -27,6 +29,9 @@ export class Taskx {
 
 	get doneDate(): TaskDate {
 		return this.#task.doneDate;
+	}
+	get id(): TaskxId {
+		return this.#id;
 	}
 	get line(): number {
 		return this.#dvTask.line;
@@ -58,18 +63,20 @@ export class Taskx {
 		this.#dvTask = dvTask;
 
 		this.#children = [];
+
 		this.#markdown = normalizeTaskText(this.#task.originalMarkdown);
 		this.#path = normalizePath(this.#task.path);
+		this.#id = Taskx.getId(this.#markdown, this.#path);
 	}
 
-	static getId(text: string, path: string): string {
+	static getId(text: string, path: string): TaskxId {
 		let id = extractId(text);
 
 		if (id === null) {
 			id = makeTempTaskId(path, text);
 		}
 
-		return id;
+		return id as TaskxId;
 	}
 
 	static fromTask(task: Task): Taskx | null {
