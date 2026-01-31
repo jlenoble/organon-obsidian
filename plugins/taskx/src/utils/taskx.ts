@@ -63,6 +63,9 @@ export class Taskx {
 			path: this.#path,
 		};
 	}
+	get startDate(): TaskDate {
+		return this.#task.startDate?.clone() || null;
+	}
 	get scheduledDate(): TaskDate {
 		return this.#task.scheduledDate?.clone() || null;
 	}

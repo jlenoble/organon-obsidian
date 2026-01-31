@@ -1,4 +1,5 @@
 import "obsidian-dataview";
+import type { DateTime } from "luxon";
 
 declare module "obsidian-dataview" {
 	/** Minimal scalar-ish value used by Dataview. */
@@ -54,6 +55,7 @@ declare module "obsidian-dataview" {
 		checked?: boolean; // some versions use checked
 		line: number;
 		path: string;
+		start?: DateTime;
 	}
 
 	/** Dataview file metadata. */

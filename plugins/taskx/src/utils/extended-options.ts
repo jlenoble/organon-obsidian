@@ -5,6 +5,7 @@ import { processTasks, type ProcessedTasks } from "./process-tasks";
 export interface Options {
 	readonly excludeFolders?: string[];
 	readonly keepDone?: boolean;
+	readonly keepNotStarted?: boolean;
 }
 
 export interface ExtendedOptions extends Required<Options>, ProcessedTasks {
@@ -15,6 +16,7 @@ export interface ExtendedOptions extends Required<Options>, ProcessedTasks {
 export const defaultOptions: Required<Options> = {
 	excludeFolders: ["Templates"],
 	keepDone: false,
+	keepNotStarted: false,
 };
 
 export function buildExtendedOptions(
