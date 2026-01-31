@@ -1,8 +1,9 @@
 import type { DvTask, DataArray } from "obsidian-dataview";
 
 import { type Options } from "./extended-options";
-import { extractId } from "./extractors";
+import { extractId, extractIdsByEmoji } from "./extractors";
 import { filterTasks } from "./filter-tasks";
+import { buildRelationGraphs, type Graphs } from "./graphs";
 import { buildTaskNodes, type TaskNode } from "./nodes";
 import { Taskx } from "./taskx";
 import { makeTempTaskId } from "./temp-id";
@@ -16,6 +17,8 @@ export interface ProcessedTasks {
 	readonly tasksUsurpingIds: Array<Task>;
 	/** Inheritance tree when tasks are split into smaller tasks */
 	readonly taskNodes: Array<TaskNode>;
+	/** Relation graphs between tasks */
+	readonly graphs: Graphs;
 	/** Tasks as collected by Tasks plugin */
 	readonly tasks: Array<Task>;
 	/** Tasks as collected by Dataview plugin */
@@ -84,11 +87,30 @@ export function processTasks(
 
 	Taskx.taskxMap = taskMap;
 
+	const graphs = buildRelationGraphs(
+		Array.from(taskMap.values()).map(t => t.record),
+		[
+			{
+				kind: "dependsOn",
+				emoji: "⛔",
+				extractTargets: (record): TaskxId[] =>
+					extractIdsByEmoji(record.markdown, "⛔") as TaskxId[],
+			},
+			{
+				kind: "partOf",
+				emoji: "🌿",
+				extractTargets: (record): TaskxId[] =>
+					extractIdsByEmoji(record.markdown, "🌿") as TaskxId[],
+			},
+		],
+	);
+
 	return {
 		taskMap,
 		tasksMissingIds,
 		tasksUsurpingIds,
 		taskNodes,
+		graphs,
 		tasks,
 		dvTasks,
 	};

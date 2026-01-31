@@ -1,6 +1,7 @@
 import type { DvTaskStatus, DvTask } from "obsidian-dataview";
 
 import { extractId } from "./extractors";
+import { type TaskRecord } from "./graphs";
 import { makeTempTaskId, normalizePath, normalizeTaskText } from "./temp-id";
 
 export class Taskx {
@@ -44,6 +45,13 @@ export class Taskx {
 	}
 	get path(): TaskxPath {
 		return this.#path;
+	}
+	get record(): TaskRecord {
+		return {
+			id: this.#id,
+			markdown: this.#markdown,
+			path: this.#path,
+		};
 	}
 	get status(): DvTaskStatus {
 		return this.#dvTask.status;
