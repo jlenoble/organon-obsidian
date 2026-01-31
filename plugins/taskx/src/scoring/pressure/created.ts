@@ -3,7 +3,11 @@ import type { Pressure } from "../types";
 import { daysBetween } from "./days-between";
 
 export function computeDimensionsFromCreatedDate(
-	{ createdDate }: { createdDate: TaskDate },
+	{
+		createdDate,
+		dueDate,
+		scheduledDate,
+	}: { createdDate: TaskDate; dueDate: TaskDate; scheduledDate: TaskDate },
 	priorDimensions: Dimensions = {
 		gain: 0,
 		pressure: 0,
@@ -11,10 +15,12 @@ export function computeDimensionsFromCreatedDate(
 	},
 ): Dimensions {
 	const pressure = pressureFromCreatedDate(createdDate);
+	const mayBeObsolete = pressure === 4 && !dueDate && !scheduledDate;
+	const hasBug = pressure === 5;
 
 	return max(
 		{
-			gain: pressure >= 4 ? 5 : 0, // Make sure the task floats upward if is either a bug or probably obsolete
+			gain: mayBeObsolete || hasBug ? 5 : 0, // Make sure the task floats upward if is either a bug or probably obsolete
 			pressure,
 			friction: 0,
 		},
