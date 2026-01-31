@@ -1,6 +1,8 @@
 import { type DataviewInlineApi } from "obsidian-dataview";
 
+import type { Friction, Gain, Pressure } from "../scoring";
 import { buildExtendedOptions, defaultOptions, type ExtendedOptions, type Options } from "../utils";
+import type { Badge, Bin } from "./binning";
 
 export const DECISION_VIEW_NAMES = [
 	"cell", // one cell from the decision table, with fixed Gain × Pressure
@@ -18,6 +20,18 @@ export type ScoreMode = (typeof SCORE_MODES)[number];
 export interface DecisionOptions extends Options {
 	readonly viewName?: ViewName;
 	readonly scoreMode?: ScoreMode;
+
+	/** Binning thresholds (by default: 0-1 Low, 2-3 Middle, 4-5 High) */
+	bins?: {
+		gain: [Gain, Gain]; // [maxLow, maxMid] ; High = above
+		pressure: [Pressure, Pressure];
+		friction: [Friction, Friction];
+	};
+
+	gBin?: Bin;
+	pBin?: Bin;
+
+	fBadge?: Badge;
 }
 
 export interface ExtendedDecisionOptions extends Required<DecisionOptions>, ExtendedOptions {}
@@ -25,6 +39,18 @@ export interface ExtendedDecisionOptions extends Required<DecisionOptions>, Exte
 const defaultDecisionOptions: Required<DecisionOptions> = {
 	viewName: "cell",
 	scoreMode: "mode1",
+
+	bins: {
+		gain: [1, 3],
+		pressure: [1, 3],
+		friction: [1, 3],
+	},
+
+	gBin: 0,
+	pBin: 0,
+
+	fBadge: "🟢",
+
 	...defaultOptions,
 };
 
@@ -33,12 +59,9 @@ export function buildExtendedDecisionOptions(
 	dv: DataviewInlineApi,
 	tasksPlugin: TasksPlugin,
 ): ExtendedDecisionOptions {
-	const viewName = options.viewName || defaultDecisionOptions.viewName;
-	const scoreMode = options.scoreMode || defaultDecisionOptions.scoreMode;
-
 	return {
-		viewName,
-		scoreMode,
+		...defaultDecisionOptions,
+		...options,
 		...buildExtendedOptions(options, dv, tasksPlugin),
 	};
 }
