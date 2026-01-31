@@ -6,11 +6,13 @@ export function decisionCell(options: ExtendedDecisionOptions): void {
 	const { dv, dvTasks } = options;
 
 	dv.taskList(
-		dvTasks.map(t => {
-			const task = Taskx.getTaskxFromDvTask(t)!;
-			const { score } = scoreTask(task, options);
-			return { ...t, visual: `${score}  ${task?.markdown}` };
-		}),
+		dvTasks
+			.map(t => {
+				const task = Taskx.getTaskxFromDvTask(t)!;
+				const { score } = scoreTask(task, options);
+				return { ...t, score, visual: `${score}  ${task?.markdown}` };
+			})
+			.sort(({ score }) => score, "desc"),
 		false,
 	);
 }

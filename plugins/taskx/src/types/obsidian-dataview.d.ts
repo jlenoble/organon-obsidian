@@ -15,11 +15,19 @@ declare module "obsidian-dataview" {
 	/** Values Dataview can render in tables/lists. */
 	type RenderValue = Value | HTMLElement;
 
+	type ArrayFunc<T, R> = (elem: T, index: number, arr: T[]) => R;
+	type Predicate<T> = ArrayFunc<T, boolean>;
+	type ArrayComparator<T> = (a: T, b: T) => number;
+
 	/** Dataview's chainable array type. */
 	interface DataArray<T> extends Array<T> {
 		where(predicate: (value: T, index: number, array: T[]) => boolean): DataArray<T>;
 		map<U>(mapper: (value: T, index: number, array: T[]) => U): DataArray<U>;
-		flatMap<U>(mapper: (value: T, index: number, array: T[]) => U[] | DataArray<U>): DataArray<U>;
+		sort<U>(
+			key: ArrayFunc<T, U>,
+			direction?: "asc" | "desc",
+			comparator?: ArrayComparator<U>,
+		): DataArray<T>;
 
 		/**
 		 * Dataview-style field projection.
