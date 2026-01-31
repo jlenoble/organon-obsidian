@@ -1,6 +1,6 @@
 import type { DvTaskStatus, DvTask } from "obsidian-dataview";
 
-import { extractId } from "./extractors";
+import { extractId, extractParentId } from "./extractors";
 import { type TaskRecord } from "./graphs";
 import { makeTempTaskId, normalizePath, normalizeTaskText } from "./temp-id";
 
@@ -12,6 +12,7 @@ export class Taskx {
 
 	#id: TaskxId;
 	#markdown: TaskxMarkdown;
+	#parentId: TaskxId | null;
 	#path: TaskxPath;
 
 	// Must be reset on every refresh, currently processTasks() is the single point of entry
@@ -28,8 +29,14 @@ export class Taskx {
 		this.#children = tasks;
 	}
 
+	get createdDate(): TaskDate {
+		return this.#task.createdDate?.clone() || null;
+	}
 	get doneDate(): TaskDate {
-		return this.#task.doneDate;
+		return this.#task.doneDate?.clone() || null;
+	}
+	get dueDate(): TaskDate {
+		return this.#task.dueDate?.clone() || null;
 	}
 	get id(): TaskxId {
 		return this.#id;
@@ -43,6 +50,9 @@ export class Taskx {
 	get originalMarkdown(): string {
 		return this.#task.originalMarkdown;
 	}
+	get parentId(): TaskxId | null {
+		return this.#parentId;
+	}
 	get path(): TaskxPath {
 		return this.#path;
 	}
@@ -52,6 +62,9 @@ export class Taskx {
 			markdown: this.#markdown,
 			path: this.#path,
 		};
+	}
+	get scheduledDate(): TaskDate {
+		return this.#task.scheduledDate?.clone() || null;
 	}
 	get status(): DvTaskStatus {
 		return this.#dvTask.status;
@@ -75,6 +88,7 @@ export class Taskx {
 		this.#markdown = normalizeTaskText(this.#task.originalMarkdown);
 		this.#path = normalizePath(this.#task.path);
 		this.#id = Taskx.getId(this.#markdown, this.#path);
+		this.#parentId = extractParentId(this.#markdown) as TaskxId | null;
 	}
 
 	static getId(text: string, path: string): TaskxId {

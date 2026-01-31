@@ -1,3 +1,4 @@
+import { scoreTask } from "../scoring";
 import { Taskx } from "../utils";
 import { type ExtendedDecisionOptions } from "./decision-options";
 
@@ -6,8 +7,9 @@ export function decisionCell(options: ExtendedDecisionOptions): void {
 
 	dv.taskList(
 		dvTasks.map(t => {
-			const task = Taskx.getTaskxFromDvTask(t);
-			return { ...t, visual: task?.markdown };
+			const task = Taskx.getTaskxFromDvTask(t)!;
+			const { score } = scoreTask(task, options);
+			return { ...t, visual: `${score}  ${task?.markdown}` };
 		}),
 		false,
 	);
