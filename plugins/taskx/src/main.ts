@@ -21,13 +21,8 @@ import {
 	type SummaryOptions,
 } from "./summary/summary-options";
 import { summaryTable } from "./summary/summary-table";
-import { tree } from "./summary/tree";
 import type { TaskXPluginInterface } from "./types/taskx-plugin";
 import { isDataviewInlineApi, isTasksPlugin } from "./utils";
-
-import "primereact/resources/themes/lara-dark-indigo/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
 
 import "./styles.css";
 
@@ -135,10 +130,6 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 
 			case "table":
 				summaryTable(extOptions);
-				break;
-
-			case "tree":
-				tree(extOptions);
 				break;
 
 			default:

@@ -5,7 +5,6 @@ import { buildExtendedOptions, defaultOptions, type ExtendedOptions, type Option
 export const SUMMARY_NAMES = [
 	"hello-world", // for quick debugging
 	"table", // default keyword to request the default summary table; Actual result will likely vary and introduce breaking changes
-	"tree", // Prime React tree
 ] as const;
 
 export const SUMMARY_GROUP_BY = [
