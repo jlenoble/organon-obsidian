@@ -12,6 +12,15 @@ importers:
 
   ../../plugins/taskx:
     dependencies:
+      '@codemirror/commands':
+        specifier: 6.10.1
+        version: 6.10.1
+      '@codemirror/state':
+        specifier: 6.5.2
+        version: 6.5.2
+      '@codemirror/view':
+        specifier: 6.38.6
+        version: 6.38.6
       obsidian:
         specifier: 1.10.0
         version: 1.10.0(@codemirror/state@6.5.2)(@codemirror/view@6.38.6)
@@ -25,12 +34,6 @@ importers:
         specifier: 19.2.0
         version: 19.2.0(react@19.2.0)
     devDependencies:
-      '@codemirror/state':
-        specifier: 6.5.2
-        version: 6.5.2
-      '@codemirror/view':
-        specifier: 6.38.6
-        version: 6.38.6
       '@types/luxon':
         specifier: 3.7.1
         version: 3.7.1
@@ -161,6 +164,12 @@ packages:
   '@babel/types@7.28.6':
     resolution: {integrity: sha512-0ZrskXVEHSWIqZM/sQZ4EV3jZJXRkio/WCxaqKZP1g//CEWEPSfeZFcms4XeKBCHU0ZKnIkdJeU/kF+eRp5lBg==}
     engines: {node: '>=6.9.0'}
+
+  '@codemirror/commands@6.10.1':
+    resolution: {integrity: sha512-uWDWFypNdQmz2y1LaNJzK7fL7TYKLeUAU0npEC685OKTF3KcQ2Vu3klIM78D7I6wGhktme0lh3CuQLv0ZCrD9Q==}
+
+  '@codemirror/language@6.11.2':
+    resolution: {integrity: sha512-p44TsNArL4IVXDTbapUmEkAlvWs2CFQbcfc0ymDsis1kH2wh0gcY96AS29c/vp2d0y2Tquk1EDSaawpzilUiAw==}
 
   '@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/2d416d7835867d1b1e8d0e726b147fc1135c9f92':
     resolution: {tarball: https://codeload.github.com/lishid/cm-language/tar.gz/2d416d7835867d1b1e8d0e726b147fc1135c9f92}
@@ -1944,6 +1953,22 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
+
+  '@codemirror/commands@6.10.1':
+    dependencies:
+      '@codemirror/language': 6.11.2
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.38.6
+      '@lezer/common': 1.5.0
+
+  '@codemirror/language@6.11.2':
+    dependencies:
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.38.6
+      '@lezer/common': 1.5.0
+      '@lezer/highlight': 1.2.3
+      '@lezer/lr': 1.4.8
+      style-mod: 4.1.3
 
   '@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/2d416d7835867d1b1e8d0e726b147fc1135c9f92':
     dependencies:
