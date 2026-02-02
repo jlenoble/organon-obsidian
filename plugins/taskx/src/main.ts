@@ -9,6 +9,12 @@ import {
 	type ExtendedDecisionOptions,
 } from "./decision";
 import {
+	compileResolver,
+	TaskxSettingTab,
+	type Resolver,
+	type TaskxPluginSettings,
+} from "./settings";
+import {
 	buildExtendedSummaryOptions,
 	type ExtendedSummaryOptions,
 	SUMMARY_NAMES,
@@ -16,6 +22,7 @@ import {
 } from "./summary/summary-options";
 import { summaryTable } from "./summary/summary-table";
 import { tree } from "./summary/tree";
+import type { TaskXPluginInterface } from "./types/taskx-plugin";
 import { isDataviewInlineApi, isTasksPlugin } from "./utils";
 
 import "primereact/resources/themes/lara-dark-indigo/theme.css";
@@ -24,7 +31,10 @@ import "primeicons/primeicons.css";
 
 import "./styles.css";
 
-export default class TaskXPlugin extends Plugin {
+export default class TaskXPlugin extends Plugin implements TaskXPluginInterface {
+	settings: TaskxPluginSettings = {};
+	resolver: Resolver = {};
+
 	dvApi: DataviewApi | null = null;
 	tasksPlugin: TasksPlugin | null = null;
 
@@ -38,6 +48,10 @@ export default class TaskXPlugin extends Plugin {
 
 	async onload(): Promise<void> {
 		console.log("Loading TaskX...");
+
+		await this.loadSettings();
+
+		this.addSettingTab(new TaskxSettingTab(this.app, this));
 
 		// Wait for Dataview and Tasks to be available
 		this.app.workspace.onLayoutReady(async () => {
@@ -59,6 +73,28 @@ export default class TaskXPlugin extends Plugin {
 
 	onunload(): void {
 		console.log("Unloading TaskX...");
+	}
+
+	// --- settings ------------------------------------------------------------
+
+	async loadSettings(): Promise<void> {
+		const loaded = (await this.loadData()) as Partial<TaskxPluginSettings> | null;
+
+		this.settings = {
+			...this.settings,
+			...loaded,
+		};
+
+		this.rebuildResolver();
+	}
+
+	async saveSettings(): Promise<void> {
+		await this.saveData(this.settings);
+		this.rebuildResolver();
+	}
+
+	private rebuildResolver(): void {
+		this.resolver = compileResolver({});
 	}
 
 	// --- helpers ------------------------------------------------------------
