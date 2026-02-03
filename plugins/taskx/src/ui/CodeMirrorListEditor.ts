@@ -9,6 +9,7 @@ export type CodeMirrorListEditorOptions = {
 	initValue: string;
 	placeholder?: string;
 	onChange?: (value: string) => void;
+	readOnly?: boolean;
 };
 
 export class CodeMirrorListEditor implements TaskXDisposable {
@@ -17,6 +18,8 @@ export class CodeMirrorListEditor implements TaskXDisposable {
 	constructor(opts: CodeMirrorListEditorOptions) {
 		const extensions = [
 			keymap.of(defaultKeymap),
+			EditorState.readOnly.of(!!opts.readOnly),
+			EditorView.editable.of(!opts.readOnly),
 			EditorView.lineWrapping,
 			highlightActiveLine(),
 			EditorView.updateListener.of(u => {

@@ -50,6 +50,7 @@ export class TaskXSettingTab extends PluginSettingTab {
 		});
 
 		const editor = new TagEditor({
+			plugin: this.plugin,
 			containerEl: containerEl.createDiv({ cls: "taskx-tag-editor-host" }),
 			initValue: this.plugin.settings.handledTags.join("\n"),
 			onChange: (value): void => {

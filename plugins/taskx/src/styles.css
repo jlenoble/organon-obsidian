@@ -59,3 +59,15 @@
 	resize: vertical;
 	overflow: auto;
 }
+
+.taskx-modal-buttons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.taskx-modal-error {
+	color: var(--text-error);
+	margin: 8px 0;
+}
