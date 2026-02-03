@@ -1,10 +1,13 @@
 import { type App, PluginSettingTab } from "obsidian";
 
 import { type TaskXPluginInterface } from "../types/taskx-plugin";
-import { toggleButton } from "../ui";
+import { CodeMirrorListEditor, toggleButton } from "../ui";
 import { normalizeList, type NormalizationOptions } from "./normalize-tag";
+import { TaskXDisposer } from "../utils";
 
 export class TaskXSettingTab extends PluginSettingTab {
+	private disposer: TaskXDisposer = new TaskXDisposer();
+
 	constructor(
 		app: App,
 		private plugin: TaskXPluginInterface,
@@ -13,6 +16,9 @@ export class TaskXSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
+		// Single cleanup trigger for previous UI (including CM editor)
+		this.disposer.dispose();
+
 		const { containerEl } = this;
 		containerEl.empty();
 
@@ -42,6 +48,25 @@ export class TaskXSettingTab extends PluginSettingTab {
 			initValue: this.plugin.settings.looseHyphenMatching,
 			onChange: makeOnChange("looseHyphenMatching"),
 		});
+
+		// --- Bare editor section ---
+		const editorHost = containerEl.createDiv({ cls: "taskx-cm-host" });
+
+		const editor = new CodeMirrorListEditor({
+			containerEl: editorHost,
+			initValue: this.plugin.settings.handledTags.join("\n"),
+			placeholder: "One tag per line…",
+			onChange: (value): void => {
+				console.log("editor changed:", value);
+			},
+		});
+
+		// Register editor cleanup
+		this.disposer.add(() => editor.dispose());
+	}
+
+	dispose(): void {
+		this.disposer.dispose();
 	}
 
 	normalizeAllTags(): void {

@@ -30,6 +30,7 @@ import "./styles.css";
 export default class TaskXPlugin extends Plugin implements TaskXPluginInterface {
 	settings: TaskXPluginSettings = { ...DEFAULT_SETTINGS };
 	resolver: Resolver = {};
+	private settingTab: TaskXSettingTab | null = null;
 
 	dvApi: DataviewApi | null = null;
 	tasksPlugin: TasksPlugin | null = null;
@@ -47,7 +48,8 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 
 		await this.loadSettings();
 
-		this.addSettingTab(new TaskXSettingTab(this.app, this));
+		this.settingTab = new TaskXSettingTab(this.app, this);
+		this.addSettingTab(this.settingTab);
 
 		// Wait for Dataview and Tasks to be available
 		this.app.workspace.onLayoutReady(async () => {
@@ -69,6 +71,10 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 
 	onunload(): void {
 		console.log("Unloading TaskX...");
+		// Ensure any mounted UI resources are released
+		// (works even if settings tab isn't currently shown)
+		this.settingTab?.dispose();
+		this.settingTab = null;
 	}
 
 	// --- settings ------------------------------------------------------------
