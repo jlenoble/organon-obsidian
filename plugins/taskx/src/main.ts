@@ -10,6 +10,7 @@ import {
 } from "./decision";
 import {
 	compileResolver,
+	DEFAULT_SETTINGS,
 	TaskXSettingTab,
 	type Resolver,
 	type TaskXPluginSettings,
@@ -27,7 +28,7 @@ import { isDataviewInlineApi, isTasksPlugin } from "./utils";
 import "./styles.css";
 
 export default class TaskXPlugin extends Plugin implements TaskXPluginInterface {
-	settings: TaskXPluginSettings = {};
+	settings: TaskXPluginSettings = { ...DEFAULT_SETTINGS };
 	resolver: Resolver = {};
 
 	dvApi: DataviewApi | null = null;
