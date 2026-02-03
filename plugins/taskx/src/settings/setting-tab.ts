@@ -1,7 +1,7 @@
 import { type App, PluginSettingTab } from "obsidian";
 
 import { type TaskXPluginInterface } from "../types/taskx-plugin";
-import { CodeMirrorListEditor, toggleButton } from "../ui";
+import { TagEditor, toggleButton } from "../ui";
 import { normalizeList, type NormalizationOptions } from "./normalize-tag";
 import { TaskXDisposer } from "../utils";
 
@@ -49,13 +49,9 @@ export class TaskXSettingTab extends PluginSettingTab {
 			onChange: makeOnChange("looseHyphenMatching"),
 		});
 
-		// --- Bare editor section ---
-		const editorHost = containerEl.createDiv({ cls: "taskx-cm-host" });
-
-		const editor = new CodeMirrorListEditor({
-			containerEl: editorHost,
+		const editor = new TagEditor({
+			containerEl: containerEl.createDiv({ cls: "taskx-tag-editor-host" }),
 			initValue: this.plugin.settings.handledTags.join("\n"),
-			placeholder: "One tag per line…",
 			onChange: (value): void => {
 				console.log("editor changed:", value);
 			},
