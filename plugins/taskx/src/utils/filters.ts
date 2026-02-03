@@ -1,4 +1,4 @@
-import { type Taskx } from "./taskx";
+import { type TaskX } from "./taskx";
 
 type HasPath = { path: string };
 
@@ -14,15 +14,15 @@ export function makeExcludeFolders<T extends HasPath>(
 	};
 }
 
-export function done(t: Taskx): boolean {
+export function done(t: TaskX): boolean {
 	return t.doneDate !== null;
 }
 
-export function remaining(t: Taskx): boolean {
+export function remaining(t: TaskX): boolean {
 	return t.doneDate === null;
 }
 
-export function doneToday(t: Taskx): boolean {
+export function doneToday(t: TaskX): boolean {
 	const today = window.moment().format("YYYY-MM-DD");
 	return !!(t.doneDate && t.doneDate.format("YYYY-MM-DD") === today);
 }

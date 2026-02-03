@@ -10,9 +10,9 @@ import {
 } from "./decision";
 import {
 	compileResolver,
-	TaskxSettingTab,
+	TaskXSettingTab,
 	type Resolver,
-	type TaskxPluginSettings,
+	type TaskXPluginSettings,
 } from "./settings";
 import {
 	buildExtendedSummaryOptions,
@@ -27,7 +27,7 @@ import { isDataviewInlineApi, isTasksPlugin } from "./utils";
 import "./styles.css";
 
 export default class TaskXPlugin extends Plugin implements TaskXPluginInterface {
-	settings: TaskxPluginSettings = {};
+	settings: TaskXPluginSettings = {};
 	resolver: Resolver = {};
 
 	dvApi: DataviewApi | null = null;
@@ -46,7 +46,7 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 
 		await this.loadSettings();
 
-		this.addSettingTab(new TaskxSettingTab(this.app, this));
+		this.addSettingTab(new TaskXSettingTab(this.app, this));
 
 		// Wait for Dataview and Tasks to be available
 		this.app.workspace.onLayoutReady(async () => {
@@ -73,7 +73,7 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 	// --- settings ------------------------------------------------------------
 
 	async loadSettings(): Promise<void> {
-		const loaded = (await this.loadData()) as Partial<TaskxPluginSettings> | null;
+		const loaded = (await this.loadData()) as Partial<TaskXPluginSettings> | null;
 
 		this.settings = {
 			...this.settings,

@@ -1,9 +1,9 @@
-import { type Taskx } from "./taskx";
+import { type TaskX } from "./taskx";
 import { SUMMARY_GROUP_BY, type ExtendedSummaryOptions } from "../summary/summary-options";
 
-export function groupByFilePath(tasks: Iterable<Taskx>): Map<string, Taskx[]> {
-	// Manually group Taskx by file path
-	const grouped: Map<string, Taskx[]> = new Map();
+export function groupByFilePath(tasks: Iterable<TaskX>): Map<string, TaskX[]> {
+	// Manually group TaskX by file path
+	const grouped: Map<string, TaskX[]> = new Map();
 
 	for (const t of tasks) {
 		const group = grouped.get(t.path) ?? [];
@@ -17,9 +17,9 @@ export function groupByFilePath(tasks: Iterable<Taskx>): Map<string, Taskx[]> {
 	return grouped;
 }
 
-export function groupByTag(tasks: Iterable<Taskx>): Map<string, Taskx[]> {
-	// Manually group Taskx by file path
-	const grouped: Map<string, Taskx[]> = new Map();
+export function groupByTag(tasks: Iterable<TaskX>): Map<string, TaskX[]> {
+	// Manually group TaskX by file path
+	const grouped: Map<string, TaskX[]> = new Map();
 
 	for (const t of tasks) {
 		for (const tag of t.tags) {
@@ -35,7 +35,7 @@ export function groupByTag(tasks: Iterable<Taskx>): Map<string, Taskx[]> {
 	return grouped;
 }
 
-export function getGroupedTasks(options: ExtendedSummaryOptions): Map<string, Taskx[]> {
+export function getGroupedTasks(options: ExtendedSummaryOptions): Map<string, TaskX[]> {
 	const { dv, taskMap } = options;
 
 	// Filter tasks

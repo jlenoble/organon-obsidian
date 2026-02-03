@@ -1,12 +1,12 @@
 import { PluginSettingTab } from "obsidian";
 
 export interface Resolver {}
-export interface TaskxPluginSettings {}
+export interface TaskXPluginSettings {}
 
 export function compileResolver(_args: {}): Resolver {
 	return {};
 }
 
-export class TaskxSettingTab extends PluginSettingTab {
+export class TaskXSettingTab extends PluginSettingTab {
 	display(): void {}
 }

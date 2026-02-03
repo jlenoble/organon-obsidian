@@ -1,9 +1,9 @@
 import { type Plugin } from "obsidian";
 
-import type { Resolver, TaskxPluginSettings } from "../settings";
+import type { Resolver, TaskXPluginSettings } from "../settings";
 
 export interface TaskXPluginInterface extends Plugin {
-	settings: TaskxPluginSettings;
+	settings: TaskXPluginSettings;
 	resolver: Resolver;
 
 	saveSettings(): Promise<void>;

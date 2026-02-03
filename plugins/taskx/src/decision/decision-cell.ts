@@ -1,5 +1,5 @@
 import { scoreTask } from "../scoring";
-import { Taskx } from "../utils";
+import { TaskX } from "../utils";
 import { bin3, frictionBadge } from "./binning";
 import { type ExtendedDecisionOptions } from "./decision-options";
 
@@ -17,7 +17,7 @@ export function decisionCell(options: ExtendedDecisionOptions): void {
 	dv.taskList(
 		dvTasks
 			.map(t => {
-				const task = Taskx.getTaskxFromDvTask(t)!;
+				const task = TaskX.getTaskXFromDvTask(t)!;
 				const { id, dimensions, score } = scoreTask(task, options);
 				return {
 					...t,

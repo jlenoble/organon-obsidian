@@ -3,7 +3,7 @@ import { type Dimensions } from "../dimensions";
 import { type Friction } from "../types";
 
 export function computeDimensionsFromPartOfRelation(
-	{ id, parentId }: { id: TaskxId; parentId: TaskxId | null },
+	{ id, parentId }: { id: TaskXId; parentId: TaskXId | null },
 	{ graphs: { partOf } }: ExtendedOptions,
 	priorDimensions: Dimensions = {
 		gain: 0,

@@ -5,12 +5,12 @@ import { extractId, extractIdsByEmoji } from "./extractors";
 import { filterTasks } from "./filter-tasks";
 import { buildRelationGraphs, type Graphs } from "./graphs";
 import { buildTaskNodes, type TaskNode } from "./nodes";
-import { Taskx } from "./taskx";
+import { TaskX } from "./taskx";
 import { makeTempTaskId } from "./temp-id";
 
 export interface ProcessedTasks {
 	/** All tasks, some have a temporary ids regenerated on each refresh */
-	readonly taskMap: Map<string, Taskx>;
+	readonly taskMap: Map<string, TaskX>;
 	/** Tasks that have no permanent ids */
 	readonly tasksMissingIds: Array<Task>;
 	/** Tasks that have already used ids */
@@ -30,14 +30,14 @@ export function processTasks(
 	dvTasks0: DataArray<DvTask>,
 	options: Required<Options>,
 ): ProcessedTasks {
-	const taskMap: Map<string, Taskx> = new Map();
+	const taskMap: Map<string, TaskX> = new Map();
 	const tasksMissingIds: Task[] = [];
 	const tasksUsurpingIds: Task[] = [];
 
 	const { tasks, dvTasks } = filterTasks(tasks0, dvTasks0, options);
 
-	Taskx.taskMap = new Map();
-	Taskx.dvTaskMap = new Map();
+	TaskX.taskMap = new Map();
+	TaskX.dvTaskMap = new Map();
 
 	for (const task of tasks) {
 		let id = extractId(task.originalMarkdown ?? "");
@@ -47,8 +47,8 @@ export function processTasks(
 			id = makeTempTaskId(task.path, task.originalMarkdown);
 		}
 
-		if (!Taskx.taskMap.has(id)) {
-			Taskx.taskMap.set(id, task);
+		if (!TaskX.taskMap.has(id)) {
+			TaskX.taskMap.set(id, task);
 		} else {
 			tasksUsurpingIds.push(task);
 		}
@@ -61,31 +61,31 @@ export function processTasks(
 			id = makeTempTaskId(dvTask.path, dvTask.text);
 		}
 
-		if (!Taskx.dvTaskMap.has(id)) {
-			Taskx.dvTaskMap.set(id, dvTask);
+		if (!TaskX.dvTaskMap.has(id)) {
+			TaskX.dvTaskMap.set(id, dvTask);
 		}
 	}
 
-	if (Taskx.dvTaskMap.size !== Taskx.taskMap.size) {
+	if (TaskX.dvTaskMap.size !== TaskX.taskMap.size) {
 		throw new Error("Dataview and Tasks don't collect the same number of tasks");
 	}
 
-	const sanityCheck: Set<string> = new Set(Taskx.taskMap.keys());
-	for (const key of Taskx.dvTaskMap.keys()) {
+	const sanityCheck: Set<string> = new Set(TaskX.taskMap.keys());
+	for (const key of TaskX.dvTaskMap.keys()) {
 		sanityCheck.add(key);
 	}
 
-	if (Taskx.dvTaskMap.size !== sanityCheck.size) {
+	if (TaskX.dvTaskMap.size !== sanityCheck.size) {
 		throw new Error("Dataview and Tasks don't collect the same tasks");
 	}
 
-	for (const [key, dvTask] of Taskx.dvTaskMap.entries()) {
-		taskMap.set(key, new Taskx(Taskx.taskMap.get(key)!, dvTask));
+	for (const [key, dvTask] of TaskX.dvTaskMap.entries()) {
+		taskMap.set(key, new TaskX(TaskX.taskMap.get(key)!, dvTask));
 	}
 
-	const taskNodes: TaskNode[] = buildTaskNodes(Taskx.taskMap);
+	const taskNodes: TaskNode[] = buildTaskNodes(TaskX.taskMap);
 
-	Taskx.taskxMap = taskMap;
+	TaskX.taskxMap = taskMap;
 
 	const graphs = buildRelationGraphs(
 		Array.from(taskMap.values()).map(t => t.record),
@@ -93,14 +93,14 @@ export function processTasks(
 			{
 				kind: "dependsOn",
 				emoji: "⛔",
-				extractTargets: (record): TaskxId[] =>
-					extractIdsByEmoji(record.markdown, "⛔") as TaskxId[],
+				extractTargets: (record): TaskXId[] =>
+					extractIdsByEmoji(record.markdown, "⛔") as TaskXId[],
 			},
 			{
 				kind: "partOf",
 				emoji: "🌿",
-				extractTargets: (record): TaskxId[] =>
-					extractIdsByEmoji(record.markdown, "🌿") as TaskxId[],
+				extractTargets: (record): TaskXId[] =>
+					extractIdsByEmoji(record.markdown, "🌿") as TaskXId[],
 			},
 		],
 	);

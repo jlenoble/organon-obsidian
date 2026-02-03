@@ -3,7 +3,7 @@ import { type Dimensions } from "../dimensions";
 import { computeDimensionsFromPartOfRelation } from "./part-of";
 
 export function computeDimensionsFromFrictions(
-	meta: { id: TaskxId; parentId: TaskxId | null },
+	meta: { id: TaskXId; parentId: TaskXId | null },
 	options: ExtendedOptions,
 	priorDimensions: Dimensions = {
 		gain: 0,

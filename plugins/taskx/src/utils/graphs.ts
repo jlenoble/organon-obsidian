@@ -8,23 +8,23 @@ export type Emoji = (typeof RELATIONS)[RelationKind]["emoji"];
 
 export interface Edge<Kind extends RelationKind> {
 	kind: Kind;
-	from: TaskxId;
-	to: TaskxId;
+	from: TaskXId;
+	to: TaskXId;
 }
 
 export interface TaskRecord {
-	id: TaskxId;
-	markdown: TaskxMarkdown;
-	path: TaskxPath;
+	id: TaskXId;
+	markdown: TaskXMarkdown;
+	path: TaskXPath;
 }
 
 export class RelationGraph<Kind extends RelationKind> {
-	#outgoing = new Map<TaskxId, Map<Kind, Set<TaskxId>>>();
-	#incoming = new Map<TaskxId, Map<Kind, Set<TaskxId>>>();
+	#outgoing = new Map<TaskXId, Map<Kind, Set<TaskXId>>>();
+	#incoming = new Map<TaskXId, Map<Kind, Set<TaskXId>>>();
 
 	constructor(public readonly kind: Kind) {}
 
-	addNode(id: TaskxId): void {
+	addNode(id: TaskXId): void {
 		if (!this.#outgoing.has(id)) {
 			this.#outgoing.set(id, new Map());
 		}
@@ -51,7 +51,7 @@ export class RelationGraph<Kind extends RelationKind> {
 		incKinds.get(edge.kind)!.add(edge.from);
 	}
 
-	neighbors(id: TaskxId, kind: Kind, dir: "out" | "in" = "out"): TaskxId[] {
+	neighbors(id: TaskXId, kind: Kind, dir: "out" | "in" = "out"): TaskXId[] {
 		const m = (dir === "out" ? this.#outgoing : this.#incoming).get(id);
 		if (!m) {
 			return [];
@@ -59,8 +59,8 @@ export class RelationGraph<Kind extends RelationKind> {
 		return [...(m.get(kind) ?? [])];
 	}
 
-	*walkDFS(start: TaskxId, kind: Kind, dir: "out" | "in" = "out"): Iterable<TaskxId> {
-		const seen = new Set<TaskxId>();
+	*walkDFS(start: TaskXId, kind: Kind, dir: "out" | "in" = "out"): Iterable<TaskXId> {
+		const seen = new Set<TaskXId>();
 		const stack = [start];
 		while (stack.length) {
 			const cur = stack.pop()!;
@@ -81,7 +81,7 @@ export interface RelationSpec<Kind extends RelationKind> {
 	emoji: (typeof RELATIONS)[Kind]["emoji"];
 	// Extract one or more target IDs from a taskind line.
 	// Return target IDs only; graph builder wires from -> target.
-	extractTargets(task: TaskRecord): TaskxId[];
+	extractTargets(task: TaskRecord): TaskXId[];
 }
 
 export type Graphs = {
@@ -99,7 +99,7 @@ export function buildRelationGraphs(
 	};
 
 	// Collect active ids
-	const ids: Set<TaskxId> = new Set(Array.from(taskRecords).map(r => r.id));
+	const ids: Set<TaskXId> = new Set(Array.from(taskRecords).map(r => r.id));
 
 	for (const record of taskRecords) {
 		// Ensure node exists in every graph (optional, but convenient)
@@ -123,7 +123,7 @@ function addEdges<Kind extends RelationKind>({
 	graphs: Graphs;
 	spec: RelationSpec<Kind>;
 	record: TaskRecord;
-	ids: Set<TaskxId>;
+	ids: Set<TaskXId>;
 }): void {
 	// Filter out obsolete ids
 	const targets = spec.extractTargets(record).filter(id => ids.has(id));

@@ -4,28 +4,28 @@ import { extractId, extractParentId } from "./extractors";
 import { type TaskRecord } from "./graphs";
 import { makeTempTaskId, normalizePath, normalizeTaskText } from "./temp-id";
 
-export class Taskx {
+export class TaskX {
 	#task: Task;
 	#dvTask: DvTask;
 
-	#children: Taskx[];
+	#children: TaskX[];
 
-	#id: TaskxId;
-	#markdown: TaskxMarkdown;
-	#parentId: TaskxId | null;
-	#path: TaskxPath;
+	#id: TaskXId;
+	#markdown: TaskXMarkdown;
+	#parentId: TaskXId | null;
+	#path: TaskXPath;
 
 	// Must be reset on every refresh, currently processTasks() is the single point of entry
 	static taskMap: Map<string, Task> = new Map();
 	// Must be reset on every refresh, currently processTasks() is the single point of entry
 	static dvTaskMap: Map<string, DvTask> = new Map();
 	// Must be reset on every refresh, currently processTasks() is the single point of entry
-	static taskxMap: Map<string, Taskx> = new Map();
+	static taskxMap: Map<string, TaskX> = new Map();
 
-	get children(): Taskx[] {
+	get children(): TaskX[] {
 		return this.#children;
 	}
-	set children(tasks: Taskx[]) {
+	set children(tasks: TaskX[]) {
 		this.#children = tasks;
 	}
 
@@ -38,7 +38,7 @@ export class Taskx {
 	get dueDate(): TaskDate {
 		return this.#task.dueDate?.clone() || null;
 	}
-	get id(): TaskxId {
+	get id(): TaskXId {
 		return this.#id;
 	}
 	get line(): number {
@@ -50,10 +50,10 @@ export class Taskx {
 	get originalMarkdown(): string {
 		return this.#task.originalMarkdown;
 	}
-	get parentId(): TaskxId | null {
+	get parentId(): TaskXId | null {
 		return this.#parentId;
 	}
-	get path(): TaskxPath {
+	get path(): TaskXPath {
 		return this.#path;
 	}
 	get record(): TaskRecord {
@@ -90,45 +90,45 @@ export class Taskx {
 
 		this.#markdown = normalizeTaskText(this.#task.originalMarkdown);
 		this.#path = normalizePath(this.#task.path);
-		this.#id = Taskx.getId(this.#markdown, this.#path);
-		this.#parentId = extractParentId(this.#markdown) as TaskxId | null;
+		this.#id = TaskX.getId(this.#markdown, this.#path);
+		this.#parentId = extractParentId(this.#markdown) as TaskXId | null;
 	}
 
-	static getId(text: string, path: string): TaskxId {
+	static getId(text: string, path: string): TaskXId {
 		let id = extractId(text);
 
 		if (id === null) {
 			id = makeTempTaskId(path, text);
 		}
 
-		return id as TaskxId;
+		return id as TaskXId;
 	}
 
-	static fromTask(task: Task): Taskx | null {
-		return Taskx.fromMarkdownAndPath(task.originalMarkdown, task.path);
+	static fromTask(task: Task): TaskX | null {
+		return TaskX.fromMarkdownAndPath(task.originalMarkdown, task.path);
 	}
-	static fromDvTask(dvTask: DvTask): Taskx | null {
-		return Taskx.fromMarkdownAndPath(dvTask.text, dvTask.path);
+	static fromDvTask(dvTask: DvTask): TaskX | null {
+		return TaskX.fromMarkdownAndPath(dvTask.text, dvTask.path);
 	}
-	static fromMarkdownAndPath(markdown: string, path: string): Taskx | null {
-		const id = Taskx.getId(markdown, path);
+	static fromMarkdownAndPath(markdown: string, path: string): TaskX | null {
+		const id = TaskX.getId(markdown, path);
 
-		const task = Taskx.taskMap.get(id);
-		const dvTask = Taskx.dvTaskMap.get(id);
+		const task = TaskX.taskMap.get(id);
+		const dvTask = TaskX.dvTaskMap.get(id);
 
 		if (!task || !dvTask) {
 			return null;
 		}
 
-		return new Taskx(task, dvTask);
+		return new TaskX(task, dvTask);
 	}
 
-	static getTaskxFromTask(t: Task): Taskx | undefined {
-		const id = Taskx.getId(t.originalMarkdown, t.path);
-		return Taskx.taskxMap.get(id);
+	static getTaskXFromTask(t: Task): TaskX | undefined {
+		const id = TaskX.getId(t.originalMarkdown, t.path);
+		return TaskX.taskxMap.get(id);
 	}
-	static getTaskxFromDvTask(t: DvTask): Taskx | undefined {
-		const id = Taskx.getId(t.text, t.path);
-		return Taskx.taskxMap.get(id);
+	static getTaskXFromDvTask(t: DvTask): TaskX | undefined {
+		const id = TaskX.getId(t.text, t.path);
+		return TaskX.taskxMap.get(id);
 	}
 }
