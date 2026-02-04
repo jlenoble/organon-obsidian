@@ -2,9 +2,11 @@ import { Notice } from "obsidian";
 
 import { type NormalizationOptions, normalize, normalizeList } from "../settings";
 import { CodeMirrorListEditor } from "./CodeMirrorListEditor";
+import { ConfirmModal } from "./ConfirmModal";
 import { TagInputModal } from "./TagInputModal";
 import { type TaskXPluginInterface } from "../types/taskx-plugin";
 import { type TaskXDisposable } from "../utils";
+
 export interface TagEditorOptions {
 	plugin: TaskXPluginInterface;
 	containerEl: HTMLElement;
@@ -86,7 +88,37 @@ export class TagEditor implements TaskXDisposable {
 		const removeBtn = right.createEl("button", { text: "Remove selected" });
 		removeBtn.addClass("mod-warning");
 		removeBtn.onclick = async (): Promise<void> => {
-			console.log("remove");
+			const selected = this.#cmEditor.getSelectedLine();
+			if (!selected) {
+				new Notice("Place the cursor on a line to remove that tag.");
+				return;
+			}
+
+			const current = normalize(selected, options);
+			if (!current) {
+				new Notice("Selected line is not a valid tag.");
+				return;
+			}
+
+			new ConfirmModal(this.#plugin.app, {
+				title: "Remove tag",
+				message: `Remove ${String(current)}?`,
+				confirmText: "Remove",
+				cancelText: "Cancel",
+				isDanger: true,
+				onConfirm: async (): Promise<void> => {
+					const tags = this.readEditorTags(options);
+					const next = tags.filter(x => String(x) !== String(current));
+
+					if (next.length === tags.length) {
+						new Notice("Tag not found in list (maybe editor changed).");
+						return;
+					}
+
+					this.writeEditorTags(next);
+					await this.persistFromEditor(options);
+				},
+			}).open();
 		};
 	}
 
