@@ -1,9 +1,15 @@
 import { Notice } from "obsidian";
 
-import { type NormalizationOptions, normalize, normalizeList } from "../settings";
+import {
+	type MeaningId,
+	type NormalizationOptions,
+	normalizeMeaningId,
+	normalizeMeaningIdList,
+	normalizeSpecList,
+} from "../settings";
 import { CodeMirrorListEditor } from "./CodeMirrorListEditor";
 import { ConfirmModal } from "./ConfirmModal";
-import { TagInputModal } from "./TagInputModal";
+import { MeaningSpecModal } from "./MeaningSpecModal";
 import { type TaskXPluginInterface } from "../types/taskx-plugin";
 import { type TaskXDisposable } from "../utils";
 
@@ -45,93 +51,67 @@ export class TagEditor implements TaskXDisposable {
 		const addBtn = right.createEl("button", { text: "Add" });
 		addBtn.addClass("mod-cta");
 		addBtn.onclick = async (): Promise<void> => {
-			new TagInputModal(this.#plugin.app, {
-				title: "Add tag",
-				description: "Enter a tag. It will be normalized (#, lowercase if enabled).",
-				placeholder: "e.g. #work",
-				initialValue: "",
-				validate: (raw): string | null => {
-					const t = normalize(raw, options);
-					if (!t) {
-						return "Invalid tag (no spaces).";
-					}
-					return null;
+			new MeaningSpecModal(
+				this.#plugin.app,
+				{ mode: "create" },
+				{
+					normalization: options,
+					isMeaningIdTaken: (id): boolean =>
+						this.#plugin.settings.meaningSpecs.some(m => String(m.id) === id),
+					onSubmit: async (spec): Promise<void> => {
+						this.#plugin.settings.meaningSpecs = [...this.#plugin.settings.meaningSpecs, spec];
+						await this.#plugin.saveSettings();
+
+						const ids = this.#plugin.settings.meaningSpecs.map(m => String(m.id));
+						this.#cmEditor.setValue(ids.join("\n"));
+					},
 				},
-				onSubmit: async (raw): Promise<void> => {
-					const t = normalize(raw, options) as Tag | null;
-
-					if (!t) {
-						new Notice("Invalid tag.");
-						return;
-					}
-
-					const current = this.#plugin.settings.handledTags.map(String);
-					if (current.includes(String(t))) {
-						new Notice("Tag already present.");
-						return;
-					}
-
-					this.#plugin.settings.handledTags = [...this.#plugin.settings.handledTags, t];
-					await this.#plugin.saveSettings();
-					new Notice("Saved.");
-
-					this.#cmEditor.setValue(this.#plugin.settings.handledTags.join("\n"));
-				},
-			}).open();
+			).open();
 		};
 
 		const editBtn = right.createEl("button", { text: "Edit selected" });
 		editBtn.onclick = async (): Promise<void> => {
 			const selected = this.#cmEditor.getSelectedLine();
 			if (!selected) {
-				new Notice("Place the cursor on a line to edit that tag.");
+				new Notice("Place the cursor on a line to edit that tag family name.");
 				return;
 			}
 
-			const current = normalize(selected, options);
+			const current = normalizeMeaningId(selected, options);
 			if (!current) {
-				new Notice("Selected line is not a valid tag.");
+				new Notice("Selected line is not a valid tag family name.");
 				return;
 			}
 
-			new TagInputModal(this.#plugin.app, {
-				title: "Edit tag",
-				description: "Edit the current tag. It will be normalized (#, lowercase if enabled).",
-				placeholder: `Edit ${current}`,
-				initialValue: current,
-				validate: (raw): string | null => {
-					const t = normalize(raw, options);
-					if (!t) {
-						return "Invalid tag (no spaces).";
-					}
-					return null;
-				},
-				onSubmit: async (raw): Promise<void> => {
-					const next = normalize(raw, options);
-					if (!next) {
-						new Notice("Invalid tag.");
-						return;
-					}
+			const index = this.findSpecIndex(current, options);
 
-					const tags = this.readEditorTags(options);
-					const idx = tags.findIndex(x => String(x) === String(current));
-					if (idx === -1) {
-						new Notice("Selected tag not found in list (maybe editor changed).");
-						return;
-					}
+			if (index > -1) {
+				new MeaningSpecModal(
+					this.#plugin.app,
+					{ mode: "edit", initial: this.#plugin.settings.meaningSpecs[index] },
+					{
+						normalization: options,
+						isMeaningIdTaken: (id): boolean =>
+							this.#plugin.settings.meaningSpecs.some((m, i) => i !== index && String(m.id) === id),
+						onSubmit: async (spec): Promise<void> => {
+							this.#plugin.settings.meaningSpecs[index] = spec;
 
-					// Prevent duplicates
-					const dup = tags.findIndex(x => String(x) === String(next));
-					if (dup !== -1 && dup !== idx) {
-						new Notice("That tag already exists in the list.");
-						return;
-					}
+							this.#plugin.settings.meaningSpecs = normalizeSpecList(
+								this.#plugin.settings.meaningSpecs,
+								options,
+							);
 
-					tags[idx] = next;
-					this.writeEditorTags(tags);
-					await this.persistFromEditor(options);
-				},
-			}).open();
+							await this.#plugin.saveSettings();
+
+							const ids = this.#plugin.settings.meaningSpecs.map(m => String(m.id));
+							this.#cmEditor.setValue(ids.join("\n"));
+						},
+					},
+				).open();
+			} else {
+				new Notice("Selected tag not found in list (maybe editor changed).");
+				return;
+			}
 		};
 
 		const removeBtn = right.createEl("button", { text: "Remove selected" });
@@ -139,32 +119,32 @@ export class TagEditor implements TaskXDisposable {
 		removeBtn.onclick = async (): Promise<void> => {
 			const selected = this.#cmEditor.getSelectedLine();
 			if (!selected) {
-				new Notice("Place the cursor on a line to remove that tag.");
+				new Notice("Place the cursor on a line to remove that tag family.");
 				return;
 			}
 
-			const current = normalize(selected, options);
+			const current = normalizeMeaningId(selected, options);
 			if (!current) {
-				new Notice("Selected line is not a valid tag.");
+				new Notice("Selected line is not a valid tag family name.");
 				return;
 			}
 
 			new ConfirmModal(this.#plugin.app, {
-				title: "Remove tag",
+				title: "Remove tag family",
 				message: `Remove ${String(current)}?`,
 				confirmText: "Remove",
 				cancelText: "Cancel",
 				isDanger: true,
 				onConfirm: async (): Promise<void> => {
-					const tags = this.readEditorTags(options);
-					const next = tags.filter(x => String(x) !== String(current));
+					const ids = this.readEditorMeaningIds(options);
+					const next = ids.filter(x => String(x) !== String(current));
 
-					if (next.length === tags.length) {
-						new Notice("Tag not found in list (maybe editor changed).");
+					if (next.length === ids.length) {
+						new Notice("Tag family not found in list (maybe editor changed).");
 						return;
 					}
 
-					this.writeEditorTags(next);
+					this.writeEditorMeaningIds(next);
 					await this.persistFromEditor(options);
 				},
 			}).open();
@@ -175,24 +155,26 @@ export class TagEditor implements TaskXDisposable {
 		this.#cmEditor.dispose();
 	}
 
-	readEditorTags(options: NormalizationOptions): Tag[] {
-		// Read editor → normalized Tag[]
+	readEditorMeaningIds(options: NormalizationOptions): MeaningId[] {
+		// Read editor → normalized MeningId[]
 		const lines = this.splitLines(this.#cmEditor.getValue());
-		const norm = normalizeList(lines, options);
+		const norm = normalizeMeaningIdList(lines, options);
 
 		// avoid duplicates while keeping order
 		return this.uniquePreserveOrder(norm);
 	}
 
-	writeEditorTags(tags: Tag[]): void {
-		// Write Tag[] → editor
-		this.#cmEditor.setValue(tags.join("\n"));
+	writeEditorMeaningIds(ids: MeaningId[]): void {
+		// Write MeaningId[] → editor
+		this.#cmEditor.setValue(ids.join("\n"));
 	}
 
 	async persistFromEditor(options: NormalizationOptions): Promise<void> {
 		// Persist editor → settings
-		const tags = this.readEditorTags(options);
-		this.#plugin.settings.handledTags = tags;
+		const ids = new Set(this.readEditorMeaningIds(options));
+		this.#plugin.settings.meaningSpecs = this.#plugin.settings.meaningSpecs.filter(spec =>
+			ids.has(spec.id),
+		);
 		await this.#plugin.saveSettings();
 	}
 
@@ -203,9 +185,9 @@ export class TagEditor implements TaskXDisposable {
 			.filter(Boolean);
 	}
 
-	uniquePreserveOrder(xs: Tag[]): Tag[] {
-		const seen = new Set<Tag>();
-		const out: Tag[] = [];
+	uniquePreserveOrder(xs: MeaningId[]): MeaningId[] {
+		const seen = new Set<MeaningId>();
+		const out: MeaningId[] = [];
 		for (const x of xs) {
 			if (seen.has(x)) {
 				continue;
@@ -214,5 +196,15 @@ export class TagEditor implements TaskXDisposable {
 			out.push(x);
 		}
 		return out;
+	}
+
+	findSpecIndex(id: MeaningId, options: NormalizationOptions): number {
+		const next = normalizeMeaningId(id, options);
+		if (!next) {
+			new Notice("Invalid meaning id.");
+			return -1;
+		}
+
+		return this.#plugin.settings.meaningSpecs.findIndex(spec => spec.id === next);
 	}
 }

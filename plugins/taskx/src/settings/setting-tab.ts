@@ -2,7 +2,8 @@ import { type App, PluginSettingTab } from "obsidian";
 
 import { type TaskXPluginInterface } from "../types/taskx-plugin";
 import { TagEditor, toggleButton } from "../ui";
-import { normalizeList, type NormalizationOptions } from "./normalize-tag";
+import { normalizeSpecList } from "./normalize-spec";
+import { type NormalizationOptions } from "./normalize-tag";
 import { TaskXDisposer } from "../utils";
 
 export class TaskXSettingTab extends PluginSettingTab {
@@ -52,10 +53,8 @@ export class TaskXSettingTab extends PluginSettingTab {
 		const editor = new TagEditor({
 			plugin: this.plugin,
 			containerEl: containerEl.createDiv({ cls: "taskx-tag-editor-host" }),
-			initValue: this.plugin.settings.handledTags.join("\n"),
-			onChange: (value): void => {
-				console.log("editor changed:", value);
-			},
+			initValue: this.plugin.settings.meaningSpecs.map(spec => spec.id).join("\n"),
+			onChange: (): void => {},
 		});
 
 		// Register editor cleanup
@@ -67,8 +66,8 @@ export class TaskXSettingTab extends PluginSettingTab {
 	}
 
 	normalizeAllTags(): void {
-		this.plugin.settings.handledTags = normalizeList(
-			this.plugin.settings.handledTags,
+		this.plugin.settings.meaningSpecs = normalizeSpecList(
+			this.plugin.settings.meaningSpecs,
 			this.plugin.settings,
 		);
 	}

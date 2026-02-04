@@ -71,3 +71,14 @@
 	color: var(--text-error);
 	margin: 8px 0;
 }
+
+.taskx-tabs {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 10px;
+	flex-wrap: wrap;
+}
+.taskx-tab-btn.is-active {
+	font-weight: 600;
+	text-decoration: underline;
+}
