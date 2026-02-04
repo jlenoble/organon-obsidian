@@ -28,7 +28,7 @@ export class TagEditor implements TaskXDisposable {
 		this.#plugin = plugin;
 		const options: NormalizationOptions = {
 			normalizeTagsToLowercase: plugin.settings.normalizeTagsToLowercase,
-			looseHyphenMatching: plugin.settings.looseHyphenMatching,
+			removeHyphensAndUnderscores: plugin.settings.removeHyphensAndUnderscores,
 		};
 
 		// Layout: textarea left, buttons right

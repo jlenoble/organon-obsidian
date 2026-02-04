@@ -1,6 +1,6 @@
 export type NormalizationOptions = {
 	normalizeTagsToLowercase: boolean;
-	looseHyphenMatching: boolean;
+	removeHyphensAndUnderscores: boolean;
 };
 
 export function normalizeStrict(raw: string, opt: NormalizationOptions): Tag | null {
@@ -26,7 +26,7 @@ export function normalizeStrict(raw: string, opt: NormalizationOptions): Tag | n
 }
 
 export function normalizeLoose(strict: Tag, opt: NormalizationOptions): Tag {
-	if (!opt.looseHyphenMatching) {
+	if (!opt.removeHyphensAndUnderscores) {
 		return strict;
 	}
 	return strict.replace(/[-_]/g, "") as Tag;

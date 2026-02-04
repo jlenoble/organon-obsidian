@@ -45,10 +45,10 @@ export class TaskXSettingTab extends PluginSettingTab {
 		});
 		toggleButton({
 			containerEl,
-			name: "Allow hyphens and underscores",
-			description: "If enabled, tags may contain '-' or '_'.",
-			initValue: this.plugin.settings.looseHyphenMatching,
-			onChange: makeOnChange("looseHyphenMatching"),
+			name: "Forbid hyphens and underscores",
+			description: "If enabled, tags are stripped from '-' or '_'.",
+			initValue: this.plugin.settings.removeHyphensAndUnderscores,
+			onChange: makeOnChange("removeHyphensAndUnderscores"),
 		});
 
 		// Dimensions

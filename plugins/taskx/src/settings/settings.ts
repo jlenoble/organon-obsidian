@@ -24,6 +24,6 @@ export const DEFAULT_SETTINGS: TaskXPluginSettings = {
 	],
 
 	fallbackDefaults: defaultDimensions(),
-	looseHyphenMatching: true,
 	normalizeTagsToLowercase: true,
+	removeHyphensAndUnderscores: false,
 };
