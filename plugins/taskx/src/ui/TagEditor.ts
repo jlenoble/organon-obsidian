@@ -82,7 +82,56 @@ export class TagEditor implements TaskXDisposable {
 
 		const editBtn = right.createEl("button", { text: "Edit selected" });
 		editBtn.onclick = async (): Promise<void> => {
-			console.log("edit");
+			const selected = this.#cmEditor.getSelectedLine();
+			if (!selected) {
+				new Notice("Place the cursor on a line to edit that tag.");
+				return;
+			}
+
+			const current = normalize(selected, options);
+			if (!current) {
+				new Notice("Selected line is not a valid tag.");
+				return;
+			}
+
+			new TagInputModal(this.#plugin.app, {
+				title: "Edit tag",
+				description: "Edit the current tag. It will be normalized (#, lowercase if enabled).",
+				placeholder: `Edit ${current}`,
+				initialValue: current,
+				validate: (raw): string | null => {
+					const t = normalize(raw, options);
+					if (!t) {
+						return "Invalid tag (no spaces).";
+					}
+					return null;
+				},
+				onSubmit: async (raw): Promise<void> => {
+					const next = normalize(raw, options);
+					if (!next) {
+						new Notice("Invalid tag.");
+						return;
+					}
+
+					const tags = this.readEditorTags(options);
+					const idx = tags.findIndex(x => String(x) === String(current));
+					if (idx === -1) {
+						new Notice("Selected tag not found in list (maybe editor changed).");
+						return;
+					}
+
+					// Prevent duplicates
+					const dup = tags.findIndex(x => String(x) === String(next));
+					if (dup !== -1 && dup !== idx) {
+						new Notice("That tag already exists in the list.");
+						return;
+					}
+
+					tags[idx] = next;
+					this.writeEditorTags(tags);
+					await this.persistFromEditor(options);
+				},
+			}).open();
 		};
 
 		const removeBtn = right.createEl("button", { text: "Remove selected" });
