@@ -53,7 +53,7 @@ export class TagEditor implements TaskXDisposable {
 		addBtn.onclick = async (): Promise<void> => {
 			new MeaningSpecModal(
 				this.#plugin.app,
-				{ mode: "create" },
+				{ mode: "create", initial: { dimensions: { ...this.#plugin.settings.fallbackDefaults } } },
 				{
 					normalization: options,
 					isMeaningIdTaken: (id): boolean =>

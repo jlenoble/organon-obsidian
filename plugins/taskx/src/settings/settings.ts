@@ -1,9 +1,10 @@
-import { defaultDimensions } from "../scoring";
+import { defaultDimensions, type Dimensions } from "../scoring";
 import type { MeaningId, MeaningSpec } from "./meaning";
 import { type NormalizationOptions } from "./normalize-tag";
 
 export interface TaskXPluginSettings extends NormalizationOptions {
 	meaningSpecs: MeaningSpec[];
+	fallbackDefaults: Dimensions;
 }
 
 export const DEFAULT_SETTINGS: TaskXPluginSettings = {
@@ -22,6 +23,7 @@ export const DEFAULT_SETTINGS: TaskXPluginSettings = {
 		},
 	],
 
+	fallbackDefaults: defaultDimensions(),
 	looseHyphenMatching: true,
 	normalizeTagsToLowercase: true,
 };

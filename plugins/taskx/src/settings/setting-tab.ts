@@ -1,9 +1,10 @@
-import { type App, PluginSettingTab } from "obsidian";
+import { type App, PluginSettingTab, Setting } from "obsidian";
 
 import { type TaskXPluginInterface } from "../types/taskx-plugin";
 import { TagEditor, toggleButton } from "../ui";
 import { normalizeSpecList } from "./normalize-spec";
 import { type NormalizationOptions } from "./normalize-tag";
+import { parseBaseScoreOrKeep, type Dimensions } from "../scoring";
 import { TaskXDisposer } from "../utils";
 
 export class TaskXSettingTab extends PluginSettingTab {
@@ -49,6 +50,39 @@ export class TaskXSettingTab extends PluginSettingTab {
 			initValue: this.plugin.settings.looseHyphenMatching,
 			onChange: makeOnChange("looseHyphenMatching"),
 		});
+
+		// Dimensions
+		const fb: Dimensions = this.plugin.settings.fallbackDefaults;
+		new Setting(containerEl)
+			.setName("Fallback dimensions")
+			.setDesc("Used when no meaning matches any tag.")
+			.addText(t =>
+				t
+					.setPlaceholder("gain")
+					.setValue(String(fb.gain))
+					.onChange(async v => {
+						fb.gain = parseBaseScoreOrKeep(fb.gain, v);
+						await this.plugin.saveSettings();
+					}),
+			)
+			.addText(t =>
+				t
+					.setPlaceholder("pressure")
+					.setValue(String(fb.pressure))
+					.onChange(async v => {
+						fb.pressure = parseBaseScoreOrKeep(fb.pressure, v);
+						await this.plugin.saveSettings();
+					}),
+			)
+			.addText(t =>
+				t
+					.setPlaceholder("friction")
+					.setValue(String(fb.friction))
+					.onChange(async v => {
+						fb.friction = parseBaseScoreOrKeep(fb.friction, v);
+						await this.plugin.saveSettings();
+					}),
+			);
 
 		const editor = new TagEditor({
 			plugin: this.plugin,
