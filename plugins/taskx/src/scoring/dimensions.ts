@@ -13,3 +13,7 @@ export function max(dims1: Dimensions, dims2: Dimensions): Dimensions {
 		friction: Math.max(dims1.friction, dims2.friction) as Friction,
 	};
 }
+
+export function defaultDimensions(): Dimensions {
+	return { gain: 0, pressure: 0, friction: 0 };
+}
