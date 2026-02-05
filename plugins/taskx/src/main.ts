@@ -9,6 +9,7 @@ import {
 	type DecisionOptions,
 	type ExtendedDecisionOptions,
 } from "./decision";
+import { missingDurations } from "./doctor";
 import {
 	compileResolver,
 	DEFAULT_SETTINGS,
@@ -194,6 +195,40 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 
 			case "next":
 				nextTask(extOptions);
+				break;
+
+			default:
+				this.dv.paragraph(
+					`Usage: taskx.decision({ viewName: ${DECISION_VIEW_NAMES.map(t => '"' + t + '"').join(" | ")} });`,
+				);
+		}
+
+		this.dv.paragraph(`There are ${extOptions.taskMap.size} tasks in total.`);
+	}
+
+	doctor(options: DecisionOptions = {}): void {
+		if (!isTasksPlugin(this.tasksPlugin)) {
+			console.warn("Tasks plugin not loaded before TaskX");
+			return;
+		}
+
+		// this.dv is expected to have been set up at the top of any calling block
+		// with the simple line: taskx.dv = dv
+		if (!isDataviewInlineApi(this.dv)) {
+			console.warn("Dataview inline API not set in TaskX");
+			return;
+		}
+
+		const extOptions: ExtendedDecisionOptions = buildExtendedDecisionOptions(options, {
+			dv: this.dv,
+			tasksPlugin: this.tasksPlugin,
+			resolver: this.resolver,
+			settings: this.settings,
+		});
+
+		switch (extOptions.viewName) {
+			case "doctor:duration":
+				missingDurations(extOptions);
 				break;
 
 			default:

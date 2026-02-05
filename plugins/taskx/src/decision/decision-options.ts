@@ -6,6 +6,7 @@ import type { Badge, Bin } from "./binning";
 export const DECISION_VIEW_NAMES = [
 	"cell", // one cell from the decision table, with fixed Gain × Pressure
 	"next", // next task, in order
+	"doctor:duration", // list tasks missing durations
 ] as const;
 
 export const SCORE_MODES = [

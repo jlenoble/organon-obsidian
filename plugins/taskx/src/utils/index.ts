@@ -3,6 +3,7 @@ export * from "./extended-options";
 export * from "./extractors";
 export * from "./filter-tasks";
 export * from "./filters";
+export * from "./graphs";
 export * from "./groups";
 export * from "./guards";
 export * from "./process-tasks";

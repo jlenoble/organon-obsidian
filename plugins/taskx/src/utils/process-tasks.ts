@@ -1,5 +1,6 @@
 import type { DvTask, DataArray } from "obsidian-dataview";
 
+import { computePartOfDurations } from "./durations";
 import { type Options } from "./extended-options";
 import { extractId, extractIdsByEmoji } from "./extractors";
 import { filterTasks } from "./filter-tasks";
@@ -16,6 +17,8 @@ export interface ProcessedTasks {
 	readonly tasksUsurpingIds: Array<Task>;
 	/** Relation graphs between tasks */
 	readonly graphs: Graphs;
+	/** All collected and computed durations */
+	readonly durations: Map<TaskXId, moment.Duration>;
 	/** Tasks as collected by Tasks plugin */
 	readonly tasks: Array<Task>;
 	/** Tasks as collected by Dataview plugin */
@@ -100,11 +103,27 @@ export function processTasks(
 		],
 	);
 
+	const tasksById = new Map(
+		Array.from(graphs.partOf.walkPostOrderAll("partOf", "in")).map(id => {
+			const taskx = taskMap.get(id)!;
+			return [
+				id,
+				{
+					id: id as TaskXId,
+					markdown: taskx.markdown as TaskXMarkdown,
+					path: taskx.path as TaskXPath,
+				},
+			];
+		}),
+	);
+	const { durations } = computePartOfDurations({ graph: graphs.partOf, tasksById });
+
 	return {
 		taskMap,
 		tasksMissingIds,
 		tasksUsurpingIds,
 		graphs,
+		durations,
 		tasks,
 		dvTasks,
 	};

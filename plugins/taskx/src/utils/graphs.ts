@@ -74,6 +74,111 @@ export class RelationGraph<Kind extends RelationKind> {
 			}
 		}
 	}
+
+	/**
+	 * Walk the graph in post-order (leaf-first): a node is yielded only after
+	 * all of its reachable neighbors in the chosen direction have been yielded.
+	 *
+	 * For partOf:
+	 * - edges are child -> parent
+	 * - to visit children first, use dir = "in" (incoming edges are children)
+	 */
+	*walkPostOrder(start: TaskXId, kind: Kind, dir: "out" | "in" = "out"): Iterable<TaskXId> {
+		const visited = new Set<TaskXId>();
+		const inStack = new Set<TaskXId>(); // cycle detection
+
+		// Stack of frames: (node, expanded?)
+		// expanded=false means "first time we see it"; then we push children and come back expanded=true.
+		const stack: Array<{ id: TaskXId; expanded: boolean }> = [{ id: start, expanded: false }];
+
+		while (stack.length) {
+			const frame = stack.pop()!;
+			const id = frame.id;
+
+			if (frame.expanded) {
+				// All descendants have been processed
+				inStack.delete(id);
+				visited.add(id);
+				yield id;
+				continue;
+			}
+
+			if (visited.has(id)) {
+				continue;
+			}
+			if (inStack.has(id)) {
+				// Cycle detected. We throw because "partOf" or "dependsOn" cycles are data corruption.
+				throw new Error(
+					`Cycle detected while walking post-order from ${String(start)} at ${String(id)}`,
+				);
+			}
+
+			inStack.add(id);
+
+			// Schedule post-visit
+			stack.push({ id, expanded: true });
+
+			// Schedule children (or predecessors) to be processed first
+			const neigh = this.neighbors(id, kind, dir);
+			for (const n of neigh) {
+				if (!visited.has(n)) {
+					stack.push({ id: n, expanded: false });
+				}
+			}
+		}
+	}
+
+	*walkPostOrderAll(kind: Kind, dir: "out" | "in" = "out"): Iterable<TaskXId> {
+		// Collect all node IDs known to this graph
+		const all = new Set<TaskXId>();
+		for (const id of this.#outgoing.keys()) {
+			all.add(id);
+		}
+		for (const id of this.#incoming.keys()) {
+			all.add(id);
+		}
+
+		// Start a post-order walk from each node not yet visited.
+		// We reuse the same algorithm but share `visited` across starts.
+		const visited = new Set<TaskXId>();
+		const inStack = new Set<TaskXId>();
+
+		for (const start of all) {
+			if (visited.has(start)) {
+				continue;
+			}
+
+			const stack: Array<{ id: TaskXId; expanded: boolean }> = [{ id: start, expanded: false }];
+
+			while (stack.length) {
+				const frame = stack.pop()!;
+				const id = frame.id;
+
+				if (frame.expanded) {
+					inStack.delete(id);
+					visited.add(id);
+					yield id;
+					continue;
+				}
+
+				if (visited.has(id)) {
+					continue;
+				}
+				if (inStack.has(id)) {
+					throw new Error(`Cycle detected while walking post-order at ${String(id)}`);
+				}
+
+				inStack.add(id);
+				stack.push({ id, expanded: true });
+
+				for (const n of this.neighbors(id, kind, dir)) {
+					if (!visited.has(n)) {
+						stack.push({ id: n, expanded: false });
+					}
+				}
+			}
+		}
+	}
 }
 
 export interface RelationSpec<Kind extends RelationKind> {
