@@ -13,7 +13,7 @@ export type MeaningSpec = {
 	 * Clean separation: each language has its own lexicon.
 	 * Example: fr:{canonical:["#rappel"],aliases:["#remind"]} etc
 	 */
-	languages: Record<Locale, TagLexicon>;
+	languages: Partial<Record<Locale, TagLexicon>>;
 
 	/**
 	 * Optional: language-neutral aliases (legacy, shorthand, cross-locale noise).

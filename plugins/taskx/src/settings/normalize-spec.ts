@@ -23,7 +23,7 @@ export function normalizeSpec(spec: MeaningSpec, opt: NormalizationOptions): Mea
 		friction: clamp0to5(spec.dimensions.friction),
 	};
 
-	const languages: Record<Locale, TagLexicon> = {};
+	const languages: Partial<Record<Locale, TagLexicon>> = {};
 
 	for (const [locale, lexicon] of Object.entries(spec.languages) as Array<[Locale, TagLexicon]>) {
 		const canonical = normalize(lexicon.canonical, opt);

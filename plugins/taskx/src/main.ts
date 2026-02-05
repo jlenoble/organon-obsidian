@@ -29,7 +29,12 @@ import "./styles.css";
 
 export default class TaskXPlugin extends Plugin implements TaskXPluginInterface {
 	settings: TaskXPluginSettings = { ...DEFAULT_SETTINGS };
-	resolver: Resolver = {};
+	resolver: Resolver = {
+		byLocale: new Map(),
+		neutral: new Map(),
+		all: new Map(),
+		collisions: [],
+	};
 	private settingTab: TaskXSettingTab | null = null;
 
 	dvApi: DataviewApi | null = null;
@@ -96,7 +101,11 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 	}
 
 	private rebuildResolver(): void {
-		this.resolver = compileResolver({});
+		this.resolver = compileResolver({
+			specs: this.settings.meaningSpecs,
+			normalizeTagsToLowercase: this.settings.normalizeTagsToLowercase,
+			removeHyphensAndUnderscores: this.settings.removeHyphensAndUnderscores,
+		});
 	}
 
 	// --- helpers ------------------------------------------------------------
@@ -124,11 +133,12 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 			return;
 		}
 
-		const extOptions: ExtendedSummaryOptions = buildExtendedSummaryOptions(
-			options,
-			this.dv,
-			this.tasksPlugin,
-		);
+		const extOptions: ExtendedSummaryOptions = buildExtendedSummaryOptions(options, {
+			dv: this.dv,
+			tasksPlugin: this.tasksPlugin,
+			resolver: this.resolver,
+			settings: this.settings,
+		});
 
 		switch (extOptions.name) {
 			case "hello-world":
@@ -169,11 +179,12 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 			return;
 		}
 
-		const extOptions: ExtendedDecisionOptions = buildExtendedDecisionOptions(
-			options,
-			this.dv,
-			this.tasksPlugin,
-		);
+		const extOptions: ExtendedDecisionOptions = buildExtendedDecisionOptions(options, {
+			dv: this.dv,
+			tasksPlugin: this.tasksPlugin,
+			resolver: this.resolver,
+			settings: this.settings,
+		});
 
 		switch (extOptions.viewName) {
 			case "cell":

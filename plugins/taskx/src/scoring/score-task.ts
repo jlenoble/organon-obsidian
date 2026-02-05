@@ -18,7 +18,7 @@ export function computePriorityScore(d: Dimensions): Score {
 }
 
 export function scoreTask(taskx: TaskX, options: ExtendedOptions): ScoredTask {
-	let dimensions = computeDimensionsFromTags(taskx);
+	let dimensions = computeDimensionsFromTags(taskx, options);
 	dimensions = computeDimensionsFromExpectedGains(taskx, dimensions);
 	dimensions = computeDimensionsFromTimeConstraints(taskx, dimensions);
 	dimensions = computeDimensionsFromFrictions(taskx, options, dimensions);

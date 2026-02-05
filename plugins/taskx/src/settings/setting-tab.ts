@@ -6,6 +6,7 @@ import { normalizeSpecList } from "./normalize-spec";
 import { type NormalizationOptions } from "./normalize-tag";
 import { parseBaseScoreOrKeep, type Dimensions } from "../scoring";
 import { TaskXDisposer } from "../utils";
+import { type ResolvePolicy } from "./tag-lexicon-resolver";
 
 export class TaskXSettingTab extends PluginSettingTab {
 	private disposer: TaskXDisposer = new TaskXDisposer();
@@ -50,6 +51,42 @@ export class TaskXSettingTab extends PluginSettingTab {
 			initValue: this.plugin.settings.removeHyphensAndUnderscores,
 			onChange: makeOnChange("removeHyphensAndUnderscores"),
 		});
+
+		// Locale dropdown (keep list small for now; you can expand later)
+		new Setting(containerEl)
+			.setName("Locale")
+			.setDesc("Locale used to resolve localized tags.")
+			.addDropdown(dd => {
+				const locales: Locale[] = ["fr", "en"] as Locale[]; // extend as needed
+				for (const loc of locales) {
+					dd.addOption(loc, loc);
+				}
+
+				dd.setValue(String(this.plugin.settings.locale));
+				dd.onChange(async v => {
+					this.plugin.settings.locale = v as Locale;
+					await this.plugin.saveSettings();
+					this.display();
+				});
+			});
+
+		// ResolvePolicy dropdown
+		new Setting(containerEl)
+			.setName("Resolve policy")
+			.setDesc("How tags are resolved to meaning ids.")
+			.addDropdown(dd => {
+				const policies: ResolvePolicy[] = ["locale+neutral", "all", "localeThenAll"];
+				for (const p of policies) {
+					dd.addOption(p, p);
+				}
+
+				dd.setValue(this.plugin.settings.resolvePolicy);
+				dd.onChange(async v => {
+					this.plugin.settings.resolvePolicy = v as ResolvePolicy;
+					await this.plugin.saveSettings();
+					this.display();
+				});
+			});
 
 		// Dimensions
 		const fb: Dimensions = this.plugin.settings.fallbackDefaults;

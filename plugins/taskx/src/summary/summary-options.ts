@@ -1,6 +1,10 @@
-import { type DataviewInlineApi } from "obsidian-dataview";
-
-import { buildExtendedOptions, defaultOptions, type ExtendedOptions, type Options } from "../utils";
+import {
+	buildExtendedOptions,
+	defaultOptions,
+	type ExtOptions,
+	type ExtendedOptions,
+	type Options,
+} from "../utils";
 
 export const SUMMARY_NAMES = [
 	"hello-world", // for quick debugging
@@ -32,8 +36,7 @@ const defaultSummaryOptions: Required<SummaryOptions> = {
 
 export function buildExtendedSummaryOptions(
 	options: SummaryOptions,
-	dv: DataviewInlineApi,
-	tasksPlugin: TasksPlugin,
+	extOptions: ExtOptions,
 ): ExtendedSummaryOptions {
 	const name = options.name || defaultSummaryOptions.name;
 	const groupBy = options.groupBy || defaultSummaryOptions.groupBy;
@@ -41,6 +44,6 @@ export function buildExtendedSummaryOptions(
 	return {
 		name,
 		groupBy,
-		...buildExtendedOptions(options, dv, tasksPlugin),
+		...buildExtendedOptions(options, extOptions),
 	};
 }

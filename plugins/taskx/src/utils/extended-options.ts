@@ -1,6 +1,8 @@
 import { type DataviewInlineApi } from "obsidian-dataview";
 
 import { processTasks, type ProcessedTasks } from "./process-tasks";
+import { type Resolver } from "../settings";
+import { type TaskXPluginInterface } from "../types/taskx-plugin";
 
 export interface Options {
 	readonly excludeFolders?: string[];
@@ -9,10 +11,14 @@ export interface Options {
 	readonly keepNotStarted?: boolean;
 }
 
-export interface ExtendedOptions extends Required<Options>, ProcessedTasks {
+export interface ExtOptions {
 	readonly dv: DataviewInlineApi;
 	readonly tasksPlugin: TasksPlugin;
+	readonly resolver: Resolver;
+	readonly settings: TaskXPluginInterface["settings"];
 }
+
+export interface ExtendedOptions extends Required<Options>, ExtOptions, ProcessedTasks {}
 
 export const defaultOptions: Required<Options> = {
 	excludeFolders: ["Templates"],
@@ -21,20 +27,15 @@ export const defaultOptions: Required<Options> = {
 	keepNotStarted: false,
 };
 
-export function buildExtendedOptions(
-	options: Options,
-	dv: DataviewInlineApi,
-	tasksPlugin: TasksPlugin,
-): ExtendedOptions {
+export function buildExtendedOptions(options: Options, extOptions: ExtOptions): ExtendedOptions {
 	const opts: Required<Options> = { ...defaultOptions, ...options };
 
-	const tasks = tasksPlugin.getTasks(); // <-- this should return all cached tasks
-	const dvTasks = dv.pages().file.tasks;
+	const tasks = extOptions.tasksPlugin.getTasks(); // <-- this should return all cached tasks
+	const dvTasks = extOptions.dv.pages().file.tasks;
 
 	return {
 		...opts,
-		dv,
-		tasksPlugin,
+		...extOptions,
 		...processTasks(tasks, dvTasks, opts),
 	};
 }

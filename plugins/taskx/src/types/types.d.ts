@@ -11,4 +11,4 @@ type TaskXMarkdown = Brand<string, "Markdown">;
 type TaskXPath = Brand<string, "Path">;
 
 type Tag = Brand<string, "Tag">; // #tic, #admin...
-type Locale = Brand<string, "Locale">; // "fr", "en", "fr-FR", etc.
+type Locale = "fr" | "en"; // "fr", "en", "fr-FR", etc.

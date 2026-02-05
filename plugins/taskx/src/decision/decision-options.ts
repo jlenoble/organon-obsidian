@@ -1,7 +1,6 @@
-import { type DataviewInlineApi } from "obsidian-dataview";
-
 import type { Friction, Gain, Pressure } from "../scoring";
-import { buildExtendedOptions, defaultOptions, type ExtendedOptions, type Options } from "../utils";
+import type { ExtOptions, ExtendedOptions, Options } from "../utils";
+import { buildExtendedOptions, defaultOptions } from "../utils";
 import type { Badge, Bin } from "./binning";
 
 export const DECISION_VIEW_NAMES = [
@@ -56,12 +55,11 @@ const defaultDecisionOptions: Required<DecisionOptions> = {
 
 export function buildExtendedDecisionOptions(
 	options: DecisionOptions,
-	dv: DataviewInlineApi,
-	tasksPlugin: TasksPlugin,
+	extOptions: ExtOptions,
 ): ExtendedDecisionOptions {
 	return {
 		...defaultDecisionOptions,
 		...options,
-		...buildExtendedOptions(options, dv, tasksPlugin),
+		...buildExtendedOptions(options, extOptions),
 	};
 }
