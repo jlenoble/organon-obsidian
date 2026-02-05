@@ -5,6 +5,7 @@ import {
 	buildExtendedDecisionOptions,
 	DECISION_VIEW_NAMES,
 	decisionCell,
+	nextTask,
 	type DecisionOptions,
 	type ExtendedDecisionOptions,
 } from "./decision";
@@ -189,6 +190,10 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 		switch (extOptions.viewName) {
 			case "cell":
 				decisionCell(extOptions);
+				break;
+
+			case "next":
+				nextTask(extOptions);
 				break;
 
 			default:
