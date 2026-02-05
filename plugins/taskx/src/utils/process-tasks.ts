@@ -4,7 +4,6 @@ import { type Options } from "./extended-options";
 import { extractId, extractIdsByEmoji } from "./extractors";
 import { filterTasks } from "./filter-tasks";
 import { buildRelationGraphs, type Graphs } from "./graphs";
-import { buildTaskNodes, type TaskNode } from "./nodes";
 import { TaskX } from "./taskx";
 import { makeTempTaskId } from "./temp-id";
 
@@ -15,8 +14,6 @@ export interface ProcessedTasks {
 	readonly tasksMissingIds: Array<Task>;
 	/** Tasks that have already used ids */
 	readonly tasksUsurpingIds: Array<Task>;
-	/** Inheritance tree when tasks are split into smaller tasks */
-	readonly taskNodes: Array<TaskNode>;
 	/** Relation graphs between tasks */
 	readonly graphs: Graphs;
 	/** Tasks as collected by Tasks plugin */
@@ -83,8 +80,6 @@ export function processTasks(
 		taskMap.set(key, new TaskX(TaskX.taskMap.get(key)!, dvTask));
 	}
 
-	const taskNodes: TaskNode[] = buildTaskNodes(TaskX.taskMap);
-
 	TaskX.taskxMap = taskMap;
 
 	const graphs = buildRelationGraphs(
@@ -109,7 +104,6 @@ export function processTasks(
 		taskMap,
 		tasksMissingIds,
 		tasksUsurpingIds,
-		taskNodes,
 		graphs,
 		tasks,
 		dvTasks,
