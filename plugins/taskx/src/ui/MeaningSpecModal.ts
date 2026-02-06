@@ -5,6 +5,7 @@ import { clamp0to5, defaultDimensions } from "../scoring";
 import type { MeaningId, MeaningSpec, NormalizationOptions, TagLexicon } from "../settings";
 import { defaultLexicon, normalize, normalizeList } from "../settings";
 import { splitCsvOrLines, validateLocale, validateMeaningId } from "./helpers";
+import { toggleButton } from "./toggle-button";
 
 export type MeaningSpecModalMode =
 	| { mode: "create"; initial?: Partial<MeaningSpec> }
@@ -172,7 +173,6 @@ export class MeaningSpecModal extends Modal {
 				dim.gain = clamp0to5(n);
 			});
 		});
-
 		new Setting(host).setName("Pressure").addText(t => {
 			t.setValue(String(dim.pressure ?? 0));
 			t.onChange(v => {
@@ -183,7 +183,6 @@ export class MeaningSpecModal extends Modal {
 				dim.pressure = clamp0to5(n);
 			});
 		});
-
 		new Setting(host).setName("Friction").addText(t => {
 			t.setValue(String(dim.friction ?? 0));
 			t.onChange(v => {
@@ -193,6 +192,17 @@ export class MeaningSpecModal extends Modal {
 				}
 				dim.friction = clamp0to5(n);
 			});
+		});
+
+		// isAuthority
+		toggleButton({
+			containerEl: host,
+			name: "Tag is authoritative",
+			description: "If enabled, tagged tasks are marked for B3.",
+			initValue: !!this.spec.isAuthority,
+			onChange: v => {
+				this.spec.isAuthority = v;
+			},
 		});
 
 		// neutral aliases

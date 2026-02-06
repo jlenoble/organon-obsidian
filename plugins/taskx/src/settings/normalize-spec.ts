@@ -23,6 +23,8 @@ export function normalizeSpec(spec: MeaningSpec, opt: NormalizationOptions): Mea
 		friction: clamp0to5(spec.dimensions.friction),
 	};
 
+	const isAuthority = spec.isAuthority ?? false;
+
 	const languages: Partial<Record<Locale, TagLexicon>> = {};
 
 	for (const [locale, lexicon] of Object.entries(spec.languages) as Array<[Locale, TagLexicon]>) {
@@ -44,7 +46,7 @@ export function normalizeSpec(spec: MeaningSpec, opt: NormalizationOptions): Mea
 
 	const neutralAliases: Tag[] = normalizeList(spec.neutralAliases, opt);
 
-	return { id, dimensions, languages, neutralAliases };
+	return { id, dimensions, isAuthority, languages, neutralAliases };
 }
 
 export function normalizeSpecList(specs: MeaningSpec[], opt: NormalizationOptions): MeaningSpec[] {

@@ -9,6 +9,11 @@ export type MeaningSpec = {
 	// what it means in scoring terms
 	dimensions: Dimensions;
 
+	/** Marks this tag family as representing an external/authority constraint (B3 domain).
+	 *  Default: false. We only treat tasks as "authority" when this is explicitly set.
+	 */
+	isAuthority?: boolean;
+
 	/**
 	 * Clean separation: each language has its own lexicon.
 	 * Example: fr:{canonical:["#rappel"],aliases:["#remind"]} etc
