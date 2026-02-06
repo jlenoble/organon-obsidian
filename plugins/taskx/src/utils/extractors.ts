@@ -39,6 +39,10 @@ export function extractIdsByEmoji(text: string, emoji: string): string[] {
  * - ⏱️ 1mo
  */
 export function extractDuration(text: string): moment.Duration | null {
+	return parseToMomentDuration(extractDurationToken(text));
+}
+
+export function extractDurationToken(text: string): string {
 	const escaped = escapeRegExp("⏱️");
 
 	// Capture after emoji:
@@ -51,12 +55,29 @@ export function extractDuration(text: string): moment.Duration | null {
 
 	const m = text.match(re);
 	if (!m) {
-		return null;
+		return "";
 	}
 
-	const raw = m[1].trim();
+	return m[1].trim();
+}
 
-	return parseToMomentDuration(raw);
+export function extractDurationTokenWithEmoji(text: string): string {
+	const escaped = escapeRegExp("⏱️");
+
+	// Capture after emoji:
+	// first chunk: number + unit (mo|w|d|h|m)
+	// optional second chunk: number + (h|m) to allow "1h30" or "1h30m"
+	const re = new RegExp(
+		`(` + `${escaped}\\s*` + `(?:\\d+\\s*(?:mo|w|d|h|m))` + `(?:\\s*\\d+\\s*(?:h|m))?` + `)`,
+		"u",
+	);
+
+	const m = text.match(re);
+	if (!m) {
+		return "";
+	}
+
+	return m[1].trim();
 }
 
 function parseToMomentDuration(raw: string): moment.Duration | null {

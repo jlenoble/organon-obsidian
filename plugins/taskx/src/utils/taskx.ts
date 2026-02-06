@@ -10,6 +10,7 @@ export class TaskX {
 
 	#children: TaskX[];
 
+	#description: TaskXMarkdown;
 	#id: TaskXId;
 	#markdown: TaskXMarkdown;
 	#parentId: TaskXId | null;
@@ -32,6 +33,9 @@ export class TaskX {
 	get createdDate(): TaskDate {
 		return this.#task.createdDate?.clone() || null;
 	}
+	get description(): string {
+		return this.#description;
+	}
 	get doneDate(): TaskDate {
 		return this.#task.doneDate?.clone() || null;
 	}
@@ -46,6 +50,9 @@ export class TaskX {
 	}
 	get markdown(): string {
 		return this.#markdown;
+	}
+	get originalDescription(): string {
+		return this.#task.description;
 	}
 	get originalMarkdown(): string {
 		return this.#task.originalMarkdown;
@@ -89,6 +96,7 @@ export class TaskX {
 		this.#children = [];
 
 		this.#markdown = normalizeTaskText(this.#task.originalMarkdown);
+		this.#description = normalizeTaskText(this.#task.description);
 		this.#path = normalizePath(this.#task.path);
 		this.#id = TaskX.getId(this.#markdown, this.#path);
 		this.#parentId = extractParentId(this.#markdown) as TaskXId | null;

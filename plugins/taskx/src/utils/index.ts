@@ -1,4 +1,5 @@
 export * from "./disposer";
+export * from "./durations";
 export * from "./extended-options";
 export * from "./extractors";
 export * from "./filter-tasks";
