@@ -1,5 +1,7 @@
-import type { Friction, Gain, Pressure } from "../scoring";
-import type { ExtOptions, ExtendedOptions, Options } from "../utils";
+import { type DvTask } from "obsidian-dataview";
+
+import type { Dimensions, Friction, Gain, Pressure } from "../scoring";
+import type { ExtOptions, ExtendedOptions, Options, TaskX } from "../utils";
 import { buildExtendedOptions, defaultOptions } from "../utils";
 import type { Badge, Bin } from "./binning";
 
@@ -36,6 +38,13 @@ export interface DecisionOptions extends Options {
 }
 
 export interface ExtendedDecisionOptions extends Required<DecisionOptions>, ExtendedOptions {}
+export type ExtDvTask = DvTask & {
+	id: TaskXId;
+	dimensions: Dimensions;
+	score: number;
+	duration?: moment.Duration;
+	taskx: TaskX;
+};
 
 const defaultDecisionOptions: Required<DecisionOptions> = {
 	viewName: "cell",
