@@ -7,6 +7,7 @@ import {
 	DECISION_VIEW_NAMES,
 	decisionCell,
 	nextTask,
+	scheduleDay,
 	type DecisionOptions,
 	type ExtendedDecisionOptions,
 } from "./decision";
@@ -200,6 +201,10 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 
 			case "next":
 				nextTask(extOptions);
+				break;
+
+			case "day":
+				scheduleDay(extOptions);
 				break;
 
 			default:

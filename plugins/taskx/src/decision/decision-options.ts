@@ -11,6 +11,7 @@ export const DECISION_VIEW_NAMES = [
 	"basin", // one bason Bn at a time
 	"next", // next task, in order
 	"doctor:duration", // list tasks missing durations
+	"day", // day schedule time blocks
 ] as const;
 
 export const SCORE_MODES = [
