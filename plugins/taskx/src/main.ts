@@ -2,6 +2,7 @@ import { Plugin } from "obsidian";
 import type { DataviewApi, DataviewInlineApi } from "obsidian-dataview";
 
 import {
+	basin,
 	buildExtendedDecisionOptions,
 	DECISION_VIEW_NAMES,
 	decisionCell,
@@ -191,6 +192,10 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 		switch (extOptions.viewName) {
 			case "cell":
 				decisionCell(extOptions);
+				break;
+
+			case "basin":
+				basin(extOptions);
 				break;
 
 			case "next":

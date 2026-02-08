@@ -3,6 +3,7 @@ import type { DataArray } from "obsidian-dataview";
 import { scoreTask } from "../scoring";
 import { extractDurationTokenWithEmoji, formatTaskDurationToken, TaskX } from "../utils";
 import { frictionBadge } from "./binning";
+import { isAuthorityTask } from "./decision-engine";
 import type { ExtDvTask, ExtendedDecisionOptions } from "./decision-options";
 
 export const allDvTasks = (options: ExtendedDecisionOptions): DataArray<ExtDvTask> => {
@@ -34,6 +35,8 @@ export const allDvTasks = (options: ExtendedDecisionOptions): DataArray<ExtDvTas
 				description = description + " ⏱️ ❓";
 			}
 
+			const isAuthority = isAuthorityTask(taskx, options);
+
 			const markdown = taskx.markdown.replace(taskx.description, description);
 
 			const visual = `${prefix} ${markdown}`;
@@ -43,6 +46,7 @@ export const allDvTasks = (options: ExtendedDecisionOptions): DataArray<ExtDvTas
 				dimensions,
 				score,
 				duration,
+				isAuthority,
 				taskx,
 			};
 

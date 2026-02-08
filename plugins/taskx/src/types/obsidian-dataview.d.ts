@@ -56,6 +56,7 @@ declare module "obsidian-dataview" {
 		line: number;
 		path: string;
 		start?: DateTime;
+		visual: string;
 	}
 
 	/** Dataview file metadata. */

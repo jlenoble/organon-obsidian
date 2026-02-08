@@ -18,7 +18,9 @@ export interface ExtOptions {
 	readonly settings: TaskXPluginInterface["settings"];
 }
 
-export interface ExtendedOptions extends Required<Options>, ExtOptions, ProcessedTasks {}
+export interface ExtendedOptions extends Required<Options>, ExtOptions, ProcessedTasks {
+	readonly authorityTags: Tag[];
+}
 
 export const defaultOptions: Required<Options> = {
 	excludeFolders: ["Templates"],
@@ -33,9 +35,26 @@ export function buildExtendedOptions(options: Options, extOptions: ExtOptions): 
 	const tasks = extOptions.tasksPlugin.getTasks(); // <-- this should return all cached tasks
 	const dvTasks = extOptions.dv.pages().file.tasks;
 
+	const authorityTags: Set<Tag> = new Set();
+
+	for (const spec of extOptions.settings.meaningSpecs) {
+		if (spec.isAuthority) {
+			for (const tag of spec.neutralAliases) {
+				authorityTags.add(tag);
+			}
+			for (const lex of Object.values(spec.languages)) {
+				authorityTags.add(lex.canonical);
+				for (const tag of lex.aliases) {
+					authorityTags.add(tag);
+				}
+			}
+		}
+	}
+
 	return {
 		...opts,
 		...extOptions,
 		...processTasks(tasks, dvTasks, opts),
+		authorityTags: Array.from(authorityTags),
 	};
 }

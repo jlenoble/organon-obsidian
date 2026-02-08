@@ -4,9 +4,11 @@ import type { Dimensions, Friction, Gain, Pressure } from "../scoring";
 import type { ExtOptions, ExtendedOptions, Options, TaskX } from "../utils";
 import { buildExtendedOptions, defaultOptions } from "../utils";
 import type { Badge, Bin } from "./binning";
+import { type Basin } from "./decision-engine";
 
 export const DECISION_VIEW_NAMES = [
 	"cell", // one cell from the decision table, with fixed Gain × Pressure
+	"basin", // one bason Bn at a time
 	"next", // next task, in order
 	"doctor:duration", // list tasks missing durations
 ] as const;
@@ -35,6 +37,13 @@ export interface DecisionOptions extends Options {
 	pBin?: Bin;
 
 	fBadge?: Badge;
+
+	basin?: Basin;
+
+	thresholds?: {
+		b1MaxMinutes: number;
+		b4MinOutgoingLinks: number;
+	};
 }
 
 export interface ExtendedDecisionOptions extends Required<DecisionOptions>, ExtendedOptions {}
@@ -43,6 +52,7 @@ export type ExtDvTask = DvTask & {
 	dimensions: Dimensions;
 	score: number;
 	duration?: moment.Duration;
+	isAuthority: boolean;
 	taskx: TaskX;
 };
 
@@ -60,6 +70,13 @@ const defaultDecisionOptions: Required<DecisionOptions> = {
 	pBin: 0,
 
 	fBadge: "🟢",
+
+	basin: "B0",
+
+	thresholds: {
+		b1MaxMinutes: 15,
+		b4MinOutgoingLinks: 2,
+	},
 
 	...defaultOptions,
 };

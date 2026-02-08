@@ -115,24 +115,38 @@ export function resolveMeaningId(
 	return null;
 }
 
+export function resolveSpec(
+	args: {
+		tag: string;
+		resolver: Resolver;
+	} & TaskXPluginSettings,
+): MeaningSpec | null {
+	const id = resolveMeaningId(args);
+
+	if (!id) {
+		console.warn(`Tag ${args.tag} is not yet handled`);
+		return null;
+	}
+
+	return args.meaningSpecs.find(spec => spec.id === id) || null;
+}
+
 export function resolveDimensions(
 	args: {
 		tag: string;
 		resolver: Resolver;
 	} & TaskXPluginSettings,
 ): Dimensions {
-	const id = resolveMeaningId(args);
+	const spec = resolveSpec(args);
+	return spec ? spec.dimensions : defaultDimensions();
+}
 
-	if (!id) {
-		console.warn(`Tag ${args.tag} is not yet handled`);
-		return defaultDimensions();
-	}
-
-	const spec = args.meaningSpecs.find(spec => spec.id === id);
-
-	if (!spec) {
-		return defaultDimensions();
-	}
-
-	return spec.dimensions;
+export function resolveAuthority(
+	args: {
+		tag: string;
+		resolver: Resolver;
+	} & TaskXPluginSettings,
+): boolean {
+	const spec = resolveSpec(args);
+	return spec?.isAuthority ?? false;
 }
