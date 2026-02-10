@@ -1,12 +1,8 @@
 import type { DataviewInlineApi } from "obsidian-dataview";
 
 import { computeSchedulingHint } from "./decision-scheduling-hints";
+import { fmt } from "./helpers";
 import type { DaySchedule } from "./schedule-types";
-
-function fmt(t: moment.Moment): string {
-	// moment-like formatting
-	return t.format("HH:mm");
-}
 
 export function renderDaySchedule(dv: DataviewInlineApi, schedule: DaySchedule): void {
 	if (schedule.diagnostics.length) {

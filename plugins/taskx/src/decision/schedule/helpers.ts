@@ -14,3 +14,13 @@ export function clampToHorizon(ctx: DayContext, e: FixedEvent): FixedEvent | nul
 	}
 	return { ...e, start, end };
 }
+
+export function atToday(now: moment.Moment, hhmm: string): moment.Moment {
+	const [h, m] = hhmm.split(":").map(x => parseInt(x, 10));
+	return now.clone().hour(h).minute(m).second(0).millisecond(0);
+}
+
+export function fmt(t: moment.Moment): string {
+	// moment-like formatting
+	return t.format("HH:mm");
+}

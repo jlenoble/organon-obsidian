@@ -119,6 +119,7 @@ export type DaySchedule = {
 	blocks: TimeBlockPlan[];
 	items: ScheduledItem[];
 	diagnostics: string[];
+	allTasks: ExtDvTask[];
 };
 
 export type ScheduleOptions = {

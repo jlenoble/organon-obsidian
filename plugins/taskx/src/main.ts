@@ -3,10 +3,12 @@ import type { DataviewApi, DataviewInlineApi } from "obsidian-dataview";
 
 import {
 	basin,
+	buildDayScheduleObject,
 	buildExtendedDecisionOptions,
 	DECISION_VIEW_NAMES,
 	decisionCell,
 	nextTask,
+	renderNowView,
 	scheduleDay,
 	type DecisionOptions,
 	type ExtendedDecisionOptions,
@@ -203,9 +205,15 @@ export default class TaskXPlugin extends Plugin implements TaskXPluginInterface 
 				nextTask(extOptions);
 				break;
 
-			case "day":
+			case "day:now": {
+				const schedule = buildDayScheduleObject(extOptions);
+				renderNowView(this.dv, extOptions, schedule);
+				break;
+			}
+			case "day:table": {
 				scheduleDay(extOptions);
 				break;
+			}
 
 			default:
 				this.dv.paragraph(

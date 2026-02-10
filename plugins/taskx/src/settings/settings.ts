@@ -1,13 +1,16 @@
-import { defaultDimensions, type Dimensions } from "../scoring";
 import type { MeaningId, MeaningSpec } from "./meaning";
 import { type NormalizationOptions } from "./normalize-tag";
 import { type ResolvePolicy } from "./tag-lexicon-resolver";
+import { DEFAULT_DAY_PROFILE_SETTINGS } from "../decision/schedule/profile-defaults";
+import type { DayProfileSettings } from "../decision/schedule/profile-types";
+import { defaultDimensions, type Dimensions } from "../scoring";
 
 export interface TaskXPluginSettings extends NormalizationOptions {
 	meaningSpecs: MeaningSpec[];
 	fallbackDefaults: Dimensions;
 	locale: Locale;
 	resolvePolicy: ResolvePolicy;
+	dayProfiles?: DayProfileSettings;
 }
 
 export const DEFAULT_SETTINGS: TaskXPluginSettings = {
@@ -40,4 +43,6 @@ export const DEFAULT_SETTINGS: TaskXPluginSettings = {
 
 	normalizeTagsToLowercase: true,
 	removeHyphensAndUnderscores: false,
+
+	dayProfiles: DEFAULT_DAY_PROFILE_SETTINGS,
 };
