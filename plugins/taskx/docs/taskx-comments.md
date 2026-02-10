@@ -3,6 +3,10 @@
 This document defines the **authoritative commenting style** for the TaskX codebase.
 All new files and changes must follow these conventions.
 
+The purpose of these rules is simple: make the code understandable to a future you
+(or a future teammate) without having to reconstruct the architecture from scratch.
+Comments are part of the design, not decoration.
+
 Goals:
 
 - Make intent and boundaries explicit.
@@ -12,45 +16,82 @@ Goals:
 
 Tone:
 
-- Use a **collective, neutral voice**: “we”, “our intent”, “the system”.
-- Avoid addressing a person directly.
+- Use a **collective, neutral voice**: “we”, “the system”, “this layer”.
+- Do not address a person directly.
+- Prefer short, clear sentences.
 - Prefer intent and invariants over implementation trivia.
+- Prefer **plain English first**, then structured clarifications if needed.
+
+The preambles in `src/core/model/*.ts` are the **reference style** for tone:
+narrative, architectural, and focused on why a file exists and what it guarantees.
 
 ---
 
 ## 1) File preamble (mandatory for all non-trivial files)
 
-Every file must start with a block comment with the following sections:
+Every non-trivial file must start with a block comment.
+
+### 1.1 Path line (mandatory)
+
+The first line of the preamble must be the file path **relative to `src/`**, and must **not**
+include the `src/` prefix.
+
+Example:
 
 ```ts
 /**
- * <path/to/file.ts>
+ * core/pipeline/stage-rank.ts
  *
- * What this file is:
- * - <1–2 lines describing the role of this file in the architecture.>
- *
- * Why this exists:
- * - <Explain the architectural boundary or seam this file establishes.>
- * - <Explain what problem it isolates or decouples.>
- *
- * Responsibilities:
- * - <Bullet list of what this file does.>
- * - <Keep this concrete and testable.>
- *
- * Non-goals:
- * - <Bullet list of what this file explicitly does NOT do.>
- * - <Helps prevent scope creep and accidental coupling.>
- *
- * Design notes:
- * - <Optional: invariants, extension points, or future evolution hints.>
+ * ...
  */
 ```
 
+### 1.2 Content and structure
+
+A file preamble should first **explain itself in plain English**.
+
+A reader should be able to understand, after a few sentences:
+
+- What role this file plays in the architecture,
+- Why it exists,
+- What boundary or responsibility it establishes,
+- What kind of problems it is meant to solve or avoid.
+
+After this narrative introduction, it is **allowed and encouraged** to add
+short, labeled bullet sections to make things precise.
+
+For example:
+
+- `Intent:`
+- `Goals:`
+- `Limits:`
+- `Non-goals:`
+- `Caveats:`
+- `Invariants:`
+
+These bullet sections exist to **clarify** the text, not to replace it.
+They should never be the only content of the preamble.
+
 Guidelines:
 
-- Keep it **architectural**, not historical.
+- Start with a short explanatory text in full sentences.
+- Keep sentences simple and direct.
+- Use bullet lists only after the intent is clear.
+- Keep the focus **architectural**, not historical.
 - Prefer **stable intent** over current implementation details.
-- If a file is truly trivial, the preamble may be shortened but must still exist.
+- If a file is truly trivial, the preamble may be shorter, but it must still exist.
+
+### 1.3 Anti-patterns (avoid)
+
+Do **not** write file preambles as:
+
+- A pure bullet list with no narrative introduction,
+- A spec sheet with only section headers and checklists,
+- A restatement of the roadmap or folder structure,
+- API documentation for the contents of the file,
+- A history log (“we used to…”, “this was added because…”).
+
+The goal is to **make sense first**, then **make things precise**.
 
 ---
 
@@ -61,7 +102,7 @@ Guidelines:
 Add JSDoc when a symbol:
 
 - Represents a **domain concept** (e.g., TaskEntity, Issue, Recommendation).
-- Is part of a **public/internal contract** between layers.
+- Is part of a **public or internal contract** between layers.
 - Has **invariants, expectations, or non-obvious semantics**.
 - Marks an **architectural seam** (pipeline stage, registry, adapter boundary).
 
@@ -74,22 +115,30 @@ Do NOT:
 ### 2.2 Style guidelines
 
 - Use full sentences.
+- Keep sentences short and concrete.
 - Explain:
   - What this represents,
   - Why it exists,
   - What it guarantees,
   - What it deliberately does not cover (if relevant).
 
-- Prefer sections like:
-  - “Notes:”
-  - “Invariants:”
-  - “Rationale:”
+You may use short labeled sections such as:
+
+- `Notes:`
+- `Invariants:`
+- `Rationale:`
+- `Limits:`
+
+Use them to clarify, not to replace the explanation.
 
 ### 2.3 Example
 
 ```ts
 /**
  * A RecommendationFeed is the structured, UI-ready output of the pipeline.
+ *
+ * It represents the final decision of the core about what should be shown to the user.
+ * The UI is expected to render this as-is, without reinterpreting it.
  *
  * Invariants:
  * - Sections are already ordered.
@@ -118,11 +167,16 @@ Document functions when they:
 - Implement a **policy or transformation step**.
 - Hide non-trivial decisions or invariants.
 
+Structure:
+
+- Start with 1–2 sentences that explain what the function does and why it exists.
+- Then, if useful, add a small labeled bullet section.
+
 Template:
 
 ```ts
 /**
- * <Short summary of what this function does.>
+ * <Short explanation of what this function does and why it exists.>
  *
  * Notes:
  * - <Purity / side effects expectations.>
@@ -136,6 +190,8 @@ Example:
 ```ts
 /**
  * Group and order recommendations into a feed structure for rendering.
+ *
+ * This is the place where presentation order becomes a core decision, not a UI concern.
  *
  * Notes:
  * - This function is pure and must not mutate its inputs.
@@ -184,14 +240,17 @@ registry.push(detector);
 - Do not describe **temporary states** or TODOs as architecture.
 - Do not explain **history** (“we used to…”).
 - Do not encode **UI instructions** in core logic comments.
-- Do not duplicate information that belongs in docs/taskx-roadmap.md or docs/taskx-naming.md.
+- Do not duplicate information that belongs in `docs/taskx-roadmap.md` or `docs/taskx-naming.md`.
 
 ---
 
 ## 6) Consistency rules
 
 1. Every non-trivial file has a preamble.
-2. Every domain-level type has a JSDoc explaining intent and invariants.
-3. Pipeline stages and registries always document purity and responsibility.
-4. Inline comments justify **why**, not **what**.
-5. If a comment becomes false, **fix or remove it immediately**.
+2. The preamble starts with the **path relative to `src/`**, without the `src/` prefix.
+3. The preamble starts with **plain English explanation** before any bullet lists.
+4. Any bullet list must be under a **labeled section** (Intent, Goals, Limits, Non-goals, etc.).
+5. Every domain-level type has a JSDoc explaining intent and invariants.
+6. Pipeline stages and registries always document purity and responsibility.
+7. Inline comments justify **why**, not **what**.
+8. If a comment becomes false, **fix or remove it immediately**.
