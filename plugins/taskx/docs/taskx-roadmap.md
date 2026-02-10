@@ -185,7 +185,7 @@ Stages (in order):
 - ✅ `stage-recommend.ts`
   Convert issues and facts into `Recommendation[]` (fix + minimal do-now).
 
-- 🟡 `stage-rank.ts` (M0)
+- ✅ `stage-rank.ts`
   Group and order `Recommendation[]` into a `RecommendationFeed`.
 
 - 🟡 `pipeline.ts` (M0)
