@@ -1,4 +1,6 @@
 /**
+ * core/registries/issue-detectors.ts
+ *
  * This file defines the registry for issue detectors.
  *
  * Why a registry:

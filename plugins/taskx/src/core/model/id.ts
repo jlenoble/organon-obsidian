@@ -1,4 +1,6 @@
 /**
+ * core/model/id.ts
+ *
  * We centralize ID conventions here because IDs become the “spine” of the system:
  * tasks, issues, fixes, recommendations, templates, superblocks, etc.
  *

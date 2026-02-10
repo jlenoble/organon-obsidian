@@ -1,4 +1,6 @@
 /**
+ * core/model/recommendation.ts
+ *
  * This file defines the UI-facing contract of the TaskX core:
  * the Recommendation and RecommendationFeed structures.
  *

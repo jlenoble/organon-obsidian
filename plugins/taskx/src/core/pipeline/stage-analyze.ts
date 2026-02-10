@@ -1,4 +1,6 @@
 /**
+ * core/pipeline/stage-analyze.ts
+ *
  * This file defines the analysis stage of the pipeline.
  *
  * Responsibility:

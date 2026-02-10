@@ -1,4 +1,6 @@
 /**
+ * core/pipeline/stage-collect.ts
+ *
  * This file defines the collection stage of the pipeline.
  *
  * Responsibility:

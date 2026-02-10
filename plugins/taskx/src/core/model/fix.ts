@@ -1,4 +1,6 @@
 /**
+ * core/model/fix.ts
+ *
  * This file defines how the TaskX core represents “fixes”:
  * proposals to change the current state of tasks or notes in order to
  * remove blockers, improve structure, or make progress possible.

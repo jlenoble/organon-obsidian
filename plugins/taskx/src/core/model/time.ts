@@ -1,4 +1,6 @@
 /**
+ * core/model/time.ts
+ *
  * This file defines how the TaskX core becomes “aware of time”.
  *
  * Design goals:

@@ -1,4 +1,6 @@
 /**
+ * core/model/facts.ts
+ *
  * This file defines the “derived facts” layer: computed properties about tasks.
  *
  * Why facts exist:

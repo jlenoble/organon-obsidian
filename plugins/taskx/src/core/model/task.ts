@@ -1,4 +1,6 @@
 /**
+ * core/model/task.ts
+ *
  * This file defines the canonical, tool-agnostic representation of a task inside TaskX.
  *
  * Why this exists:

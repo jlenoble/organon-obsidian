@@ -1,4 +1,6 @@
 /**
+ * core/pipeline/stage-issues.ts
+ *
  * This file defines the issue detection stage of the pipeline.
  *
  * Responsibility:

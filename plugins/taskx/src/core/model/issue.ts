@@ -1,4 +1,6 @@
 /**
+ * core/model/issue.ts
+ *
  * This file defines how the TaskX core represents “issues”:
  * detected blockers, inconsistencies, or missing information that prevent tasks
  * from flowing toward execution.

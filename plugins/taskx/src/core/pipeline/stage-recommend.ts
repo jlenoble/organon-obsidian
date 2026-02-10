@@ -1,4 +1,6 @@
 /**
+ * core/pipeline/stage-recommend.ts
+ *
  * This file defines the recommendation compilation stage of the pipeline.
  *
  * Responsibility:
