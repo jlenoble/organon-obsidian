@@ -8,6 +8,7 @@ Its goals are:
 - Preserve architectural coherence over time.
 - Avoid scope creep and accidental coupling.
 - Make history readable and meaningful.
+- Prioritize end-to-end usefulness over feature accumulation.
 
 These rules apply to **all contributors** and to all changes, regardless of size.
 
@@ -27,20 +28,57 @@ These rules apply to **all contributors** and to all changes, regardless of size
 4. **History should explain itself**
    Commit messages are not a formality; they are the primary record of architectural intent.
 
+5. **Throughput beats sophistication**
+   The primary short- and mid-term goal is to maximize the number of tasks that can flow
+   end-to-end toward completion. Feature richness comes after a working, high-coverage loop exists.
+
 ---
 
-## 2) Change granularity
+## 2) Milestone ordering and priorities
 
-### 2.1 Default rule: one coherent change set
+Development follows this high-level progression:
+
+- **M0 — Vertical slice (make it run)**
+  Achieve an end-to-end path:
+  pipeline → feed → renderer → code block → visible output in Obsidian,
+  even if the data is minimal or stubbed.
+
+- **M1 — Coverage ramp (make it useful)**
+  Add policy-light facts, detectors, and fixes that:
+  - unblock common cases,
+  - require minimal strategic choice,
+  - increase the proportion of tasks that can reach execution or resolution.
+
+  Examples:
+  - missing-duration detection + simple duration fixes,
+  - obvious blocking dependencies,
+  - simple, mechanical normalizations.
+
+- **M2 — Advanced behavior (make it smart)**
+  Introduce policy-heavy or interactive features:
+  - templates,
+  - superblocks,
+  - wizards,
+  - sophisticated planning and shaping heuristics.
+
+Rule of thumb:
+
+> Prefer work that increases **end-to-end throughput** over work that increases **feature surface**.
+
+---
+
+## 3) Change granularity
+
+### 3.1 Default rule: one coherent change set
 
 A change should normally focus on:
 
 - One file, or
-- One tightly related set of files (e.g., a new feature folder, a pipeline stage plus its registry hook, or a bug fix that requires touching both logic and tests/adapters).
+- One tightly related set of files (e.g., a new feature folder, a pipeline stage plus its registry hook, or a bug fix that requires touching both logic and adapters/UI).
 
 The goal is **coherence**, not artificial restriction.
 
-### 2.2 When multiple files are expected and acceptable
+### 3.2 When multiple files are expected and acceptable
 
 Editing multiple files in a single commit is appropriate when:
 
@@ -54,7 +92,7 @@ Editing multiple files in a single commit is appropriate when:
 
 In short: **if the files are inextricably related, they belong together**.
 
-### 2.3 What should not be mixed
+### 3.3 What should not be mixed
 
 Avoid mixing in the same commit:
 
@@ -67,16 +105,36 @@ If in doubt: split the change.
 
 ---
 
-## 3) Standard workflow for adding or changing code
+## 4) Spec drift check (before starting new work)
+
+Before implementing a new feature or stage, perform a quick consistency check in the
+affected area:
+
+- Do file preambles and JSDoc match `docs/taskx-comments.md`?
+- Do names and paths match `docs/taskx-naming.md`?
+- Are import directions consistent with `docs/taskx-import-boundaries.md`?
+- Do responsibilities still match `docs/taskx-roadmap.md`?
+
+If cheap, **fix drift immediately** in a small preliminary refactor.
+If not, record the discrepancy explicitly and plan a dedicated correction step.
+
+The goal is to prevent silent divergence between code and specifications.
+
+---
+
+## 5) Standard workflow for adding or changing code
 
 1. **Consult the roadmap** (`docs/taskx-roadmap.md`)
-   - Identify the next file or area to work on.
+   - Identify the next file or area to work on, with priority given to:
+     - maintaining the vertical slice,
+     - or increasing end-to-end coverage.
    - If the change does not fit the roadmap, update the roadmap first.
 
 2. **Check conventions**
    - Naming: `docs/taskx-naming.md`
    - Comments and documentation: `docs/taskx-comments.md`
    - Commits: `docs/taskx-commits.md`
+   - Import boundaries: `docs/taskx-import-boundaries.md`
 
 3. **Implement the change**
    - Keep the scope minimal but complete.
@@ -94,12 +152,13 @@ If in doubt: split the change.
 
 ---
 
-## 4) Relationship to the roadmap
+## 6) Relationship to the roadmap
 
 The roadmap is **normative**:
 
 - It defines what files and layers are expected to exist.
 - It defines where new responsibilities should go.
+- It encodes the intended milestone progression.
 
 Rules:
 
@@ -109,11 +168,12 @@ Rules:
 
 ---
 
-## 5) Review checklist (mental or explicit)
+## 7) Review checklist (mental or explicit)
 
 Before finalizing a change, verify:
 
 - [ ] Does this change respect the layering rules?
+- [ ] Does it move the system closer to a working vertical slice or higher coverage?
 - [ ] Is the scope coherent and focused?
 - [ ] Are naming and file locations consistent with conventions?
 - [ ] Are comments and docstrings aligned with the comment style guide?
@@ -122,12 +182,13 @@ Before finalizing a change, verify:
 
 ---
 
-## 6) Philosophy
+## 8) Philosophy
 
 TaskX is intended to grow over time into a complex but **comprehensible** system.
 
 We optimize for:
 
+- End-to-end usefulness over speculative features,
 - Long-term readability over short-term speed,
 - Explicit structure over implicit conventions,
 - Predictable evolution over ad-hoc growth.
