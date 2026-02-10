@@ -9,6 +9,12 @@ Goals:
 - Avoid noise and filler text.
 - Keep a clean signal between features, refactors, fixes, and docs.
 
+General formatting rules:
+
+- Wrap all lines at **100 characters maximum**.
+- Prefer short, readable lines over dense paragraphs.
+- Use blank lines to separate logical blocks.
+
 ---
 
 ## 1) Prefixes and scope
@@ -47,6 +53,7 @@ Rules:
 - Keep it **short and specific**.
 - Do not end with a period.
 - Describe **what changes**, not why.
+- Keep the subject line **under 100 characters**.
 
 Examples:
 
@@ -75,6 +82,7 @@ A body is **optional** when:
 
 ### 3.2 Body style rules
 
+- Wrap all lines at **100 characters maximum**.
 - Use **short paragraphs or bullet points**.
 - Do **not** pad with text just to reach a certain length.
 - Prefer:
@@ -99,7 +107,7 @@ objects into a structured RecommendationFeed with semantic sections. This
 centralizes presentation grouping and ordering policy in the pipeline instead
 of the UI.
 
-No advanced scoring or planning policy is introduced here yet; the initial
+No advanced scoring or planning policy is introduced here yet. The initial
 implementation is intentionally simple and deterministic.
 
 ```
@@ -155,3 +163,4 @@ when building the do-now recommendation.
 3. The **body** (if present) explains _why_ and _what boundaries exist_.
 4. Brevity beats verbosity when intent is obvious.
 5. If a future you would ask “why is this like this?”, put that answer in the body.
+6. Keep all lines **at or under 100 characters**.
