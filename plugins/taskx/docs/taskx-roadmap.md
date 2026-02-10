@@ -188,7 +188,7 @@ Stages (in order):
 - ✅ `stage-rank.ts`
   Group and order `Recommendation[]` into a `RecommendationFeed`.
 
-- 🟡 `pipeline.ts` (M0)
+- ✅ `pipeline.ts`
   Orchestrate all stages end-to-end and return the final feed.
 
 Planned later:
