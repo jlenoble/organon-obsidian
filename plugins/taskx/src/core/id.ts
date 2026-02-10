@@ -30,8 +30,24 @@ export type TaskId = Brand<string, "TaskId">;
 /** Issue identifier (usually "issue-id:<taskId>" or "issue-id:global"). */
 export type IssueId = Brand<string, "IssueId">;
 
-/** Fix identifier (stable key for a fix candidate, e.g., "fix:set-duration-15m"). */
+/**
+ * Fix recipe identifier (shared option key).
+ * Examples:
+ * - "fix:set-duration-15m"
+ * - "fix:add-tag:#b5"
+ *
+ * Collisions are intended: the same fix recipe can be proposed for many tasks/issues.
+ */
 export type FixId = Brand<string, "FixId">;
+
+/**
+ * Fix candidate identifier (unique instance key for UI/actions).
+ * Examples:
+ * - "fixcand:missing-duration:<taskId>:fix:set-duration-15m"
+ *
+ * This must be unique per rendered candidate, even when recipeId repeats.
+ */
+export type FixCandidateId = Brand<string, "FixCandidateId">;
 
 /** Recommendation identifier (stable key for a recommendation item in the feed). */
 export type RecommendationId = Brand<string, "RecommendationId">;
