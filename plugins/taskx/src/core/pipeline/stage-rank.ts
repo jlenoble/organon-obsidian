@@ -1,30 +1,24 @@
 /**
- * src/core/pipeline/stage-rank.ts
+ * core/pipeline/stage-rank.ts
  *
- * What this file is:
- * - A pure pipeline stage that converts a flat list of Recommendation items into a structured
- *   RecommendationFeed suitable for direct rendering.
+ * This stage turns a flat list of recommendations into a structured feed.
+ * It is where we decide how the UI will see the output: which sections exist,
+ * which order they appear in, and which order items appear inside each section.
  *
- * Why this exists:
- * - The UI must not re-rank, re-group, or reinterpret recommendations.
- * - Grouping and ordering policy must live in the core pipeline to keep behavior deterministic
- *   and to preserve a stable UI contract over time.
+ * This exists to keep the UI dumb. Rendering should not change meaning.
+ * If grouping or ordering is a decision, it belongs in the pipeline.
  *
- * Responsibilities:
- * - Group recommendations into a small set of semantic sections.
- * - Order sections deterministically.
- * - Order items within each section deterministically.
+ * Intent:
+ * - Produce a RecommendationFeed that is ready to render.
+ * - Keep the result deterministic for the same inputs.
+ *
+ * Limits:
+ * - This is M0 policy. It stays simple and boring.
  *
  * Non-goals:
- * - No advanced scoring policy (weighting, learning, personalization).
- * - No planning heuristics (superblocks, day shaping).
- * - No feature-specific grouping rules (those should be expressed via recommendation kinds
- *   or later dedicated metadata, not UI heuristics).
- *
- * Design notes:
- * - Our current contract is intentionally coarse: we group by Recommendation.kind.
- * - When we later introduce more kinds (wizard, plan), we will extend grouping here rather
- *   than pushing policy into the renderer.
+ * - Advanced scoring or personalization.
+ * - Planning or scheduling logic.
+ * - Feature-specific grouping rules beyond the recommendation kind.
  */
 
 import type {
