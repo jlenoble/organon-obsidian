@@ -20,9 +20,12 @@ TaskX aims to provide:
 - A **progressive, structured path** from raw tasks to concrete action.
 - A system that is **extensible by addition**, not by modification.
 - A codebase that remains **understandable after years of growth**.
+- A system that **maximizes end-to-end task throughput**, i.e. the proportion of tasks
+  that can flow from observation to execution or resolution.
 
 We optimize for:
 
+- End-to-end usefulness and coverage over early feature sophistication,
 - Long-term readability over short-term convenience,
 - Explicit structure over implicit conventions,
 - Deterministic behavior over “magic”.
@@ -102,6 +105,9 @@ Key rules:
 - No stage should embed UI or environment assumptions.
 - Policy decisions (ranking, grouping, planning) live in dedicated stages, not in the UI.
 
+The pipeline exists to **increase end-to-end task throughput** by progressively
+turning raw tasks into actionable recommendations.
+
 ---
 
 ## 5) Extensibility model
@@ -143,7 +149,8 @@ TaskX is **not**:
 - A tag-driven rule system baked into the core,
 - A UI-centric system where logic lives in views.
 
-It is a **decision-support and action-shaping system** built around progressive structure.
+It is a **decision-support and action-shaping system** built around progressive structure
+and increasing task throughput.
 
 ---
 
@@ -151,4 +158,4 @@ It is a **decision-support and action-shaping system** built around progressive 
 
 - If a new requirement does not fit these principles, update this document first.
 - If a shortcut seems tempting, prefer making the architecture explicit instead.
-- Architectural clarity is treated as a feature, not as overhead.
+- Architectural clarity and end-to-end usefulness are treated as features, not as overhead.
