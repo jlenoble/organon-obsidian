@@ -9,6 +9,7 @@
 		"build": "tsc && vite build",
 		"clean": "rm -rf dist dist-types",
 		"copy": "cp dist/* manifest.json temp/obsidian-taskx",
+		"tar": "git archive --format=tar.gz -o taskx.tgz HEAD",
 		"lint": "eslint --ext .ts,.tsx src",
 		"lint:fix": "eslint --ext .ts,.tsx src --fix"
 	},
