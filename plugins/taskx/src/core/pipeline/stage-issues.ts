@@ -15,7 +15,7 @@ import type { TaskFactsIndex } from "../model/facts";
 import type { Issue } from "../model/issue";
 import type { TaskEntity } from "../model/task";
 import type { TimeContext } from "../model/time";
-import { listIssueDetectors } from "../registries/issueDetectors";
+import { listIssueDetectors } from "../registries/issue-detectors";
 
 /**
  * Detect issues in the current task universe.
