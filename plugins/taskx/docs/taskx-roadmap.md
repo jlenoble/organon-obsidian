@@ -240,7 +240,7 @@ Purpose: **bridge the outside world to the core**.
 - 🟡 `adapters/obsidian/patch-applier.ts` (M1)
   Apply `FixAction[]` / patch plans back to markdown files.
 
-- 🟡 `adapters/obsidian/time-context.ts` (M0)
+- ✅ `adapters/obsidian/time-context.ts`
   Build `TimeContext` from the environment.
 
 ---
