@@ -7,6 +7,7 @@ It answers:
 - What folders and files are expected to exist,
 - What each area is responsible for,
 - Which parts are already implemented and which are planned,
+- In which order major capabilities should be built,
 - Where new features must be added.
 
 If there is a conflict between ad-hoc implementation and this file, **this file wins**
@@ -17,6 +18,78 @@ Status markers:
 - ✅ Implemented
 - 🟡 Planned / stubbed
 - ⛔ Not started
+
+---
+
+## 0) Milestones and priorities
+
+Development is organized around three major milestones:
+
+### M0 — Vertical slice (make it run)
+
+Goal:
+
+- Achieve an end-to-end path:
+  pipeline → feed → renderer → code block → visible output in Obsidian,
+  even with minimal or stubbed data.
+
+Focus:
+
+- Pipeline orchestration completeness,
+- Feed rendering,
+- Entry points and plugin wiring.
+
+Success criterion:
+
+- A TaskX code block renders a `RecommendationFeed` in Obsidian.
+
+---
+
+### M1 — Coverage ramp (make it useful)
+
+Goal:
+
+- Maximize the proportion of tasks that can flow end-to-end toward execution or resolution.
+
+Focus:
+
+- Policy-light facts and issue detectors,
+- Mechanical, low-risk fixes,
+- Patch application back to notes,
+- Real task collection from the vault.
+
+Examples:
+
+- Missing duration detection + simple duration fixes,
+- Obvious blocking dependencies,
+- Simple normalization and cleanup steps.
+
+Success criterion:
+
+- A growing share of real tasks can be analyzed, fixed, and executed using TaskX.
+
+---
+
+### M2 — Advanced behavior (make it smart)
+
+Goal:
+
+- Introduce policy-heavy and interactive features.
+
+Focus:
+
+- Templates,
+- Superblocks,
+- Wizards,
+- Sophisticated planning and shaping heuristics.
+
+Success criterion:
+
+- TaskX supports complex workflows and strategic planning, without compromising the M0/M1 pipeline.
+
+Rule of thumb:
+
+> Prefer work that improves **end-to-end throughput** (M1) over work that expands the **feature surface** (M2), once M0 exists.
 
 ---
 
@@ -64,10 +137,11 @@ Purpose: define the **stable language** of the system.
 - ✅ `recommendation.ts`
   `Recommendation`, `RecommendationKind`, and `RecommendationFeed` (UI contract).
 
-Planned additions:
+Planned (M2):
 
 - 🟡 `template.ts`
   Task templates / blueprints (spawnable canonical decompositions).
+
 - 🟡 `superblock.ts`
   Recurring availability windows / planning envelopes.
 
@@ -82,11 +156,13 @@ Purpose: define **plugin-style extension points** without changing the pipeline.
 
 Planned:
 
-- 🟡 `wizards.ts`
+- 🟡 `wizards.ts` (M2)
   Registry for interactive wizards (decomposition, planning, etc.).
-- 🟡 `scorers.ts`
+
+- 🟡 `scorers.ts` (M2)
   Registry for recommendation scoring policies.
-- 🟡 `templates.ts`
+
+- 🟡 `templates.ts` (M2)
   Registry/loader for task templates.
 
 ---
@@ -109,16 +185,16 @@ Stages (in order):
 - ✅ `stage-recommend.ts`
   Convert issues and facts into `Recommendation[]` (fix + minimal do-now).
 
-- 🟡 `stage-rank.ts`
+- 🟡 `stage-rank.ts` (M0)
   Group and order `Recommendation[]` into a `RecommendationFeed`.
 
-- 🟡 `pipeline.ts`
+- 🟡 `pipeline.ts` (M0)
   Orchestrate all stages end-to-end and return the final feed.
 
 Planned later:
 
-- 🟡 `stage-plan.ts` or similar
-  Dedicated planning stage for superblocks, day shaping, etc. (name TBD, but role is here).
+- 🟡 `stage-plan.ts` or similar (M2)
+  Dedicated planning stage for superblocks, day shaping, etc.
 
 ---
 
@@ -126,7 +202,7 @@ Planned later:
 
 Purpose: **one folder per feature**, matching stable IDs.
 
-### Issues
+### Issues (primarily M1)
 
 - 🟡 `features/issues/missing-duration/`
   Detect tasks missing duration and propose fixes.
@@ -138,10 +214,10 @@ Purpose: **one folder per feature**, matching stable IDs.
 Each issue feature provides:
 
 - a detector,
-- fix builders (and later, optional wizard hooks),
+- fix builders,
 - and registers itself in the appropriate registry.
 
-### Wizards
+### Wizards (M2)
 
 - 🟡 `features/wizards/decompose-task/`
 - 🟡 `features/wizards/shape-day/`
@@ -158,13 +234,13 @@ Each wizard:
 
 Purpose: **bridge the outside world to the core**.
 
-- 🟡 `adapters/obsidian/collect-tasks.ts`
+- 🟡 `adapters/obsidian/collect-tasks.ts` (M1)
   Collect tasks from Obsidian / Tasks plugin / Dataview and normalize to `TaskEntity[]`.
 
-- 🟡 `adapters/obsidian/patch-applier.ts`
+- 🟡 `adapters/obsidian/patch-applier.ts` (M1)
   Apply `FixAction[]` / patch plans back to markdown files.
 
-- 🟡 `adapters/obsidian/time-context.ts`
+- 🟡 `adapters/obsidian/time-context.ts` (M0)
   Build `TimeContext` from the environment.
 
 ---
@@ -173,20 +249,20 @@ Purpose: **bridge the outside world to the core**.
 
 ### UI (src/ui)
 
-- 🟡 `ui/feed/render-feed.ts`
+- 🟡 `ui/feed/render-feed.ts` (M0)
   Render `RecommendationFeed` to an HTMLElement (dumb view).
 
-- 🟡 `ui/feed/render-recommendation-*.ts`
+- 🟡 `ui/feed/render-recommendation-*.ts` (M1/M2)
   Optional split renderers per kind (fix, do-now, wizard, plan).
 
 ### Entry (src/entry)
 
-- 🟡 `entry/render.ts`
+- 🟡 `entry/render.ts` (M0)
   Glue code: run pipeline, pass feed to renderer.
 
 ### Plugin root
 
-- 🟡 `plugin.ts`
+- 🟡 `plugin.ts` (M0)
   Obsidian plugin entry: register code block, commands, registries, settings.
 
 ---
