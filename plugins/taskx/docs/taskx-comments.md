@@ -81,7 +81,37 @@ Guidelines:
 - Prefer **stable intent** over current implementation details.
 - If a file is truly trivial, the preamble may be shorter, but it must still exist.
 
-### 1.3 Anti-patterns (avoid)
+### 1.3 Test files (special case)
+
+Test files are still part of the architecture, but their role is different.
+
+Rules:
+
+- Test files **must** have a preamble.
+- The preamble may be **shorter and more direct** than production code.
+- The preamble should explain:
+  - What behavior or contract is being tested,
+  - At which layer (core, pipeline, UI, adapter),
+  - Whether this is a unit test, contract test, or scenario test.
+
+- Test preambles should **not** restate the production file preamble.
+- Test comments should focus on **intent of the test**, not on implementation details.
+
+Example:
+
+```ts
+/**
+ * <path/to/test>.test.ts
+ *
+ * This file defines contract tests for the pipeline feed output.
+ *
+ * Intent:
+ * - Protect the shape and ordering guarantees of RecommendationFeed.
+ * - Catch accidental policy drift during refactors.
+ */
+```
+
+### 1.4 Anti-patterns (avoid)
 
 Do **not** write file preambles as:
 
@@ -240,7 +270,8 @@ registry.push(detector);
 - Do not describe **temporary states** or TODOs as architecture.
 - Do not explain **history** (“we used to…”).
 - Do not encode **UI instructions** in core logic comments.
-- Do not duplicate information that belongs in `docs/taskx-roadmap.md` or `docs/taskx-naming.md`.
+- Do not duplicate information that belongs in `docs/taskx-roadmap.md` or
+  `docs/taskx-naming.md`.
 
 ---
 
@@ -253,4 +284,5 @@ registry.push(detector);
 5. Every domain-level type has a JSDoc explaining intent and invariants.
 6. Pipeline stages and registries always document purity and responsibility.
 7. Inline comments justify **why**, not **what**.
-8. If a comment becomes false, **fix or remove it immediately**.
+8. Test files follow the same rules, with a **shorter, test-focused preamble**.
+9. If a comment becomes false, **fix or remove it immediately**.
