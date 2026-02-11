@@ -33,10 +33,55 @@ All commits must start with one of the following prefixes:
   For correcting a bug or unintended behavior.
 
 - `✅ test(taskx):`
-  For tests only (new tests, test refactors, harness wiring, fixtures, or test tooling).
+  For tests only:
+  - new tests,
+  - test refactors,
+  - test harness wiring,
+  - fixtures and builders used only by tests,
+  - test runner configuration when its purpose is exclusively testing.
 
 - `📝 docs(taskx):`
   For documentation only (README, docs/, comment style, naming rules, etc.).
+
+- `👷 build(taskx):`
+  For changes that affect **what users install or what Obsidian loads**.
+
+  Use this when a change can alter the **built plugin output**:
+  - bundling and build pipeline (Vite, tsconfig build options),
+  - emitted files and their layout (dist/, dist-types/),
+  - module format, targets, minification,
+  - manifest handling, version injection, packaging scripts,
+  - CI steps that build the plugin package.
+
+  Plain test:
+
+  > If I rebuild the plugin after this commit, could the output files differ?
+
+  If **yes**, this is `👷 build(taskx):`.
+
+- `🔧 chore(taskx):`
+  For changes that affect **only developer workflow** and **cannot** change what users get.
+
+  Use this for:
+  - linting and formatting (ESLint, Prettier),
+  - editor tooling and repo scripts,
+  - git hooks and repo hygiene,
+  - dependency maintenance that does not change runtime or build output,
+  - CI checks that only lint or test and do not build the plugin.
+
+  Plain test:
+
+  > If I rebuild the plugin after this commit, will the output be identical?
+
+  If **yes**, this is `🔧 chore(taskx):`.
+
+Hard boundary rules:
+
+- If a change can affect **what ends up in the built plugin**, it is `👷 build(taskx):`.
+- If a change affects **only how developers work** and not the built plugin, it is
+  `🔧 chore(taskx):`.
+- If a change is **exclusively about tests**, it is `✅ test(taskx):`.
+- If a change is **exclusively about documentation**, it is `📝 docs(taskx):`.
 
 The `(taskx)` scope is mandatory and fixed for this repository.
 
@@ -68,6 +113,8 @@ Examples:
 - `🐛 fix(taskx): handle empty task list in stage_recommend`
 - `✅ test(taskx): add contract tests for pipeline feed shape`
 - `📝 docs(taskx): add authoritative naming conventions for TaskX`
+- `👷 build(taskx): update vite config to change output format`
+- `🔧 chore(taskx): update eslint config for test TypeScript parsing`
 
 ---
 
@@ -161,6 +208,22 @@ changes during refactors.
 
 Handle the empty case explicitly in stage_recommend to prevent undefined access
 when building the do-now recommendation.
+
+```
+
+**Build (short, no body required for small tweaks):**
+
+```
+
+👷 build(taskx): adjust build output directory
+
+```
+
+**Chore (short, no body required for small tweaks):**
+
+```
+
+🔧 chore(taskx): update prettier config
 
 ```
 
