@@ -140,7 +140,36 @@ This keeps **all decision policy** in the core and makes the UI a pure rendering
 
 ---
 
-## 7) Non-goals (explicit)
+## 7) Testing as an architectural concern
+
+Testing is part of the architecture, not an afterthought.
+
+Principles:
+
+- **Determinism is mandatory**:
+  - Tests must control time and environment inputs.
+  - The same inputs must always produce the same outputs.
+
+- **Layer-appropriate tests**:
+  - Core model and pipeline: unit tests and small contract tests (node environment).
+  - UI: DOM structure tests against `RecommendationFeed` (dom environment).
+  - Adapters: thin tests with stubs and fixtures.
+
+- **Contracts over internals**:
+  - High-level tests should go through **public entrypoints**.
+  - Tests must not become a backdoor to bypass architectural boundaries.
+
+- **Milestone alignment**:
+  - **T0** establishes the test harness and environments.
+  - **T1** adds coverage for M1 features.
+  - **T2** adds scenario and integration coverage for M2 behavior.
+
+The purpose of tests is to **protect architectural intent** and make refactors safe,
+not to lock in incidental implementation details.
+
+---
+
+## 8) Non-goals (explicit)
 
 TaskX is **not**:
 
@@ -154,7 +183,7 @@ and increasing task throughput.
 
 ---
 
-## 8) Change discipline
+## 9) Change discipline
 
 - If a new requirement does not fit these principles, update this document first.
 - If a shortcut seems tempting, prefer making the architecture explicit instead.
