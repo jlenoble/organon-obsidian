@@ -23,9 +23,21 @@ Status markers:
 
 ## 0) Milestones and priorities
 
-Development is organized around three major milestones:
+Development is organized around two **orthogonal tracks**:
 
-### M0 — Vertical slice (make it run)
+- **M\*** milestones: product capabilities
+- **T\*** milestones: testing infrastructure and coverage
+
+Rule of thumb:
+
+> Product milestones define _what_ the system can do.
+> Test milestones define _how confidently_ we can evolve it.
+
+No M* milestone should advance significantly without its corresponding T* support.
+
+---
+
+### M0 — Vertical slice (make it run) ✅
 
 Goal:
 
@@ -43,9 +55,43 @@ Success criterion:
 
 - A TaskX code block renders a `RecommendationFeed` in Obsidian.
 
+Status:
+
+- ✅ Achieved
+
 ---
 
-### M1 — Coverage ramp (make it useful)
+### T0 — Test harness (make it testable) 🟡
+
+Goal:
+
+- Install and wire the testing framework.
+- Make the codebase testable in a deterministic way.
+
+Focus:
+
+- Vitest integration compatible with Vite and Rush,
+- Node test environment for core and pipeline,
+- JSDOM test environment for UI rendering,
+- Path alias resolution consistent with the build,
+- Deterministic time handling (injectable `TimeContext` in tests).
+
+Deliverables:
+
+- Test runner configuration and scripts,
+- At least a minimal test scaffold:
+  - One core/pipeline contract test,
+  - One UI renderer DOM test,
+  - One simple pure unit test.
+
+Success criterion:
+
+- Tests can be run in CI and locally.
+- We can write both node and DOM tests reliably.
+
+---
+
+### M1 — Coverage ramp (make it useful) ⛔
 
 Goal:
 
@@ -70,7 +116,33 @@ Success criterion:
 
 ---
 
-### M2 — Advanced behavior (make it smart)
+### T1 — Feature test coverage (keep it safe) ⛔
+
+Goal:
+
+- Add tests alongside M1 features.
+
+Focus:
+
+- Unit tests for new core and pipeline logic,
+- Contract tests for pipeline behavior,
+- UI tests for new render paths,
+- Adapter tests with thin stubs and fixtures.
+
+Rules:
+
+- No new M1 feature without at least one relevant test.
+- Tests must respect import boundaries, except for explicit contract tests
+  that go through public entrypoints only.
+
+Success criterion:
+
+- M1 features are covered by tests at the appropriate layer.
+- Regressions in core behavior are caught early.
+
+---
+
+### M2 — Advanced behavior (make it smart) ⛔
 
 Goal:
 
@@ -91,6 +163,26 @@ Rule of thumb:
 
 > Prefer work that improves **end-to-end throughput** (M1) over work that expands the
 > **feature surface** (M2), once M0 exists.
+
+---
+
+### T2 — Advanced behavior tests (keep it sane) ⛔
+
+Goal:
+
+- Extend the test suite to cover M2-level behavior.
+
+Focus:
+
+- State machine tests for wizards,
+- Scenario tests for planning and shaping,
+- Higher-level integration tests across pipeline + UI,
+- Regression tests for complex workflows.
+
+Success criterion:
+
+- Complex behaviors are protected by scenario and integration tests.
+- Refactors in M2 do not silently break user-facing logic.
 
 ---
 
@@ -140,10 +232,10 @@ Purpose: define the **stable language** of the system.
 
 Planned (M2):
 
-- 🟡 `template.ts`
+- ⛔ `template.ts`
   Task templates / blueprints (spawnable canonical decompositions).
 
-- 🟡 `superblock.ts`
+- ⛔ `superblock.ts`
   Recurring availability windows / planning envelopes.
 
 ---
@@ -155,15 +247,15 @@ Purpose: define **plugin-style extension points** without changing the pipeline.
 - ✅ `issue-detectors.ts`
   Registry for `IssueDetector` implementations.
 
-Planned:
+Planned (M2):
 
-- 🟡 `wizards.ts` (M2)
+- ⛔ `wizards.ts`
   Registry for interactive wizards (decomposition, planning, etc.).
 
-- 🟡 `scorers.ts` (M2)
+- ⛔ `scorers.ts`
   Registry for recommendation scoring policies.
 
-- 🟡 `templates.ts` (M2)
+- ⛔ `templates.ts`
   Registry/loader for task templates.
 
 ---
@@ -192,9 +284,9 @@ Stages (in order):
 - ✅ `pipeline.ts`
   Orchestrate all stages end-to-end and return the final feed.
 
-Planned later:
+Planned (M2):
 
-- 🟡 `stage-plan.ts` or similar (M2)
+- ⛔ `stage-plan.ts` or similar
   Dedicated planning stage for superblocks, day shaping, etc.
 
 ---
@@ -207,10 +299,10 @@ Purpose: **one folder per feature**, matching stable IDs.
 
 - 🟡 `features/issues/missing-duration/`
   Detect tasks missing duration and propose fixes.
-- 🟡 `features/issues/missing-dependency/`
-- 🟡 `features/issues/inconsistent-dates/`
-- 🟡 `features/issues/ambiguous-next-step/`
-- 🟡 … (others as needed)
+- ⛔ `features/issues/missing-dependency/`
+- ⛔ `features/issues/inconsistent-dates/`
+- ⛔ `features/issues/ambiguous-next-step/`
+- ⛔ … (others as needed)
 
 Each issue feature provides:
 
@@ -220,8 +312,8 @@ Each issue feature provides:
 
 ### Wizards (M2)
 
-- 🟡 `features/wizards/decompose-task/`
-- 🟡 `features/wizards/shape-day/`
+- ⛔ `features/wizards/decompose-task/`
+- ⛔ `features/wizards/shape-day/`
 
 Each wizard:
 
@@ -276,6 +368,8 @@ Purpose: **bridge the outside world to the core**.
 4. New **behavioral features** live in `src/features/<kind>/<feature-id>/`.
 5. New **environment-specific code** lives in `src/adapters/`.
 6. The UI only consumes `RecommendationFeed` and never re-ranks or re-interprets core decisions.
+7. Tests must respect the same boundaries, except for explicit contract tests
+   that go through public entrypoints only.
 
 ---
 
