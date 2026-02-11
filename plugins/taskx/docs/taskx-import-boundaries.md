@@ -9,7 +9,7 @@ Its goals are:
 - Make refactors and extensions predictable and low-risk.
 - Keep the core domain independent from UI and environment details.
 
-These rules apply to **all contributors** and to all new code.
+These rules apply to **all contributors** and to all new code, including tests.
 
 ---
 
@@ -55,6 +55,10 @@ TaskX is structured around these main areas:
 
 4. **Features plug into registries, not into the pipeline directly**
    The pipeline only knows about registries, never about concrete feature modules.
+
+5. **Tests must respect the same boundaries by default**
+   Tests are not a backdoor to bypass the architecture. They follow the same import rules
+   as production code, with the limited exception described in section 4.
 
 ---
 
@@ -143,3 +147,101 @@ Rationale:
 
 - Features provide implementations and register themselves, but do not control
   orchestration or rendering.
+
+---
+
+### 3.5 `src/adapters/*`
+
+May import:
+
+- `src/core/model/*`
+- `src/core/pipeline/*`
+- `src/core/registries/*` (for registration or wiring)
+- Environment APIs (Obsidian, filesystem, time, etc.)
+
+Must NOT import:
+
+- `ui/*` (except through explicit, narrow UI hooks if introduced later)
+
+Rationale:
+
+- Adapters are the boundary with the outside world and may depend on the core,
+  but should not entangle UI and environment concerns by default.
+
+---
+
+### 3.6 `src/ui/*`
+
+May import:
+
+- `src/core/model/*` (UI-facing contracts only)
+- `src/entry/*` (if needed for wiring helpers)
+
+Must NOT import:
+
+- `src/core/pipeline/*`
+- `src/core/registries/*`
+- `src/features/*`
+- `src/adapters/*`
+
+Rationale:
+
+- The UI is a pure consumer of `RecommendationFeed` and related contracts.
+- It must not re-run or re-interpret core decisions.
+
+---
+
+### 3.7 `src/entry/*` and `plugin.ts`
+
+May import:
+
+- `src/core/*`
+- `src/adapters/*`
+- `src/ui/*`
+- `src/features/*` (for registration and wiring)
+
+Rationale:
+
+- Entry points are the composition root. They are allowed to see the whole system.
+
+---
+
+## 4) Special rules for tests
+
+Tests follow the same layer rules by default.
+
+### 4.1 Default rule
+
+- A test for a given layer should import **only what that layer is allowed to import**.
+- Example:
+  - Core model tests import only `src/core/model/*`.
+  - Pipeline tests import `src/core/model/*` and `src/core/pipeline/*`, but not adapters or UI.
+  - UI tests import `src/ui/*` and UI-facing core contracts, but not the pipeline.
+
+This keeps tests aligned with the architecture they protect.
+
+### 4.2 Contract tests (explicit exception)
+
+Some tests exist to protect **cross-layer contracts** (for example, the shape of
+`RecommendationFeed` produced by the pipeline and consumed by the UI).
+
+Rules for contract tests:
+
+- They may cross layers **only via public entrypoints**.
+- They must not reach into private internals of a layer.
+- They must not import adapters or environment-specific code unless that is the
+  explicit subject of the test.
+
+Rationale:
+
+- Contract tests protect integration points without turning tests into an
+  architecture bypass.
+
+---
+
+## 5) Enforcement and discipline
+
+- If a test needs to break these rules, the architecture or this document must be
+  updated first.
+- If a production file violates these rules, fix the violation before adding features.
+- Boundaries are treated as **invariants**, not as suggestions.
