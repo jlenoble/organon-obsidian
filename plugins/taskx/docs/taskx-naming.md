@@ -168,11 +168,33 @@ These strings are part of the UI contract and must not be renamed casually.
 
 ---
 
-## 6) Test file naming and categories
+## 6) Test directories and file naming
 
 Tests follow the same naming rules as production files, with an explicit suffix.
 
-### 6.1 Suffixes
+All tests live under a top-level `tests/` directory.
+
+### 6.1 Canonical test folders
+
+- `tests/unit/`
+  Unit tests for a single file or module.
+
+- `tests/contract/`
+  Contract tests that protect **public cross-layer contracts**.
+
+- `tests/scenario/`
+  Scenario or integration tests for larger workflows (primarily T2).
+
+- `tests/fixtures/`
+  Static test data (markdown snippets, serialized tasks, example feeds).
+
+- `tests/builders/`
+  Code helpers to build common test objects (`TaskEntity`, `TimeContext`,
+  `RecommendationFeed`, etc.).
+
+Folder names are **semantic** and must not be repurposed.
+
+### 6.2 Test file suffixes
 
 - Unit and contract tests:
   - `*.test.ts`
@@ -183,11 +205,11 @@ Tests follow the same naming rules as production files, with an explicit suffix.
 
 Examples:
 
-- `pipeline-feed.contract.test.ts`
-- `render-feed.dom.test.ts`
-- `facts-index.node.test.ts`
+- `tests/contract/pipeline-feed.contract.test.ts`
+- `tests/unit/ui/render-feed.dom.test.ts`
+- `tests/unit/core-model/facts-index.node.test.ts`
 
-### 6.2 Relationship to production files
+### 6.3 Relationship to production files
 
 - Test filenames should **mirror the role** of the production code they protect.
 - Prefer:
@@ -216,7 +238,8 @@ The goal is that a test file name answers: **what behavior or contract is being 
 2. **Stable IDs are kebab-case strings**.
 3. **Instance IDs are composite and unique**.
 4. **Types are PascalCase, values are camelCase**.
-5. **Test files use `.test.ts` (or `.node.test.ts` / `.dom.test.ts`) suffixes.**
-6. **Do not invent new casing or separators**.
+5. **Tests live under `tests/` and use semantic subfolders.**
+6. **Test files use `.test.ts` (or `.node.test.ts` / `.dom.test.ts`) suffixes.**
+7. **Do not invent new casing or separators**.
 
 If a new feature does not fit these rules, the feature must adapt — not the naming system.
