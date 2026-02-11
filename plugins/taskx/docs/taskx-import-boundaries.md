@@ -58,7 +58,7 @@ TaskX is structured around these main areas:
 
 5. **Tests must respect the same boundaries by default**
    Tests are not a backdoor to bypass the architecture. They follow the same import rules
-   as production code, with the limited exception described in section 4.
+   as production code, with the explicit, limited exceptions described in section 4.
 
 ---
 
@@ -208,24 +208,32 @@ Rationale:
 
 ## 4) Special rules for tests
 
-Tests follow the same layer rules by default.
+All tests live under the top-level `tests/` directory and are categorized by intent:
 
-### 4.1 Default rule
+- `tests/unit/`
+- `tests/contract/`
+- `tests/scenario/`
+- `tests/fixtures/`
+- `tests/builders/`
 
-- A test for a given layer should import **only what that layer is allowed to import**.
-- Example:
-  - Core model tests import only `src/core/model/*`.
-  - Pipeline tests import `src/core/model/*` and `src/core/pipeline/*`, but not adapters or UI.
-  - UI tests import `src/ui/*` and UI-facing core contracts, but not the pipeline.
+### 4.1 Unit tests (`tests/unit/`)
 
-This keeps tests aligned with the architecture they protect.
+- Unit tests follow **exactly the same import rules** as the layer they test.
+- Examples:
+  - Core model unit tests import only `src/core/model/*`.
+  - Pipeline unit tests import `src/core/model/*` and `src/core/pipeline/*`, but not adapters or UI.
+  - UI unit tests import `src/ui/*` and UI-facing core contracts, but not the pipeline.
 
-### 4.2 Contract tests (explicit exception)
+Rationale:
 
-Some tests exist to protect **cross-layer contracts** (for example, the shape of
+- Unit tests protect local behavior and must not bypass the architecture.
+
+### 4.2 Contract tests (`tests/contract/`)
+
+Contract tests protect **public cross-layer contracts** (for example, the shape of
 `RecommendationFeed` produced by the pipeline and consumed by the UI).
 
-Rules for contract tests:
+Rules:
 
 - They may cross layers **only via public entrypoints**.
 - They must not reach into private internals of a layer.
@@ -236,6 +244,27 @@ Rationale:
 
 - Contract tests protect integration points without turning tests into an
   architecture bypass.
+
+### 4.3 Scenario tests (`tests/scenario/`)
+
+- Scenario tests may exercise **larger slices** of the system.
+- They should still prefer public entrypoints and stable contracts.
+- They must not import adapters or environment code unless the scenario is
+  explicitly about that adapter or environment boundary.
+
+Rationale:
+
+- Scenario tests exist to protect workflows, not to blur architectural layers.
+
+### 4.4 Fixtures and builders
+
+- `tests/fixtures/` and `tests/builders/` may import from any layer **only to construct
+  test data**, not to exercise behavior directly.
+- Production code must never import from `tests/`.
+
+Rationale:
+
+- These folders exist to support tests, not to become shared infrastructure.
 
 ---
 
