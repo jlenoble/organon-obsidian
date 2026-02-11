@@ -168,7 +168,39 @@ These strings are part of the UI contract and must not be renamed casually.
 
 ---
 
-## 6) Tags and semantics
+## 6) Test file naming and categories
+
+Tests follow the same naming rules as production files, with an explicit suffix.
+
+### 6.1 Suffixes
+
+- Unit and contract tests:
+  - `*.test.ts`
+
+- Environment-specific tests may add a qualifier:
+  - `*.node.test.ts` for node environment tests
+  - `*.dom.test.ts` for DOM / jsdom environment tests
+
+Examples:
+
+- `pipeline-feed.contract.test.ts`
+- `render-feed.dom.test.ts`
+- `facts-index.node.test.ts`
+
+### 6.2 Relationship to production files
+
+- Test filenames should **mirror the role** of the production code they protect.
+- Prefer:
+  - `stage-rank.ts` → `stage-rank.test.ts`
+  - `render-feed.ts` → `render-feed.dom.test.ts`
+- Avoid opaque names like:
+  - `test1.ts`, `misc.test.ts`, `pipeline-tests.ts`
+
+The goal is that a test file name answers: **what behavior or contract is being protected?**
+
+---
+
+## 7) Tags and semantics
 
 - Tags in notes are **user data**, not stable API.
 - Core logic should prefer **facts** over raw tags whenever possible.
@@ -178,12 +210,13 @@ These strings are part of the UI contract and must not be renamed casually.
 
 ---
 
-## 7) Golden rules
+## 8) Golden rules
 
 1. **Folder name = feature ID** (always).
 2. **Stable IDs are kebab-case strings**.
 3. **Instance IDs are composite and unique**.
 4. **Types are PascalCase, values are camelCase**.
-5. **Do not invent new casing or separators**.
+5. **Test files use `.test.ts` (or `.node.test.ts` / `.dom.test.ts`) suffixes.**
+6. **Do not invent new casing or separators**.
 
 If a new feature does not fit these rules, the feature must adapt — not the naming system.
