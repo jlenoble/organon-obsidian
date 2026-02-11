@@ -196,18 +196,40 @@ Folder names are **semantic** and must not be repurposed.
 
 ### 6.2 Test file suffixes
 
-- Unit and contract tests:
-  - `*.test.ts`
+Test filenames may include **two independent qualifiers**:
 
-- Environment-specific tests may add a qualifier:
-  - `*.node.test.ts` for node environment tests
-  - `*.dom.test.ts` for DOM / jsdom environment tests
+- A **role qualifier** (what kind of test this is):
+  - `.contract` for contract tests
+  - (absence means a regular unit-style test)
+
+- An **environment qualifier** (where it runs):
+  - `.node` for node environment tests
+  - `.dom` for DOM / jsdom environment tests
+
+The base suffix is always:
+
+- `*.test.ts`
+
+When qualifiers are used, the **ordering rule** is:
+
+> `<name>[.<role>][.<env>].test.ts`
+
+Role and environment qualifiers are **orthogonal**. Neither is more important
+than the other, and either may appear alone or together.
 
 Examples:
 
-- `tests/contract/pipeline-feed.contract.test.ts`
-- `tests/unit/ui/render-feed.dom.test.ts`
-- `tests/unit/core-model/facts-index.node.test.ts`
+- Unit test, node:
+  - `facts-index.node.test.ts`
+
+- Contract test, default environment:
+  - `pipeline-feed.contract.test.ts`
+
+- Contract test, DOM:
+  - `render-feed.contract.dom.test.ts`
+
+- Unit test, DOM:
+  - `render-feed.dom.test.ts`
 
 ### 6.3 Relationship to production files
 
@@ -239,7 +261,7 @@ The goal is that a test file name answers: **what behavior or contract is being 
 3. **Instance IDs are composite and unique**.
 4. **Types are PascalCase, values are camelCase**.
 5. **Tests live under `tests/` and use semantic subfolders.**
-6. **Test files use `.test.ts` (or `.node.test.ts` / `.dom.test.ts`) suffixes.**
+6. **Test files use `.test.ts` with optional role and env qualifiers.**
 7. **Do not invent new casing or separators**.
 
 If a new feature does not fit these rules, the feature must adapt — not the naming system.
