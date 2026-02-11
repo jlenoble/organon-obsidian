@@ -89,7 +89,8 @@ Success criterion:
 
 Rule of thumb:
 
-> Prefer work that improves **end-to-end throughput** (M1) over work that expands the **feature surface** (M2), once M0 exists.
+> Prefer work that improves **end-to-end throughput** (M1) over work that expands the
+> **feature surface** (M2), once M0 exists.
 
 ---
 
@@ -257,7 +258,7 @@ Purpose: **bridge the outside world to the core**.
 
 ### Entry (src/entry)
 
-- 🟡 `entry/render.ts` (M0)
+- ✅ `entry/render.ts`
   Glue code: run pipeline, pass feed to renderer.
 
 ### Plugin root
