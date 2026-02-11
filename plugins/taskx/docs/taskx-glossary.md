@@ -17,7 +17,7 @@ If a term is used in the codebase with a different meaning than what is written 
 ## Index
 
 [A](#a) · [B](#b) · [C](#c) · [D](#d) · [E](#e) · [F](#f) · [G](#g) · H · [I](#i) · J · K · L · M ·
-N · O · [P](#p) · Q · [R](#r) · [S](#s) · [T](#t) · U · V · [W](#w) · X · Y · Z
+N · O · [P](#p) · Q · [R](#r) · [S](#s) · [T](#t) · [U](#u) · V · [W](#w) · X · Y · Z
 
 ---
 
@@ -50,6 +50,19 @@ Note:
 
 ---
 
+### Builder (test helper)
+
+A small helper used in tests to construct domain objects or contexts
+(e.g., TaskEntity, TimeContext, RecommendationFeed) in a readable and consistent way.
+
+Characteristics:
+
+- Lives under `tests/builders/`,
+- Exists to reduce duplication and improve test clarity,
+- Must not contain business logic or assertions.
+
+---
+
 ## C
 
 ### Core Model
@@ -65,7 +78,38 @@ Characteristics:
 
 ---
 
+### Contract Test
+
+A test that protects a **public contract** between layers.
+
+Examples:
+
+- The shape of `RecommendationFeed` produced by the pipeline,
+- The assumptions the UI makes about ordering and grouping.
+
+Characteristics:
+
+- Lives under `tests/contract/`,
+- Crosses layers **only via public entrypoints**,
+- Must not depend on private internals.
+
+---
+
 ## D
+
+### Determinism
+
+The property that the same inputs always produce the same outputs.
+
+In TaskX:
+
+- Pipeline and core logic are expected to be deterministic,
+- Tests must control time and environment inputs,
+- No test should depend on wall-clock time or global state.
+
+Determinism is required to make refactors safe and failures reproducible.
+
+---
 
 ### Domain Contract
 
@@ -84,7 +128,8 @@ Domain contracts:
 
 ### Entry Point
 
-Code that wires together adapters, registries, pipeline, and UI (e.g., `plugin.ts`, `src/entry/*`).
+Code that wires together adapters, registries, pipeline, and UI
+(e.g., `plugin.ts`, `src/entry/*`).
 
 Responsibilities:
 
@@ -157,6 +202,18 @@ Characteristics:
 
 ---
 
+### Fixture (test data)
+
+Static test data used by tests (e.g., markdown snippets, serialized tasks, example feeds).
+
+Characteristics:
+
+- Lives under `tests/fixtures/`,
+- Contains data, not logic,
+- Exists to make tests explicit and reproducible.
+
+---
+
 ## G
 
 ### Glossary
@@ -174,7 +231,8 @@ It is normative:
 
 ### Issue
 
-A structured report of a problem, inconsistency, or missing information that blocks or degrades progress.
+A structured report of a problem, inconsistency, or missing information that blocks or
+degrades progress.
 
 Represents:
 
@@ -213,20 +271,6 @@ Characteristics:
 - Deterministic,
 - Composed of single-responsibility stages,
 - Free of UI and environment-specific logic.
-
----
-
-### Stage
-
-A single step in the pipeline that transforms data from one representation to another.
-
-Examples:
-
-- Collection stage,
-- Analysis stage,
-- Issue detection stage,
-- Recommendation compilation stage,
-- Ranking/grouping stage.
 
 ---
 
@@ -275,6 +319,32 @@ Characteristics:
 
 ## S
 
+### Scenario Test
+
+A test that exercises a **larger workflow or story** across multiple components.
+
+Characteristics:
+
+- Lives under `tests/scenario/`,
+- Focuses on behavior across components, not on single functions,
+- Protects complex or policy-heavy behavior (primarily T2).
+
+---
+
+### Stage
+
+A single step in the pipeline that transforms data from one representation to another.
+
+Examples:
+
+- Collection stage,
+- Analysis stage,
+- Issue detection stage,
+- Recommendation compilation stage,
+- Ranking/grouping stage.
+
+---
+
 ### Superblock
 
 A recurring or structural availability envelope representing when certain kinds of work
@@ -311,7 +381,8 @@ Derived, computed observations about tasks.
 
 Represents:
 
-- “What we can infer” from the current state of tasks (e.g., executability, missing data, leaf-ness).
+- “What we can infer” from the current state of tasks (e.g., executability,
+  missing data, leaf-ness).
 
 Characteristics:
 
@@ -355,6 +426,20 @@ Used to:
 
 ---
 
+## U
+
+### Unit Test
+
+A test that protects **local behavior** of a single module or file.
+
+Characteristics:
+
+- Lives under `tests/unit/`,
+- Respects the same import boundaries as the layer under test,
+- Focuses on small, well-defined behavior.
+
+---
+
 ## W
 
 ### Wizard
@@ -372,4 +457,5 @@ Produces:
 
 - This glossary is normative.
 - If a new concept is introduced, it should be added here.
-- If an existing term changes meaning, both the code and this document must be updated together.
+- If an existing term changes meaning, both the code and this document must be updated
+  together.
