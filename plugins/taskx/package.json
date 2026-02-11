@@ -11,7 +11,9 @@
 		"copy": "cp dist/* manifest.json temp/obsidian-taskx",
 		"tar": "git archive --format=tar.gz -o taskx.tgz HEAD",
 		"lint": "eslint --ext .ts,.tsx src",
-		"lint:fix": "eslint --ext .ts,.tsx src --fix"
+		"lint:fix": "eslint --ext .ts,.tsx src --fix",
+		"test": "vitest run",
+		"test:watch": "vitest"
 	},
 	"dependencies": {
 		"@codemirror/state": "6.5.2",
@@ -34,9 +36,11 @@
 		"eslint-plugin-react": "^7.37.2",
 		"eslint-plugin-react-hooks": "7.0.0",
 		"eslint-plugin-unused-imports": "4.3.0",
+		"jsdom": "28.0.0",
 		"prettier": "3.6.2",
 		"typescript": "5.9.3",
 		"typescript-eslint": "8.46.2",
-		"vite": "7.1.11"
+		"vite": "7.1.11",
+		"vitest": "3.2.4"
 	}
 }
