@@ -157,7 +157,8 @@ Focus:
 
 Success criterion:
 
-- TaskX supports complex workflows and strategic planning, without compromising the M0/M1 pipeline.
+- TaskX supports complex workflows and strategic planning, without compromising
+  the M0/M1 pipeline.
 
 Rule of thumb:
 
@@ -210,7 +211,8 @@ TaskX is structured around four layers:
 Purpose: define the **stable language** of the system.
 
 - ✅ `id.ts`
-  Branded ID types and casting helpers (TaskId, IssueId, FixId, FixCandidateId, RecommendationId).
+  Branded ID types and casting helpers (TaskId, IssueId, FixId, FixCandidateId,
+  RecommendationId).
 
 - ✅ `task.ts`
   Canonical `TaskEntity` and `TaskOrigin` (tool-agnostic task representation).
@@ -328,7 +330,8 @@ Each wizard:
 Purpose: **bridge the outside world to the core**.
 
 - 🟡 `adapters/obsidian/collect-tasks.ts` (M1)
-  Collect tasks from Obsidian / Tasks plugin / Dataview and normalize to `TaskEntity[]`.
+  Collect tasks from Obsidian / Tasks plugin / Dataview and normalize to
+  `TaskEntity[]`.
 
 - 🟡 `adapters/obsidian/patch-applier.ts` (M1)
   Apply `FixAction[]` / patch plans back to markdown files.
@@ -360,20 +363,49 @@ Purpose: **bridge the outside world to the core**.
 
 ---
 
-## 8) Rules for extending the system
+## 8) Tests (tests/)
+
+Purpose: **protect behavior and contracts** at different scales.
+
+- 🟡 `tests/unit/` (T0/T1)
+  Unit tests for core model, pipeline stages, UI renderers, and adapters.
+
+- 🟡 `tests/contract/` (T0/T1)
+  Cross-layer tests that protect public contracts via entrypoints only.
+
+- ⛔ `tests/scenario/` (T2)
+  Scenario and integration tests for M2-level behavior.
+
+- 🟡 `tests/fixtures/` (T0)
+  Static test data such as markdown snippets, tasks, and example feeds.
+
+- 🟡 `tests/builders/` (T0)
+  Test helpers to construct domain objects and contexts.
+
+Rules:
+
+- Tests follow the same import boundaries as production code by default.
+- Only contract tests may cross layers, and only via public entrypoints.
+- New test categories or folders must be recorded in this roadmap.
+
+---
+
+## 9) Rules for extending the system
 
 1. New **domain concepts** go in `src/core/model/`.
 2. New **analysis or orchestration steps** go in `src/core/pipeline/`.
 3. New **pluggable logic** goes behind a registry in `src/core/registries/`.
 4. New **behavioral features** live in `src/features/<kind>/<feature-id>/`.
 5. New **environment-specific code** lives in `src/adapters/`.
-6. The UI only consumes `RecommendationFeed` and never re-ranks or re-interprets core decisions.
+6. The UI only consumes `RecommendationFeed` and never re-ranks or re-interprets
+   core decisions.
 7. Tests must respect the same boundaries, except for explicit contract tests
    that go through public entrypoints only.
+8. New test folders or categories must be added to this document.
 
 ---
 
-## 9) Change management
+## 10) Change management
 
 - This file must be updated **before or alongside** any structural change.
 - If a new folder or responsibility appears, it must be recorded here.
