@@ -9,8 +9,14 @@
  * - FixCandidates and wizards describe how to resolve them.
  * - Recommendations describe “what to do now”, in a form directly consumable by the UI.
  *
- * The UI must not depend on TaskEntity, Issue, or Fix internals.
- * It should only consume RecommendationFeed.
+ * Invariants:
+ * - The UI must not depend on TaskEntity, Issue, or Fix internals.
+ * - The UI consumes RecommendationFeed as-is (no re-ranking, no regrouping).
+ * - Recommendation is a discriminated union on `kind` to prevent impossible states.
+ *
+ * Non-goals:
+ * - Rendering logic (ui/*).
+ * - Ranking/grouping policy (core/pipeline/stage-rank.ts).
  */
 
 import type { FixCandidate } from "./fix";
@@ -19,24 +25,24 @@ import type { RecommendationId, TaskId } from "./id";
 /**
  * Closed set of recommendation kinds.
  *
- * Rationale:
- * - The renderer needs to know which layout/interaction model to use.
- * - We keep this intentionally small and semantic.
+ * Notes:
+ * - This is a UI contract. Adding a new kind implies a new renderer behavior.
+ * - We keep kinds semantic (what the user does), not implementation-driven.
  *
  * Current kinds:
  * - "fix": apply or review a proposed fix
  * - "do-now": execute one or more tasks now
  *
- * Later additions may include:
- * - "wizard": interactive resolution (e.g., decomposition, planning)
- * - "plan": shape a day or time window
+ * Expected later additions (M2 examples):
+ * - "wizard": interactive resolution (decomposition, planning)
+ * - "plan": day shaping / time-window planning
  */
 export type RecommendationKind = "fix" | "do-now";
 
 /**
  * Scoring signals attached to a recommendation.
  *
- * These are not absolute truths; they are policy inputs used by ranking/grouping.
+ * These are policy inputs used by ranking/grouping. They are not absolute truths.
  *
  * Conventions:
  * - All values are integers in the range 0..100.
@@ -59,6 +65,7 @@ export interface RecommendationScore {
  * - `score` is consumed by ranking policy but can be shown in diagnostics.
  */
 export interface RecommendationBase {
+	/** Stable identifier for this recommendation item in the feed. */
 	id: RecommendationId;
 
 	/** Short, user-facing title. */
@@ -70,6 +77,7 @@ export interface RecommendationBase {
 	 * Guidelines:
 	 * - Keep it concise.
 	 * - Prefer concrete signals over abstract theory.
+	 * - Avoid duplicating the title; explain the cause and context instead.
 	 */
 	why: string[];
 
@@ -84,7 +92,10 @@ export interface RecommendationBase {
  * - the set of kinds,
  * - and the required fields for each kind.
  *
- * We derive the union type mechanically from this map to keep it consistent.
+ * We derive the union type mechanically from this map so that:
+ * - kind additions are centralized and reviewable,
+ * - each kind has an explicit payload contract,
+ * - impossible states are prevented (e.g., kind="fix" without `fixes`).
  */
 export type RecommendationVariants = {
 	fix: {
@@ -96,11 +107,15 @@ export type RecommendationVariants = {
 };
 
 /**
- * Build the discriminated union from the variant map.
+ * Discriminated union of all recommendation variants.
  *
  * “TS magic” rationale:
  * - Adding a new kind is a single edit in RecommendationVariants.
  * - The union automatically updates, keeping kind and payload aligned.
+ *
+ * Narrowing patterns:
+ * - Extract<Recommendation, { kind: "fix" }> works as expected.
+ * - `if (rec.kind === "fix") { ... }` narrows to the fix variant payload.
  */
 export type Recommendation = {
 	[K in keyof RecommendationVariants]: RecommendationBase & {
