@@ -7,11 +7,12 @@ Goals:
 - Make history readable and reviewable.
 - Make intent and scope obvious from the log.
 - Avoid noise and filler text.
-- Keep a clean signal between features, refactors, fixes, and docs.
+- Keep a clean signal between features, refactors, fixes, tests, and docs.
 
 General formatting rules:
 
-- Wrap all lines at **100 characters maximum**.
+- Hard limit: wrap all lines at **100 characters maximum**.
+- Safety target: aim for **80 characters maximum** to avoid accidental overflow.
 - Prefer short, readable lines over dense paragraphs.
 - Use blank lines to separate logical blocks.
 
@@ -25,13 +26,17 @@ All commits must start with one of the following prefixes:
   For introducing a new capability, a new architectural piece, or a new file that adds behavior.
 
 - `♻️ refactor(taskx):`
-  For restructuring, renaming, moving files, or changing internal structure **without changing behavior**.
+  For restructuring, renaming, moving files, or changing internal structure **without changing
+  behavior**.
 
 - `🐛 fix(taskx):`
   For correcting a bug or unintended behavior.
 
+- `✅ test(taskx):`
+  For tests only (new tests, test refactors, harness wiring, fixtures, or test tooling).
+
 - `📝 docs(taskx):`
-  For documentation only (README, docs/, comments style, naming rules, etc.).
+  For documentation only (README, docs/, comment style, naming rules, etc.).
 
 The `(taskx)` scope is mandatory and fixed for this repository.
 
@@ -53,13 +58,15 @@ Rules:
 - Keep it **short and specific**.
 - Do not end with a period.
 - Describe **what changes**, not why.
-- Keep the subject line **under 100 characters**.
+- Hard limit: keep the subject line **under 80 characters**.
+- Safety target: keep the subject line **under 60 characters**.
 
 Examples:
 
 - `✨ feat(taskx): add stage_rank to group recommendations into a feed`
 - `♻️ refactor(taskx): move core model files into core/model directory`
 - `🐛 fix(taskx): handle empty task list in stage_recommend`
+- `✅ test(taskx): add contract tests for pipeline feed shape`
 - `📝 docs(taskx): add authoritative naming conventions for TaskX`
 
 ---
@@ -82,7 +89,8 @@ A body is **optional** when:
 
 ### 3.2 Body style rules
 
-- Wrap all lines at **100 characters maximum**.
+- Hard limit: wrap all lines at **100 characters maximum**.
+- Safety target: aim for **80 characters maximum** per line.
 - Use **short paragraphs or bullet points**.
 - Do **not** pad with text just to reach a certain length.
 - Prefer:
@@ -134,6 +142,17 @@ This is a structural change only and does not modify runtime behavior.
 
 ```
 
+**Tests (short body):**
+
+```
+
+✅ test(taskx): add pipeline feed contract test
+
+Snapshot the RecommendationFeed shape to catch accidental grouping or ordering
+changes during refactors.
+
+```
+
 **Fix (short body):**
 
 ```
@@ -163,4 +182,4 @@ when building the do-now recommendation.
 3. The **body** (if present) explains _why_ and _what boundaries exist_.
 4. Brevity beats verbosity when intent is obvious.
 5. If a future you would ask “why is this like this?”, put that answer in the body.
-6. Keep all lines **at or under 100 characters**.
+6. Hard limit is **100 chars** per line; safety target is **80 chars**.
