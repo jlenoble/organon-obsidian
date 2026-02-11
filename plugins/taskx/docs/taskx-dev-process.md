@@ -190,6 +190,38 @@ We test at the layer where the behavior lives:
 - **UI:** DOM tests for `renderFeed` output structure and stable hooks.
 - **Adapters:** thin tests for parsing/normalization glue, using stubs and fixtures.
 
+### 5.4 Canonical test layout
+
+All tests live under a single top-level `tests/` directory.
+
+Structure:
+
+- `tests/unit/`
+  Small, local tests for one file or module. These respect the same import
+  boundaries as the layer under test.
+
+- `tests/contract/`
+  Cross-layer tests that protect **public contracts**. These go through public
+  entrypoints only and must not reach into private internals.
+
+- `tests/scenario/`
+  Larger, story-driven or integration tests. These are primarily used in **T2**
+  to protect complex workflows.
+
+- `tests/fixtures/`
+  Static test data such as markdown snippets, serialized tasks, or example feeds.
+
+- `tests/builders/`
+  Code helpers to build `TaskEntity`, `TimeContext`, `RecommendationFeed`, and
+  other test objects. This avoids duplication and keeps tests readable.
+
+Rules:
+
+- Do not place tests under `src/`.
+- Choose the folder by **test intent**, not by convenience.
+- If a test does not clearly fit a category, clarify the category or update this
+  document before adding the test.
+
 ---
 
 ## 6) Standard workflow for adding or changing code
@@ -214,7 +246,7 @@ We test at the layer where the behavior lives:
 4. **Add or update tests**
    - Follow the testing workflow in this document.
    - Ensure tests are deterministic and stable.
-   - Keep tests close in time to the behavior they protect.
+   - Place tests in the canonical `tests/` layout.
 
 5. **Update documentation if needed**
    - If responsibilities, structure, or expectations change, update the relevant
@@ -254,6 +286,7 @@ Before finalizing a change, verify:
 - [ ] Are naming and file locations consistent with conventions?
 - [ ] Are comments and docstrings aligned with the comment style guide?
 - [ ] Are tests updated appropriately for the change?
+- [ ] Are tests placed in the canonical `tests/` layout?
 - [ ] Does the commit message explain the intent clearly?
 - [ ] If architecture or structure changed, did the docs get updated?
 
