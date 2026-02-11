@@ -249,7 +249,7 @@ Purpose: **bridge the outside world to the core**.
 
 ### UI (src/ui)
 
-- 🟡 `ui/feed/render-feed.ts` (M0)
+- ✅ `ui/feed/render-feed.ts`
   Render `RecommendationFeed` to an HTMLElement (dumb view).
 
 - 🟡 `ui/feed/render-recommendation-*.ts` (M1/M2)
