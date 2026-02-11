@@ -263,7 +263,7 @@ Purpose: **bridge the outside world to the core**.
 
 ### Plugin root
 
-- 🟡 `plugin.ts` (M0)
+- ✅ `plugin.ts`
   Obsidian plugin entry: register code block, commands, registries, settings.
 
 ---
