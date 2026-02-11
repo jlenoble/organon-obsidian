@@ -51,20 +51,15 @@ export interface RecommendationScore {
 }
 
 /**
- * A Recommendation is one actionable suggestion shown to the user.
+ * Fields common to all recommendation variants.
  *
- * Key ideas:
- * - It has a stable id for UI diffing and action routing.
- * - It has a kind that determines rendering and interaction style.
- * - It has a human-readable title and short justification bullets.
- * - It carries either fixes or tasks (or later, wizard references).
+ * Notes:
+ * - `id` is a stable identifier for the rendered item in the current feed.
+ * - `why` holds short, concrete rationale strings for UI and debugging.
+ * - `score` is consumed by ranking policy but can be shown in diagnostics.
  */
-export interface Recommendation {
-	/** Unique identifier for this recommendation item. */
+export interface RecommendationBase {
 	id: RecommendationId;
-
-	/** Semantic kind used by the renderer to choose layout/controls. */
-	kind: RecommendationKind;
 
 	/** Short, user-facing title. */
 	title: string;
@@ -80,25 +75,38 @@ export interface Recommendation {
 
 	/** Scoring signals for ranking and grouping policies. */
 	score: RecommendationScore;
-
-	/**
-	 * Fix candidates associated with this recommendation (for kind === "fix").
-	 *
-	 * Notes:
-	 * - We keep this optional to allow other kinds without overloading the type.
-	 * - The renderer decides how to present these (buttons, links, etc.).
-	 */
-	fixes?: FixCandidate[];
-
-	/**
-	 * Task targets associated with this recommendation (for kind === "do-now", etc.).
-	 *
-	 * Notes:
-	 * - These are TaskIds, not full TaskEntity objects, to keep the UI contract light.
-	 * - The renderer may choose to resolve/display task titles via a separate lookup.
-	 */
-	tasks?: TaskId[];
 }
+
+/**
+ * Variant payloads keyed by kind.
+ *
+ * This is the single source of truth for:
+ * - the set of kinds,
+ * - and the required fields for each kind.
+ *
+ * We derive the union type mechanically from this map to keep it consistent.
+ */
+export type RecommendationVariants = {
+	fix: {
+		fixes: FixCandidate[];
+	};
+	"do-now": {
+		tasks: TaskId[];
+	};
+};
+
+/**
+ * Build the discriminated union from the variant map.
+ *
+ * “TS magic” rationale:
+ * - Adding a new kind is a single edit in RecommendationVariants.
+ * - The union automatically updates, keeping kind and payload aligned.
+ */
+export type Recommendation = {
+	[K in keyof RecommendationVariants]: RecommendationBase & {
+		kind: K;
+	} & RecommendationVariants[K];
+}[keyof RecommendationVariants];
 
 /**
  * A RecommendationFeed is the structured output of the pipeline for the UI.
