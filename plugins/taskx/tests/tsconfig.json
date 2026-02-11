@@ -1,0 +1,10 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		// Tests live outside src/, so rootDir cannot stay limited to "src".
+		// We keep this config for editor and test-time typechecking only.
+		"rootDir": "..",
+		"noEmit": true
+	},
+	"include": ["../src/**/*.ts", "../src/**/*.tsx", "**/*.ts", "**/*.tsx"]
+}
