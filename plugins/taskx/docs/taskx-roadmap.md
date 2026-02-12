@@ -191,15 +191,15 @@ Deliverables:
 
 Implementation order (files to touch):
 
-1. 🟡 `src/core/model/recommendation.ts`
+1. ✅ `src/core/model/recommendation.ts`
    - Introduce a small UI-facing `TaskRef` / `TaskSummary` type.
    - Use it in the "collected" payload (and optionally "do-now") instead of raw ids.
 
-2. 🟡 `src/core/pipeline/stage-recommend.ts`
+2. ✅ `src/core/pipeline/stage-recommend.ts`
    - Populate task summaries from the collected TaskEntity list.
    - Keep the recommendation contract policy-light and deterministic.
 
-3. 🟡 `src/ui/feed/render-feed.ts`
+3. ✅ `src/ui/feed/render-feed.ts`
    - Render the task summary list (text, optional origin).
    - Keep ids gated behind `RenderFeedOptions.showIds`.
 

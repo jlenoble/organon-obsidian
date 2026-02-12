@@ -17,7 +17,7 @@
 import type { TaskFactsIndex } from "../model/facts";
 import { asRecommendationId } from "../model/id";
 import type { Issue } from "../model/issue";
-import type { Recommendation } from "../model/recommendation";
+import type { Recommendation, TaskSummary } from "../model/recommendation";
 import type { TaskEntity } from "../model/task";
 import type { TimeContext } from "../model/time";
 
@@ -44,9 +44,13 @@ export function stageRecommend(args: {
 	// 1) Policy-light collected sample (M1.0 visibility hook)
 	const MAX_COLLECTED = 5;
 
-	const collectedIds = args.tasks.slice(0, MAX_COLLECTED).map(t => t.id);
+	const collectedTasks: TaskSummary[] = args.tasks.slice(0, MAX_COLLECTED).map(t => ({
+		id: t.id,
+		text: t.text,
+		origin: { path: t.origin.path, line: t.origin.line },
+	}));
 
-	if (collectedIds.length > 0) {
+	if (collectedTasks.length > 0) {
 		recs.push({
 			id: asRecommendationId("rec:collected:sample"),
 			kind: "collected",
@@ -54,7 +58,7 @@ export function stageRecommend(args: {
 			why: ["Raw sample of tasks collected from the vault (no policy applied)."],
 			// We keep scoring neutral here; grouping policy drives placement.
 			score: { urgency: 0, friction: 0, payoff: 0 },
-			tasks: collectedIds,
+			tasks: collectedTasks,
 		});
 	}
 

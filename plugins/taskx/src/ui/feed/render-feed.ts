@@ -157,8 +157,27 @@ function renderRecommendationDetails(doc: Document, rec: Recommendation): HTMLEl
 
 			if (taskCount > 0) {
 				const tasks = el(doc, "ul", { className: "taskx-rec__tasks" });
-				for (const id of rec.tasks) {
-					tasks.append(el(doc, "li", { text: id }));
+				for (const t of rec.tasks) {
+					const li = el(doc, "li", { className: "taskx-rec__task" });
+
+					// The summary text is the default, human-readable surface.
+					li.append(el(doc, "span", { className: "taskx-rec__task-text", text: t.text }));
+
+					// Diagnostics are opt-in to avoid turning ids into a primary UI surface.
+					if (opts.showIds) {
+						li.append(el(doc, "code", { className: "taskx-rec__task-id", text: t.id }));
+						if (t.origin) {
+							const suffix = t.origin.line ? `:${t.origin.line}` : "";
+							li.append(
+								el(doc, "span", {
+									className: "taskx-rec__task-origin",
+									text: `${t.origin.path}${suffix}`,
+								}),
+							);
+						}
+					}
+
+					tasks.append(li);
 				}
 				details.append(tasks);
 			}

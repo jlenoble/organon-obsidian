@@ -23,6 +23,29 @@ import type { FixCandidate } from "./fix";
 import type { RecommendationId, TaskId } from "./id";
 
 /**
+ * Minimal, UI-facing task summary.
+ *
+ * Rationale:
+ * - The UI must not depend on TaskEntity (or any adapter-specific shape).
+ * - The feed must remain human-inspectable without forcing the UI to do lookups.
+ * - We keep provenance optional and lightweight so it can be rendered as
+ *   diagnostics without becoming a policy surface.
+ */
+export interface TaskSummary {
+	/** Stable task identifier, used for future click wiring and diagnostics. */
+	id: TaskId;
+
+	/** Human-readable task text (already normalized at collection time). */
+	text: string;
+
+	/** Optional provenance for diagnostics and future patch application. */
+	origin?: {
+		path: string;
+		line?: number;
+	};
+}
+
+/**
  * Closed set of recommendation kinds.
  *
  * Notes:
@@ -100,7 +123,7 @@ export interface RecommendationBase {
  */
 export type RecommendationVariants = {
 	collected: {
-		tasks: TaskId[];
+		tasks: TaskSummary[];
 	};
 
 	fix: {
