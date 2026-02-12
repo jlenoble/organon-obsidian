@@ -253,9 +253,9 @@ Implementation order (files to touch):
    - Ensure `TaskSummary.origin` is populated when available from collected tasks, so the UI can
      rely on it without special casing.
 
-3. 🟡 `tests/contract/` (T1)
-   - Add a contract test asserting that rendered task items include a provenance link when origin
-     is present (and that it is stable / copyable).
+3. ✅ `tests/contract/ui/feed/render-feed/feed-provenance.contract.dom.test.ts`
+   - Assert that rendered task items include (or hide) provenance links according to
+     `showProvenanceLinks`, and that the DOM contract is stable and copyable.
 
 Notes:
 
@@ -264,7 +264,7 @@ Notes:
 
 Status:
 
-- 🟡 In progress (rendering implemented; contract coverage pending)
+- 🟡 In progress (rendering and UI contract coverage implemented)
 
 ---
 
