@@ -1,5 +1,5 @@
 /**
- * tests/unit/core-model/id.test.ts
+ * tests/unit/core/model/id.test.ts
  *
  * This is a minimal unit test that exercises our lowest-level “pure” helpers.
  * We start here because it proves the harness can import TypeScript modules from

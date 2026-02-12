@@ -1,5 +1,5 @@
 /**
- * tests/contract/pipeline-feed.contract.test.ts
+ * tests/contract/core/pipeline/pipeline.contract.test.ts
  *
  * This contract test protects the public pipeline output shape (M0).
  *
