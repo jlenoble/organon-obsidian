@@ -230,7 +230,7 @@ Status:
 Intent:
 
 - Task lists rendered by TaskX should be actionable for editing: each rendered task should
-  include a link back to its source note (and, when possible, to the exact line).
+  include a link back to its source note.
 - This matches the ergonomic expectation set by popular task list renderers: “see it → click it
   → edit it”, without manual searching.
 
@@ -238,40 +238,33 @@ Deliverables:
 
 - Every rendered task item (at least in "Collected" and "Do now") appends a provenance link:
   `[[path/to/file|filename]]` where `filename` is shown without the `.md` extension.
-- If an origin line number is available, clicking the link should attempt to open the file and
-  jump to that line in the editor (best-effort; fall back to opening the file if unsupported).
 - The link rendering must be policy-free and purely derived from `TaskSummary.origin`.
 - Link display should be gateable via a render option (for minimal/diagnostic modes).
+- Jump-to-line behavior is explicitly **out of scope for M1** and is tracked under M2
+  (it depends on Obsidian workspace/editor APIs).
 
 Implementation order (files to touch):
 
-1. 🟡 `src/ui/feed/render-feed.ts`
-   - Extend the feed renderer to append an internal link after each task text when
-     `TaskSummary.origin?.path` is present.
-   - Use a stable DOM structure so contract tests can assert link presence.
+1. ✅ `src/ui/feed/render-feed.ts`
+   - Append an internal link after each task text when `TaskSummary.origin?.path` is present.
+   - Keep a stable DOM structure so contract tests can assert link presence.
 
-2. 🟡 `src/ui/feed/render-feed.ts` (click behavior)
-   - If `origin.line` is present, intercept clicks and use Obsidian workspace/editor APIs to
-     open the note and position the cursor (best-effort).
-   - If cursor positioning is not available in the current context, fall back to opening the file.
-
-3. 🟡 `src/core/pipeline/stage-recommend.ts`
+2. 🟡 `src/core/pipeline/stage-recommend.ts`
    - Ensure `TaskSummary.origin` is populated when available from collected tasks, so the UI can
      rely on it without special casing.
 
-4. 🟡 `tests/contract/` (T1)
+3. 🟡 `tests/contract/` (T1)
    - Add a contract test asserting that rendered task items include a provenance link when origin
      is present (and that it is stable / copyable).
 
 Notes:
 
-- Obsidian's wiki links do not natively encode “line number”. Jump-to-line behavior is therefore
-  a UI interaction detail (best-effort) rather than a link encoding guarantee.
-- We keep the contract generic: “origin path + optional line”, not a specific URI scheme.
+- Obsidian's wiki links do not natively encode “line number”. We keep the contract generic:
+  “origin path + optional line”, not a specific URI scheme.
 
 Status:
 
-- 🟡 Planned
+- 🟡 In progress (rendering implemented; contract coverage pending)
 
 ---
 
@@ -312,7 +305,8 @@ Focus:
 - Templates,
 - Superblocks,
 - Wizards,
-- Sophisticated planning and shaping heuristics.
+- Sophisticated planning and shaping heuristics,
+- Obsidian-API-driven interactions (best-effort editor/navigation behavior).
 
 Success criterion:
 
@@ -323,6 +317,19 @@ Rule of thumb:
 
 > Prefer work that improves **end-to-end throughput** (M1) over work that expands the
 > **feature surface** (M2), once M0 exists.
+
+#### M2.x — Jump-to-line navigation from task provenance ⛔
+
+Intent:
+
+- When a rendered task has `origin.path` and `origin.line`, clicking the UI affordance should
+  open the note and attempt to position the cursor near that line (best-effort).
+
+Notes:
+
+- This is an interaction feature and depends on Obsidian workspace/editor APIs.
+- It must gracefully fall back to opening the file when cursor positioning is not available.
+- The core/UI contracts remain “origin path + optional line”; no URI scheme is required.
 
 ---
 
