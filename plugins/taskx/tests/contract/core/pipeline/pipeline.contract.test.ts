@@ -1,16 +1,22 @@
 /**
  * tests/contract/core/pipeline/pipeline.contract.test.ts
  *
- * This contract test protects the public pipeline output shape (M0).
+ * This contract test protects an M0-level invariant of the public pipeline API:
+ * running the pipeline must always return a renderable RecommendationFeed,
+ * even when no tasks are collected and no features are registered.
+ *
+ * Although we are now in M1/T1 development, this test continues to lock in
+ * the baseline behavior established in M0. Changes in collection strategy
+ * (e.g. async adapters) must not break this contract.
  *
  * Contract:
- * - We call runPipeline via the public orchestrator.
+ * - We call runPipeline only via its public orchestrator API.
  * - We do not reach into stage internals or registries directly.
- * - We assert the resulting RecommendationFeed structure that the UI consumes.
+ * - We assert only UI-consumable RecommendationFeed structure.
  *
  * Scope:
- * - This is the empty-universe baseline (stageCollect is still stubbed).
- * - It ensures we keep a deterministic, renderable feed even with no tasks.
+ * - Empty-universe baseline: no tasks collected and no detectors registered.
+ * - Ensures the feed remains deterministic and renderable in the minimal case.
  */
 
 import { describe, expect, it } from "vitest";
@@ -29,15 +35,18 @@ function assertDoNow(rec: Recommendation): Extract<Recommendation, { kind: "do-n
 }
 
 describe("core/pipeline runPipeline feed contract", () => {
-	it("returns a renderable feed for the empty task universe", () => {
+	it("returns a renderable feed for the empty task universe", async () => {
 		const ctx: TimeContext = {
 			now: new Date("2026-02-11T00:00:00.000Z"),
 			tz: "Europe/Paris",
 		};
 
-		const feed = runPipeline({ ctx });
+		const feed = await runPipeline({
+			ctx,
+			collect: async () => [],
+		});
 
-		// M0 invariant: the pipeline returns a UI-ready feed object.
+		// M0 invariant: the pipeline returns a UI-ready feed object even for an empty input.
 		expect(feed).toBeTruthy();
 		expect(Array.isArray(feed.sections)).toBe(true);
 
