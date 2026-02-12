@@ -21,17 +21,20 @@
 
 import type { App } from "obsidian";
 
-import { makeTaskId, type TaskIdOrigin } from "./make-task-id";
+import { makeTaskId } from "./make-task-id";
 import type { TaskEntity } from "../../core/model/task";
 
 /**
  * Collect tasks from the vault using Dataview.
  *
  * Notes:
- * - We keep the Dataview API typed as `unknown` here to avoid leaking Dataview
- *   types outside the adapter boundary.
+ * - We keep the Dataview API typed as `unknown` to avoid leaking Dataview types
+ *   outside the adapter boundary.
  * - Tasks are returned in the order provided by Dataview.
  * - We populate only minimal fields required by TaskEntity.
+ *
+ * Even if the current Dataview calls are synchronous, we keep this adapter async
+ * so the pipeline can consistently treat collection as an async boundary.
  */
 export async function collectTasksFromDataview(args: {
 	app: App;
@@ -64,12 +67,14 @@ export async function collectTasksFromDataview(args: {
 		let indexInFile = 0;
 
 		for (const t of page.file.tasks) {
-			const origin: TaskIdOrigin & { kind: string } = {
+			// We use a generic origin kind. The collector mechanism may change,
+			// but the semantic meaning remains "a markdown task in the vault".
+			const origin = {
 				kind: "vault-markdown",
 				path: filePath,
 				// Dataview reports a 1-based line number.
 				line: t.line,
-			};
+			} as const;
 
 			// Dataview does not provide the exact raw markdown line.
 			// We retain the best available text as a placeholder for now.

@@ -5,7 +5,7 @@
  *
  * Responsibility:
  * - Register the TaskX code block processor.
- * - Delegate all computation to the M0 entry renderer.
+ * - Delegate all computation to the entry renderer.
  * - Manage only lifecycle glue (mount, unmount, refresh).
  *
  * Invariants:
@@ -28,7 +28,7 @@ export default class TaskXPlugin extends Plugin {
 		this.registerMarkdownCodeBlockProcessor("taskx", async (_src, el) => {
 			el.empty();
 
-			const view = renderTaskX({});
+			const view = await renderTaskX({ app: this.app });
 			el.appendChild(view);
 		});
 	}

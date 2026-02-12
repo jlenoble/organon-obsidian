@@ -1,7 +1,7 @@
 /**
  * core/pipeline/pipeline.ts
  *
- * This file defines the end-to-end pipeline orchestrator for TaskX (M0).
+ * This file defines the end-to-end pipeline orchestrator for TaskX.
  *
  * Responsibility:
  * - Run the core stages in the canonical order:
@@ -16,28 +16,34 @@
  * - Time must be injected via TimeContext (no ambient “now” inside stages).
  *
  * Non-goals:
- * - Advanced planning stages (M2).
- * - Adapter integration (collection is still stubbed in stage-collect).
  * - UI rendering or side effects.
  */
+
 import { stageAnalyze } from "./stage-analyze";
 import { stageCollect } from "./stage-collect";
 import { stageIssues } from "./stage-issues";
 import { stageRank } from "./stage-rank";
 import { stageRecommend } from "./stage-recommend";
 import type { RecommendationFeed } from "../model/recommendation";
+import type { TaskEntity } from "../model/task";
 import type { TimeContext } from "../model/time";
 
 /**
  * Run the TaskX pipeline end-to-end and return the UI-ready feed.
  *
+ * The caller provides:
+ * - ctx: the TimeContext (the only source of "now")
+ * - collect: an async collector function that returns TaskEntity values
+ *
  * Notes:
- * - This is the single “happy path” entry for M0 orchestration.
- * - Adapters and entry points are responsible for registering detectors and
- *   constructing TimeContext before calling this function.
+ * - Adapters and entry points are responsible for selecting a collection
+ *   strategy and constructing TimeContext before calling this function.
  */
-export function runPipeline(args: { ctx: TimeContext }): RecommendationFeed {
-	const tasks = stageCollect();
+export async function runPipeline(args: {
+	ctx: TimeContext;
+	collect: () => Promise<TaskEntity[]>;
+}): Promise<RecommendationFeed> {
+	const tasks = await stageCollect({ collect: args.collect });
 	const facts = stageAnalyze(tasks);
 	const issues = stageIssues({ tasks, facts, ctx: args.ctx });
 	const recs = stageRecommend({ tasks, facts, issues, ctx: args.ctx });
