@@ -174,7 +174,48 @@ Notes:
 
 ---
 
-### T1 — Feature test coverage (keep it safe) ⛔
+#### M1.1 — Task summaries in the feed (make it inspectable) 🟡
+
+Intent:
+
+- The M1.0 "Collected sample" proves end-to-end throughput, but ids alone are not
+  sufficient for day-to-day inspection.
+- We want the feed to show a **human-readable task summary** while keeping the UI
+  contract decoupled from TaskEntity internals.
+
+Deliverables:
+
+- The "Collected" section renders task text, not only ids.
+- Optionally render origin metadata (path / line) as provenance diagnostics.
+- Keep ids as optional diagnostics (do not remove them; just make them opt-in).
+
+Implementation order (files to touch):
+
+1. 🟡 `src/core/model/recommendation.ts`
+   - Introduce a small UI-facing `TaskRef` / `TaskSummary` type.
+   - Use it in the "collected" payload (and optionally "do-now") instead of raw ids.
+
+2. 🟡 `src/core/pipeline/stage-recommend.ts`
+   - Populate task summaries from the collected TaskEntity list.
+   - Keep the recommendation contract policy-light and deterministic.
+
+3. 🟡 `src/ui/feed/render-feed.ts`
+   - Render the task summary list (text, optional origin).
+   - Keep ids gated behind `RenderFeedOptions.showIds`.
+
+4. 🟡 `tests/contract/` (T1)
+   - Add a contract test asserting:
+     - A "Collected" section exists when tasks exist,
+     - It contains the expected number of items,
+     - It is stable and renderable (DOM smoke).
+
+Notes:
+
+- We keep the UI contract **minimal**:
+  task id + text + optional origin, nothing more.
+- This work must not introduce new policy. It is about visibility and stability.
+
+### T1 — Feature test coverage (keep it safe) 🟡
 
 Goal:
 
@@ -326,8 +367,8 @@ Purpose: **pure orchestration**. No UI, no Obsidian, no side effects.
 
 Stages (in order):
 
-- 🟡 `stage-collect.ts`
-  Collect tasks from adapters and return `TaskEntity[]` (stubbed in M0).
+- ✅ `stage-collect.ts`
+  Collect tasks from adapters and return `TaskEntity[]`.
 
 - ✅ `stage-analyze.ts`
   Build `TaskFactsIndex` from `TaskEntity[]`.
@@ -387,7 +428,7 @@ Each wizard:
 
 Purpose: **bridge the outside world to the core**.
 
-- 🟡 `adapters/obsidian/collect-tasks.ts` (M1)
+- ✅ `adapters/obsidian/collect-tasks.ts`
   Collect tasks from Obsidian / Tasks plugin / Dataview and normalize to
   `TaskEntity[]`.
 
