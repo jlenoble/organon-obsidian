@@ -123,37 +123,54 @@ Success criterion:
 Intent:
 
 - Before we can fix tasks, we must see real tasks flowing through the system.
-- This step un-stubs task collection and shows a small, raw sample in the feed.
+- This step removes stubbed collection and ensures all collected tasks have
+  stable identities and explicit origins.
+- The feed must display a small, raw sample to validate the end-to-end path.
 
 Deliverables:
 
-- Collect real tasks from the vault via Dataview (adapter).
+- Collect real tasks from the vault via a Dataview adapter.
+- Ensure every collected TaskEntity has:
+  - a stable `id` (extracted or deterministic temporary),
+  - a `TaskOrigin` with an explicit `kind`.
 - Show the first 5 collected tasks in the TaskX block output,
   even if they do not match any "do now" policy yet.
 
 Implementation order (files to touch):
 
-1. `src/adapters/obsidian/collect-tasks.ts` (new, M1)
-   - Use Dataview to collect tasks in vault order.
-   - Normalize to `TaskEntity[]`.
+1. `src/core/model/task.ts` (M1)
+   - Add `TaskOrigin.kind` and document it as an open-world discriminator.
 
-2. `src/core/pipeline/stage-collect.ts` (M1)
+2. `src/adapters/obsidian/extract-task-id.ts` (new, M1)
+   - Extract an explicit 🆔 marker from task text when present.
+
+3. `src/adapters/obsidian/make-task-id.ts` (new, M1)
+   - Build a TaskId from the extracted id or a deterministic temporary id
+     derived from origin (path, line, index).
+
+4. `src/adapters/obsidian/collect-tasks.ts` (new, M1)
+   - Use Dataview to collect tasks in vault order.
+   - Normalize them into valid TaskEntity objects with id and origin.
+
+5. `src/core/pipeline/stage-collect.ts` (M1)
    - Replace stub collection with adapter-backed collection.
 
-3. `src/core/pipeline/stage-recommend.ts` and/or `src/core/pipeline/stage-rank.ts` (M1)
+6. `src/core/pipeline/stage-recommend.ts` and/or
+   `src/core/pipeline/stage-rank.ts` (M1)
    - Add a lightweight "Collected" section that lists 5 tasks.
    - Keep this section policy-light and stable.
 
-4. `src/ui/feed/render-feed.ts` (M1)
+7. `src/ui/feed/render-feed.ts` (M1)
    - Render the new "Collected" section.
 
-5. `tests/` (T1)
+8. `tests/` (T1)
    - Add at least one contract test that asserts a collected sample is rendered.
 
 Notes:
 
 - Repo text must justify this generically (debuggability, throughput),
   not via personal task details.
+- Temporary ids must be detectable as such, to allow later diagnostics.
 
 ---
 
