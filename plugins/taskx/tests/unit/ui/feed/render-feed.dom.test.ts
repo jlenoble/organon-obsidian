@@ -74,4 +74,99 @@ describe("ui/feed renderFeed", () => {
 		const taskLis = Array.from(li.querySelectorAll(".taskx-rec__tasks li"));
 		expect(taskLis.map(n => n.textContent)).toEqual(["task:a", "task:b"]);
 	});
+
+	it("shows provenance links when showProvenanceLinks is undefined", () => {
+		const feed: RecommendationFeed = {
+			sections: [
+				{
+					title: "Collected",
+					items: [
+						{
+							kind: "collected",
+							id: asRecommendationId("rec:collected:test"),
+							title: "Collected sample",
+							why: ["baseline test"],
+							score: { urgency: 0, friction: 0, payoff: 0 },
+							tasks: [
+								{
+									id: asTaskId("task:a"),
+									text: "task a",
+									origin: { path: "folder/note.md", line: 12 },
+								},
+							],
+						},
+					],
+				},
+			],
+		};
+
+		const root = renderFeed(feed, { doc: document });
+
+		const link = root.querySelector(".taskx-rec__task-link");
+		expect(link).not.toBeNull();
+		expect(link?.textContent).toBe("[[folder/note|note]]");
+	});
+
+	it("shows provenance links when showProvenanceLinks is true", () => {
+		const feed: RecommendationFeed = {
+			sections: [
+				{
+					title: "Collected",
+					items: [
+						{
+							kind: "collected",
+							id: asRecommendationId("rec:collected:test"),
+							title: "Collected sample",
+							why: ["baseline test"],
+							score: { urgency: 0, friction: 0, payoff: 0 },
+							tasks: [
+								{
+									id: asTaskId("task:a"),
+									text: "task a",
+									origin: { path: "folder/note.md", line: 12 },
+								},
+							],
+						},
+					],
+				},
+			],
+		};
+
+		const root = renderFeed(feed, { doc: document, showProvenanceLinks: true });
+
+		const link = root.querySelector(".taskx-rec__task-link");
+		expect(link).not.toBeNull();
+		expect(link?.textContent).toBe("[[folder/note|note]]");
+	});
+
+	it("hides provenance links when showProvenanceLinks is false", () => {
+		const feed: RecommendationFeed = {
+			sections: [
+				{
+					title: "Collected",
+					items: [
+						{
+							kind: "collected",
+							id: asRecommendationId("rec:collected:test"),
+							title: "Collected sample",
+							why: ["baseline test"],
+							score: { urgency: 0, friction: 0, payoff: 0 },
+							tasks: [
+								{
+									id: asTaskId("task:a"),
+									text: "task a",
+									origin: { path: "folder/note.md", line: 12 },
+								},
+							],
+						},
+					],
+				},
+			],
+		};
+
+		const root = renderFeed(feed, { doc: document, showProvenanceLinks: false });
+
+		const link = root.querySelector(".taskx-rec__task-link");
+		expect(link).toBeNull();
+	});
 });
