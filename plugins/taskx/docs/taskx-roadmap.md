@@ -61,7 +61,7 @@ Status:
 
 ---
 
-### T0 — Test harness (make it testable) 🟡
+### T0 — Test harness (make it testable) ✅
 
 Goal:
 
@@ -81,13 +81,17 @@ Deliverables:
 - Test runner configuration and scripts,
 - At least a minimal test scaffold:
   - ✅ One core/pipeline contract test,
-  - 🟡 One UI renderer DOM test,
+  - ✅ One UI renderer DOM test,
   - ✅ One simple pure unit test.
 
 Success criterion:
 
 - Tests can be run in CI and locally.
 - We can write both node and DOM tests reliably.
+
+Status:
+
+- ✅ Achieved
 
 ---
 

@@ -1,0 +1,76 @@
+/**
+ * tests/unit/ui/feed/render-feed.dom.test.ts
+ *
+ * We protect the M0 UI rendering contract in a DOM environment.
+ *
+ * Intent:
+ * - Assert stable class names and data attributes used for styling and wiring.
+ * - Validate that the renderer stays "dumb" and follows the feed structure.
+ *
+ * Boundaries:
+ * - We do not test pipeline grouping or ranking here.
+ * - We avoid snapshot tests. We prefer explicit structural assertions.
+ */
+
+import { describe, expect, it } from "vitest";
+
+import { asRecommendationId, asTaskId } from "@/core/model/id";
+import type { RecommendationFeed } from "@/core/model/recommendation";
+import { renderFeed } from "@/ui/feed/render-feed";
+
+describe("ui/feed renderFeed", () => {
+	it("renders an empty feed placeholder", () => {
+		const feed: RecommendationFeed = {
+			sections: [],
+		};
+
+		const root = renderFeed(feed, { doc: document });
+
+		expect(root).toBeInstanceOf(HTMLElement);
+		expect(root.classList.contains("taskx-feed")).toBe(true);
+
+		const empty = root.querySelector(".taskx-feed__empty");
+		expect(empty).not.toBeNull();
+		expect(empty?.textContent).toBe("No recommendations.");
+	});
+
+	it("renders a do-now recommendation with stable hooks", () => {
+		const feed: RecommendationFeed = {
+			sections: [
+				{
+					title: "Do now",
+					items: [
+						{
+							kind: "do-now",
+							id: asRecommendationId("rec:do-now:test"),
+							title: "Execute now",
+							why: ["baseline test"],
+							score: { urgency: 1, friction: 2, payoff: 3 },
+							tasks: [asTaskId("task:a"), asTaskId("task:b")],
+						},
+					],
+				},
+			],
+		};
+
+		const root = renderFeed(feed, { doc: document });
+
+		expect(root.classList.contains("taskx-feed")).toBe(true);
+
+		const sectionTitle = root.querySelector(".taskx-feed__section-title");
+		expect(sectionTitle?.textContent).toBe("Do now");
+
+		const item = root.querySelector("li.taskx-rec");
+		expect(item).not.toBeNull();
+
+		const li = item as HTMLLIElement;
+		expect(li.dataset.taskxKind).toBe("do-now");
+		expect(li.dataset.taskxId).toBe("rec:do-now:test");
+
+		const summary = li.querySelector(".taskx-rec__summary");
+		expect(summary?.textContent).toBe("2 tasks to do now");
+
+		const taskLis = Array.from(li.querySelectorAll(".taskx-rec__tasks li"));
+		expect(taskLis.map(n => n.textContent)).toEqual(["task:a", "task:b"]);
+	});
+});
