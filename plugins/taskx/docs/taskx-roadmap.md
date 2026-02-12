@@ -95,7 +95,7 @@ Status:
 
 ---
 
-### M1 — Coverage ramp (make it useful) ⛔
+### M1 — Coverage ramp (make it useful) 🟡
 
 Goal:
 
@@ -118,7 +118,7 @@ Success criterion:
 
 - A growing share of real tasks can be analyzed, fixed, and executed using TaskX.
 
-#### M1.0 — Real task collection + visible sample (first step)
+#### M1.0 — Real task collection + visible sample (first step) 🟡
 
 Intent:
 
@@ -138,32 +138,32 @@ Deliverables:
 
 Implementation order (files to touch):
 
-1. `src/core/model/task.ts` (M1)
+1. ✅ `src/core/model/task.ts`
    - Add `TaskOrigin.kind` and document it as an open-world discriminator.
 
-2. `src/adapters/obsidian/extract-task-id.ts` (new, M1)
+2. ✅ `src/adapters/obsidian/extract-task-id.ts` (new)
    - Extract an explicit 🆔 marker from task text when present.
 
-3. `src/adapters/obsidian/make-task-id.ts` (new, M1)
+3. ✅ `src/adapters/obsidian/make-task-id.ts` (new)
    - Build a TaskId from the extracted id or a deterministic temporary id
      derived from origin (path, line, index).
 
-4. `src/adapters/obsidian/collect-tasks.ts` (new, M1)
+4. ✅ `src/adapters/obsidian/collect-tasks.ts` (new)
    - Use Dataview to collect tasks in vault order.
    - Normalize them into valid TaskEntity objects with id and origin.
 
-5. `src/core/pipeline/stage-collect.ts` (M1)
+5. ✅ `src/core/pipeline/stage-collect.ts`
    - Replace stub collection with adapter-backed collection.
 
-6. `src/core/pipeline/stage-recommend.ts` and/or
-   `src/core/pipeline/stage-rank.ts` (M1)
+6. ✅ `src/core/pipeline/stage-recommend.ts` and/or
+   `src/core/pipeline/stage-rank.ts`
    - Add a lightweight "Collected" section that lists 5 tasks.
    - Keep this section policy-light and stable.
 
-7. `src/ui/feed/render-feed.ts` (M1)
+7. ✅ `src/ui/feed/render-feed.ts`
    - Render the new "Collected" section.
 
-8. `tests/` (T1)
+8. 🟡 `tests/` (T1)
    - Add at least one contract test that asserts a collected sample is rendered.
 
 Notes:

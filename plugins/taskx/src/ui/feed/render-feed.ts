@@ -10,11 +10,11 @@
  *
  * Intent:
  * - Offer a stable rendering target for the M0 vertical slice.
- * - Keep UI responsibilities limited to display and basic interaction hooks.
+ * - Extend rendering minimally as new recommendation kinds appear.
  *
  * Limits:
  * - We do not apply fixes, mutate notes, or call Obsidian APIs from this file.
- * - We do not introduce per-kind specialized renderers yet (those come in M1/M2).
+ * - We keep interaction hooks future-facing, not feature-complete.
  *
  * Non-goals:
  * - Styling polish. We only attach predictable class names and data attributes.
@@ -144,9 +144,27 @@ function renderRecommendation(
 function renderRecommendationDetails(doc: Document, rec: Recommendation): HTMLElement {
 	const details = el(doc, "div", { className: "taskx-rec__details" });
 
-	// We keep this switch small and explicit for M0.
-	// Future work will likely move kind-specific blocks into their own files.
+	// We keep this switch small and explicit.
 	switch (rec.kind) {
+		case "collected": {
+			const taskCount = rec.tasks.length;
+			details.append(
+				el(doc, "div", {
+					className: "taskx-rec__summary",
+					text: taskCount === 1 ? "1 collected task" : `${taskCount} collected tasks`,
+				}),
+			);
+
+			if (taskCount > 0) {
+				const tasks = el(doc, "ul", { className: "taskx-rec__tasks" });
+				for (const id of rec.tasks) {
+					tasks.append(el(doc, "li", { text: id }));
+				}
+				details.append(tasks);
+			}
+			break;
+		}
+
 		case "fix": {
 			const fixCount = rec.fixes.length;
 			details.append(

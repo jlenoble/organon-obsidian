@@ -5,7 +5,7 @@
  *
  * Responsibility:
  * - Convert Issue[] (problem reports) into Recommendation[] (UI-facing suggestions).
- * - Emit minimal “do-now” recommendations based on current executability facts.
+ * - Emit policy-light recommendations that help validate end-to-end throughput.
  *
  * Design goals:
  * - Keep the stage extensible: we will add more recommendation kinds over time
@@ -25,12 +25,13 @@ import type { TimeContext } from "../model/time";
  * Compile issues and basic action suggestions into recommendations.
  *
  * Current minimal behavior:
- * 1) For each issue, emit a "fix" recommendation containing the issue fixes.
- * 2) Emit one "do-now" recommendation listing up to N executable tasks.
+ * 1) Emit one "collected" recommendation listing up to N collected task ids.
+ * 2) For each issue, emit a "fix" recommendation containing the issue fixes.
+ * 3) Emit one "do-now" recommendation listing up to N executable tasks.
  *
  * Notes:
- * - The "do-now" recommendation is intentionally simple and will evolve as we
- *   introduce deeper planning policies (superblocks, time windows, effort bands).
+ * - "collected" is policy-light and exists to validate real task throughput.
+ * - "do-now" stays intentionally shallow and will evolve with later planning.
  */
 export function stageRecommend(args: {
 	tasks: TaskEntity[];
@@ -40,7 +41,24 @@ export function stageRecommend(args: {
 }): Recommendation[] {
 	const recs: Recommendation[] = [];
 
-	// 1) Issue -> "fix" recommendations
+	// 1) Policy-light collected sample (M1.0 visibility hook)
+	const MAX_COLLECTED = 5;
+
+	const collectedIds = args.tasks.slice(0, MAX_COLLECTED).map(t => t.id);
+
+	if (collectedIds.length > 0) {
+		recs.push({
+			id: asRecommendationId("rec:collected:sample"),
+			kind: "collected",
+			title: "Collected sample",
+			why: ["Raw sample of tasks collected from the vault (no policy applied)."],
+			// We keep scoring neutral here; grouping policy drives placement.
+			score: { urgency: 0, friction: 0, payoff: 0 },
+			tasks: collectedIds,
+		});
+	}
+
+	// 2) Issue -> "fix" recommendations
 	for (const issue of args.issues) {
 		recs.push({
 			id: asRecommendationId(`rec:fix:${String(issue.id)}`),
@@ -53,12 +71,12 @@ export function stageRecommend(args: {
 		});
 	}
 
-	// 2) One minimal "do-now" recommendation (our first “block-like” suggestion)
-	const MAX_TASKS = 5;
+	// 3) One minimal "do-now" recommendation (our first “block-like” suggestion)
+	const MAX_DO_NOW = 5;
 
 	const executableTaskIds = args.tasks
 		.filter(t => args.facts.byId.get(t.id)?.isExecutableNow)
-		.slice(0, MAX_TASKS)
+		.slice(0, MAX_DO_NOW)
 		.map(t => t.id);
 
 	recs.push({

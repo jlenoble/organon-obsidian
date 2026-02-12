@@ -30,6 +30,7 @@ import type { RecommendationId, TaskId } from "./id";
  * - We keep kinds semantic (what the user does), not implementation-driven.
  *
  * Current kinds:
+ * - "collected": a policy-light sample of tasks collected from the vault
  * - "fix": apply or review a proposed fix
  * - "do-now": execute one or more tasks now
  *
@@ -37,7 +38,7 @@ import type { RecommendationId, TaskId } from "./id";
  * - "wizard": interactive resolution (decomposition, planning)
  * - "plan": day shaping / time-window planning
  */
-export type RecommendationKind = "fix" | "do-now";
+export type RecommendationKind = "collected" | "fix" | "do-now";
 
 /**
  * Scoring signals attached to a recommendation.
@@ -98,9 +99,14 @@ export interface RecommendationBase {
  * - impossible states are prevented (e.g., kind="fix" without `fixes`).
  */
 export type RecommendationVariants = {
+	collected: {
+		tasks: TaskId[];
+	};
+
 	fix: {
 		fixes: FixCandidate[];
 	};
+
 	"do-now": {
 		tasks: TaskId[];
 	};
@@ -127,13 +133,13 @@ export type Recommendation = {
  * A RecommendationFeed is the structured output of the pipeline for the UI.
  *
  * Characteristics:
- * - Grouped into semantic sections (e.g., "Unblock", "Do now").
+ * - Grouped into semantic sections (e.g., "Collected", "Unblock", "Do now").
  * - Ordering within and between sections is already decided by the pipeline.
  * - The UI should render this structure as-is, without re-ranking.
  */
 export interface RecommendationFeed {
 	sections: Array<{
-		/** Section title, e.g. "Unblock", "Do now", "Plan". */
+		/** Section title, e.g. "Collected", "Unblock", "Do now", "Plan". */
 		title: string;
 
 		/** Ordered list of recommendations in this section. */

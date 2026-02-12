@@ -13,7 +13,7 @@
  * - Keep the result deterministic for the same inputs.
  *
  * Limits:
- * - This is M0 policy. It stays simple and boring.
+ * - This is early policy. It stays simple and boring.
  *
  * Non-goals:
  * - Advanced scoring or personalization.
@@ -41,13 +41,16 @@ export function stageRank(recs: Recommendation[]): RecommendationFeed {
 
 	const sections: RecommendationFeed["sections"] = [];
 
-	// M0 policy: "fix" first (unblock), then "do-now" (execute).
+	// Early policy: show "collected" first so real tasks are visible immediately.
+	addSection(sections, "Collected", byKind.get("collected") ?? []);
+
+	// Then unblock, then execute.
 	addSection(sections, "Unblock", byKind.get("fix") ?? []);
 	addSection(sections, "Do now", byKind.get("do-now") ?? []);
 
 	// Any unexpected kinds (future additions) are preserved deterministically at the end.
 	for (const [kind, items] of byKind.entries()) {
-		if (kind === "fix" || kind === "do-now") {
+		if (kind === "collected" || kind === "fix" || kind === "do-now") {
 			continue;
 		}
 
@@ -61,7 +64,7 @@ export function stageRank(recs: Recommendation[]): RecommendationFeed {
  * Group recommendations by kind while preserving deterministic iteration order.
  *
  * Notes:
- * - We sort kinds lexicographically before emitting sections beyond the known M0 kinds,
+ * - We sort kinds lexicographically before emitting sections beyond the known kinds,
  *   so the output is stable regardless of registration order in earlier stages.
  */
 function groupByKind(recs: Recommendation[]): Map<RecommendationKind, Recommendation[]> {
@@ -88,7 +91,7 @@ function groupByKind(recs: Recommendation[]): Map<RecommendationKind, Recommenda
  * Add a section to the feed if it contains any items.
  *
  * Notes:
- * - We do not emit empty sections in M0 to keep the renderer simple.
+ * - We do not emit empty sections to keep the renderer simple.
  */
 function addSection(
 	sections: RecommendationFeed["sections"],
@@ -115,7 +118,7 @@ function addSection(
  * - Then stable id ordering as a final tie-breaker.
  *
  * Notes:
- * - This is intentionally simple and policy-light for M0.
+ * - This is intentionally simple and policy-light.
  * - We use only Recommendation.score and Recommendation.id, keeping this stage decoupled
  *   from tasks/issues internals.
  */
@@ -145,7 +148,7 @@ function sortWithinSection(items: Recommendation[]): Recommendation[] {
  *
  * Notes:
  * - This is a fallback for future kinds.
- * - Known M0 kinds are handled explicitly by the stage and should not use this path.
+ * - Known kinds are handled explicitly by the stage and should not use this path.
  */
 function kindToTitle(kind: RecommendationKind): string {
 	return String(kind)
