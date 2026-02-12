@@ -136,12 +136,16 @@ function renderRecommendation(
 		item.append(whyList);
 	}
 
-	item.append(renderRecommendationDetails(doc, rec));
+	item.append(renderRecommendationDetails(doc, rec, opts));
 
 	return item;
 }
 
-function renderRecommendationDetails(doc: Document, rec: Recommendation): HTMLElement {
+function renderRecommendationDetails(
+	doc: Document,
+	rec: Recommendation,
+	opts: RenderFeedOptions,
+): HTMLElement {
 	const details = el(doc, "div", { className: "taskx-rec__details" });
 
 	// We keep this switch small and explicit.
