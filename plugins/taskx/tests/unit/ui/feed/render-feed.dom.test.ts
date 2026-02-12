@@ -1,15 +1,16 @@
 /**
  * tests/unit/ui/feed/render-feed.dom.test.ts
  *
- * We protect the M0 UI rendering contract in a DOM environment.
+ * This is a **unit test** for the UI feed renderer.
  *
  * Intent:
  * - Assert stable class names and data attributes used for styling and wiring.
  * - Validate that the renderer stays "dumb" and follows the feed structure.
  *
  * Boundaries:
- * - We do not test pipeline grouping or ranking here.
- * - We avoid snapshot tests. We prefer explicit structural assertions.
+ * - We test the renderer in isolation by calling `renderFeed` directly.
+ * - We do not test pipeline grouping, ranking, or cross-layer contracts here.
+ * - We avoid snapshot tests and prefer explicit structural assertions.
  */
 
 import { describe, expect, it } from "vitest";
