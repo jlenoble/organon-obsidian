@@ -404,6 +404,31 @@ Used for:
 
 ---
 
+### TaskSummary
+
+A **TaskSummary** is a minimal, UI-facing representation of a task used inside
+`RecommendationFeed`.
+
+It contains:
+
+- the stable task `id`,
+- a human-readable `text` summary,
+- and optional lightweight `origin` diagnostics (path / line).
+
+Purpose:
+
+- Allow the UI to render tasks without depending on `TaskEntity` or adapter shapes.
+- Keep the UI contract stable and inspectable.
+- Avoid forcing the UI to perform lookups or re-interpret core domain objects.
+
+Non-goals:
+
+- A TaskSummary is **not** a full task model.
+- It must not carry policy, computed facts, or mutation capabilities.
+- It must not become a backdoor dependency on adapters or storage formats.
+
+---
+
 ### Template
 
 A reusable blueprint for creating or decomposing tasks into a canonical structure.

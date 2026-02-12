@@ -128,13 +128,28 @@ Consequences:
 
 ## 6) UI contract
 
+The UI layer is responsible for **rendering** and **wiring** the output of the core
+pipeline into the host environment. It is deliberately kept dumb and declarative.
+
 The UI:
 
-- Consumes **only** the `RecommendationFeed` (and related UI-facing contracts).
+- Consumes **only** the `RecommendationFeed` and its UI-facing contracts.
 - Must not:
   - re-rank recommendations,
   - re-group sections,
-  - re-interpret core decisions.
+  - re-interpret core decisions,
+  - or depend on `TaskEntity`, adapters, or registries.
+
+When task information must be displayed, it is provided through **lightweight
+UI contracts** carried by the feed, such as `TaskSummary`:
+
+- A `TaskSummary` contains only:
+  - a stable task id,
+  - a human-readable text,
+  - and optional, lightweight origin diagnostics.
+- It exists to make the feed **inspectable and renderable** without exposing
+  `TaskEntity` or adapter-specific shapes.
+- It must not carry policy, computed facts, or mutation capabilities.
 
 This keeps **all decision policy** in the core and makes the UI a pure rendering layer.
 
