@@ -80,7 +80,7 @@ Deliverables:
 
 - Test runner configuration and scripts,
 - At least a minimal test scaffold:
-  - 🟡 One core/pipeline contract test,
+  - ✅ One core/pipeline contract test,
   - 🟡 One UI renderer DOM test,
   - ✅ One simple pure unit test.
 
