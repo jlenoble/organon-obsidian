@@ -118,6 +118,43 @@ Success criterion:
 
 - A growing share of real tasks can be analyzed, fixed, and executed using TaskX.
 
+#### M1.0 — Real task collection + visible sample (first step)
+
+Intent:
+
+- Before we can fix tasks, we must see real tasks flowing through the system.
+- This step un-stubs task collection and shows a small, raw sample in the feed.
+
+Deliverables:
+
+- Collect real tasks from the vault via Dataview (adapter).
+- Show the first 5 collected tasks in the TaskX block output,
+  even if they do not match any "do now" policy yet.
+
+Implementation order (files to touch):
+
+1. `src/adapters/obsidian/collect-tasks.ts` (new, M1)
+   - Use Dataview to collect tasks in vault order.
+   - Normalize to `TaskEntity[]`.
+
+2. `src/core/pipeline/stage-collect.ts` (M1)
+   - Replace stub collection with adapter-backed collection.
+
+3. `src/core/pipeline/stage-recommend.ts` and/or `src/core/pipeline/stage-rank.ts` (M1)
+   - Add a lightweight "Collected" section that lists 5 tasks.
+   - Keep this section policy-light and stable.
+
+4. `src/ui/feed/render-feed.ts` (M1)
+   - Render the new "Collected" section.
+
+5. `tests/` (T1)
+   - Add at least one contract test that asserts a collected sample is rendered.
+
+Notes:
+
+- Repo text must justify this generically (debuggability, throughput),
+  not via personal task details.
+
 ---
 
 ### T1 — Feature test coverage (keep it safe) ⛔
@@ -272,8 +309,8 @@ Purpose: **pure orchestration**. No UI, no Obsidian, no side effects.
 
 Stages (in order):
 
-- ✅ `stage-collect.ts`
-  Collect tasks from adapters and return `TaskEntity[]` (currently stubbed).
+- 🟡 `stage-collect.ts`
+  Collect tasks from adapters and return `TaskEntity[]` (stubbed in M0).
 
 - ✅ `stage-analyze.ts`
   Build `TaskFactsIndex` from `TaskEntity[]`.
