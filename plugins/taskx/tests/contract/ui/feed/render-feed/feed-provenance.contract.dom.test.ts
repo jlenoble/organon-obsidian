@@ -21,16 +21,16 @@ import { asRecommendationId, asTaskId } from "@/core/model/id";
 import type { RecommendationFeed } from "@/core/model/recommendation";
 import { renderFeed } from "@/ui/feed/render-feed";
 
-function makeFeed(): RecommendationFeed {
+function makeFeed(kind: "collected" | "do-now"): RecommendationFeed {
 	return {
 		sections: [
 			{
-				title: "Collected",
+				title: kind === "collected" ? "Collected" : "Do now",
 				items: [
 					{
-						kind: "collected",
-						id: asRecommendationId("rec:collected:test"),
-						title: "Collected sample",
+						kind,
+						id: asRecommendationId(`rec:${kind}:test`),
+						title: kind === "collected" ? "Collected sample" : "Execute now",
 						why: ["baseline test"],
 						score: { urgency: 0, friction: 0, payoff: 0 },
 						tasks: [
@@ -40,7 +40,7 @@ function makeFeed(): RecommendationFeed {
 								origin: { path: "folder/note.md", line: 12 },
 							},
 						],
-					},
+					} as unknown as RecommendationFeed["sections"][number]["items"][number],
 				],
 			},
 		],
@@ -49,7 +49,7 @@ function makeFeed(): RecommendationFeed {
 
 describe("ui/feed renderFeed", () => {
 	it("shows provenance links when showProvenanceLinks is undefined", () => {
-		const root = renderFeed(makeFeed(), { doc: document });
+		const root = renderFeed(makeFeed("collected"), { doc: document });
 
 		const link = root.querySelector(".taskx-rec__task-link") as HTMLAnchorElement | null;
 		expect(link).not.toBeNull();
@@ -65,7 +65,7 @@ describe("ui/feed renderFeed", () => {
 	});
 
 	it("shows provenance links when showProvenanceLinks is true", () => {
-		const root = renderFeed(makeFeed(), { doc: document, showProvenanceLinks: true });
+		const root = renderFeed(makeFeed("collected"), { doc: document, showProvenanceLinks: true });
 
 		const link = root.querySelector(".taskx-rec__task-link") as HTMLAnchorElement | null;
 		expect(link).not.toBeNull();
@@ -76,9 +76,20 @@ describe("ui/feed renderFeed", () => {
 	});
 
 	it("hides provenance links when showProvenanceLinks is false", () => {
-		const root = renderFeed(makeFeed(), { doc: document, showProvenanceLinks: false });
+		const root = renderFeed(makeFeed("collected"), { doc: document, showProvenanceLinks: false });
 
 		const link = root.querySelector(".taskx-rec__task-link");
 		expect(link).toBeNull();
+	});
+
+	it("renders provenance links for do-now task summaries", () => {
+		const root = renderFeed(makeFeed("do-now"), { doc: document });
+
+		const link = root.querySelector(".taskx-rec__task-link") as HTMLAnchorElement | null;
+		expect(link).not.toBeNull();
+
+		expect(link?.textContent).toBe("note");
+		expect(link?.dataset.href).toBe("folder/note");
+		expect(link?.dataset.taskxWiki).toBe("[[folder/note|note]]");
 	});
 });

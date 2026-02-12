@@ -131,7 +131,14 @@ export type RecommendationVariants = {
 	};
 
 	"do-now": {
-		tasks: TaskId[];
+		/**
+		 * UI-facing task summaries to keep "do-now" human-readable without UI lookups.
+		 *
+		 * Notes:
+		 * - This mirrors the "collected" contract so rendering stays consistent.
+		 * - Provenance remains optional and policy-light.
+		 */
+		tasks: TaskSummary[];
 	};
 };
 

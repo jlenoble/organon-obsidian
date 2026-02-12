@@ -225,7 +225,7 @@ Status:
 
 ---
 
-### M1.2 — Append smart links for edit convenience 🟡
+### M1.2 — Append smart links for edit convenience ✅
 
 Intent:
 
@@ -249,11 +249,7 @@ Implementation order (files to touch):
    - Append an internal link after each task text when `TaskSummary.origin?.path` is present.
    - Keep a stable DOM structure so contract tests can assert link presence.
 
-2. 🟡 `src/core/pipeline/stage-recommend.ts`
-   - Ensure `TaskSummary.origin` is populated when available from collected tasks, so the UI can
-     rely on it without special casing.
-
-3. ✅ `tests/contract/ui/feed/render-feed/feed-provenance.contract.dom.test.ts`
+2. ✅ `tests/contract/ui/feed/render-feed/feed-provenance.contract.dom.test.ts`
    - Assert that rendered task items include (or hide) provenance links according to
      `showProvenanceLinks`, and that the DOM contract is stable and copyable.
 
@@ -264,7 +260,7 @@ Notes:
 
 Status:
 
-- 🟡 In progress (rendering and UI contract coverage implemented)
+- ✅ Achieved
 
 ---
 

@@ -78,10 +78,14 @@ export function stageRecommend(args: {
 	// 3) One minimal "do-now" recommendation (our first “block-like” suggestion)
 	const MAX_DO_NOW = 5;
 
-	const executableTaskIds = args.tasks
+	const executableTasks: TaskSummary[] = args.tasks
 		.filter(t => args.facts.byId.get(t.id)?.isExecutableNow)
 		.slice(0, MAX_DO_NOW)
-		.map(t => t.id);
+		.map(t => ({
+			id: t.id,
+			text: t.text,
+			origin: { path: t.origin.path, line: t.origin.line },
+		}));
 
 	recs.push({
 		id: asRecommendationId("rec:do-now:shallow"),
@@ -89,7 +93,7 @@ export function stageRecommend(args: {
 		title: "Do now (shallow block)",
 		why: ["These tasks appear executable under the current minimal policy (todo + duration set)."],
 		score: { urgency: 40, friction: 5, payoff: 35 },
-		tasks: executableTaskIds,
+		tasks: executableTasks,
 	});
 
 	return recs;

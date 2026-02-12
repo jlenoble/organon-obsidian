@@ -245,8 +245,30 @@ function renderRecommendationDetails(
 
 			if (taskCount > 0) {
 				const tasks = el(doc, "ul", { className: "taskx-rec__tasks" });
-				for (const id of rec.tasks) {
-					tasks.append(el(doc, "li", { text: id }));
+				for (const t of rec.tasks) {
+					const li = el(doc, "li", { className: "taskx-rec__task" });
+
+					li.append(el(doc, "span", { className: "taskx-rec__task-text", text: t.text }));
+
+					if (opts.showProvenanceLinks !== false && t.origin?.path) {
+						li.append(el(doc, "span", { className: "taskx-rec__task-gap", text: " " }));
+						li.append(renderProvenanceLink(doc, t.origin.path, t.origin.line));
+					}
+
+					if (opts.showIds) {
+						li.append(el(doc, "code", { className: "taskx-rec__task-id", text: t.id }));
+						if (t.origin) {
+							const suffix = t.origin.line ? `:${t.origin.line}` : "";
+							li.append(
+								el(doc, "span", {
+									className: "taskx-rec__task-origin",
+									text: `${t.origin.path}${suffix}`,
+								}),
+							);
+						}
+					}
+
+					tasks.append(li);
 				}
 				details.append(tasks);
 			}

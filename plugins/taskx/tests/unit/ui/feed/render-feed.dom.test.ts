@@ -47,14 +47,18 @@ describe("ui/feed renderFeed", () => {
 							title: "Execute now",
 							why: ["baseline test"],
 							score: { urgency: 1, friction: 2, payoff: 3 },
-							tasks: [asTaskId("task:a"), asTaskId("task:b")],
+							tasks: [
+								{ id: asTaskId("task:a"), text: "task a" },
+								{ id: asTaskId("task:b"), text: "task b" },
+							],
 						},
 					],
 				},
 			],
 		};
 
-		const root = renderFeed(feed, { doc: document });
+		// Unit test: keep output minimal and focus on stable hooks.
+		const root = renderFeed(feed, { doc: document, showProvenanceLinks: false });
 
 		expect(root.classList.contains("taskx-feed")).toBe(true);
 
@@ -71,7 +75,9 @@ describe("ui/feed renderFeed", () => {
 		const summary = li.querySelector(".taskx-rec__summary");
 		expect(summary?.textContent).toBe("2 tasks to do now");
 
-		const taskLis = Array.from(li.querySelectorAll(".taskx-rec__tasks li"));
-		expect(taskLis.map(n => n.textContent)).toEqual(["task:a", "task:b"]);
+		const taskTexts = Array.from(li.querySelectorAll(".taskx-rec__task-text")).map(
+			n => n.textContent,
+		);
+		expect(taskTexts).toEqual(["task a", "task b"]);
 	});
 });
