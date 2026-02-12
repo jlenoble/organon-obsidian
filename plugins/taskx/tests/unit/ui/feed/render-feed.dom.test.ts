@@ -102,9 +102,17 @@ describe("ui/feed renderFeed", () => {
 
 		const root = renderFeed(feed, { doc: document });
 
-		const link = root.querySelector(".taskx-rec__task-link");
+		const link = root.querySelector(".taskx-rec__task-link") as HTMLAnchorElement | null;
 		expect(link).not.toBeNull();
-		expect(link?.textContent).toBe("[[folder/note|note]]");
+
+		// Contracted label: we render the alias directly (no Markdown parsing step here).
+		expect(link?.textContent).toBe("note");
+
+		// Best-effort Obsidian internal-link semantics.
+		expect(link?.dataset.href).toBe("folder/note");
+
+		// Copyable wiki-link diagnostics (not user-facing).
+		expect(link?.dataset.taskxWiki).toBe("[[folder/note|note]]");
 	});
 
 	it("shows provenance links when showProvenanceLinks is true", () => {
@@ -134,9 +142,12 @@ describe("ui/feed renderFeed", () => {
 
 		const root = renderFeed(feed, { doc: document, showProvenanceLinks: true });
 
-		const link = root.querySelector(".taskx-rec__task-link");
+		const link = root.querySelector(".taskx-rec__task-link") as HTMLAnchorElement | null;
 		expect(link).not.toBeNull();
-		expect(link?.textContent).toBe("[[folder/note|note]]");
+
+		expect(link?.textContent).toBe("note");
+		expect(link?.dataset.href).toBe("folder/note");
+		expect(link?.dataset.taskxWiki).toBe("[[folder/note|note]]");
 	});
 
 	it("hides provenance links when showProvenanceLinks is false", () => {

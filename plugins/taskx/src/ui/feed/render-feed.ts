@@ -283,11 +283,21 @@ function renderProvenanceLink(doc: Document, path: string, line?: number): HTMLA
 
 	const a = doc.createElement("a");
 	a.className = "taskx-rec__task-link internal-link";
-	a.textContent = `[[${target}|${label}]]`;
+
+	// We render the contracted label directly.
+	//
+	// Rationale:
+	// - Obsidian contracts `[[target|label]]` when it parses Markdown.
+	// - Here we build DOM nodes directly (no Markdown parsing step), so we must
+	//   render the contracted label ourselves.
+	a.textContent = label;
 
 	// Best-effort internal-link semantics (Obsidian commonly uses data-href).
 	a.dataset.href = target;
 	a.href = target;
+
+	// Keep the full wiki-link shape as metadata for debugging / copyability.
+	a.dataset.taskxWiki = `[[${target}|${label}]]`;
 
 	// Future-facing diagnostics/hooks (pure data; no interaction here yet).
 	a.dataset.taskxOriginPath = path;
