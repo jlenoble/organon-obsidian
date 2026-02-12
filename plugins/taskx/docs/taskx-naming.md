@@ -233,13 +233,23 @@ Examples:
 
 ### 6.3 Relationship to production files
 
-Test files must **mirror the production directory tree**.
+Tests must **mirror the production directory tree** so navigation is mechanical.
 
-Rule:
+Base rule:
 
 > Replace the `src/` prefix with `tests/<kind>/` and keep the rest of the path identical.
 
 Where `<kind>` is one of: `unit`, `contract`, or `scenario`.
+
+#### 6.3.1 Single-file test (default)
+
+For a production file:
+
+- `src/<path>/<name>.ts`
+
+The default location is:
+
+- `tests/<kind>/<path>/<name>[.<role>][.<env>].test.ts`
 
 Examples:
 
@@ -252,22 +262,60 @@ Examples:
 - `src/ui/feed/render-feed.ts`
   → `tests/unit/ui/feed/render-feed.dom.test.ts`
 
+#### 6.3.2 Per-file test folder (allowed for splitting by intent)
+
+When tests for a single production file become large or need multiple “intent”
+slices, we may represent the production file as a **folder** in the test tree.
+
+Rule:
+
+> Replace `<name>.ts` with `<name>/` and place one or more `*.test.ts` files inside.
+
+So:
+
+- `src/<path>/<name>.ts`
+  → `tests/<kind>/<path>/<name>/*.test.ts`
+
+Constraints:
+
+- The folder name must equal the production file name **without** extension:
+  - `render-feed.ts` → `render-feed/`
+- Test filenames inside the folder must remain **intent-based**, not path-based.
+- Qualifiers still follow the same ordering rule:
+  - `<intent>[.<role>][.<env>].test.ts`
+- We do not duplicate the mirrored path inside the filename.
+
+Examples:
+
+- `src/ui/feed/render-feed.ts`
+  → `tests/contract/ui/feed/render-feed/feed-provenance.contract.dom.test.ts`
+  → `tests/contract/ui/feed/render-feed/feed-empty.contract.dom.test.ts`
+
+- `src/core/pipeline/pipeline.ts`
+  → `tests/contract/core/pipeline/pipeline/pipeline-shape.contract.test.ts`
+
 Forbidden:
 
 - ❌ `tests/unit/core-model/id.test.ts` (flattened path)
 - ❌ `tests/unit/ui-feed/render-feed.dom.test.ts` (flattened path)
 - ❌ `tests/unit/render-feed.dom.test.ts` (lost hierarchy)
+- ❌ `tests/contract/ui/feed/render-feed-provenance.contract.dom.test.ts`
+  (encodes hierarchy into filename instead of using folders)
 
 Rationale:
 
 - The test tree must reflect the architecture tree.
-- Navigation between code and tests must be mechanical and unambiguous.
-- There must be no encoding of paths into filenames.
+- Splitting by intent should not force lossy naming or path-encoding filenames.
+- The “per-file folder” is a controlled escape hatch that preserves mechanical
+  navigation while allowing multiple focused tests for one production file.
 
-The only difference between a production file and its test is:
+The only differences between production and tests are:
 
 - the root (`src/` → `tests/<kind>/`), and
-- the filename suffix (`.ts` → `.test.ts`, possibly with qualifiers such as `.dom` or `.contract`).
+- either:
+  - the filename suffix (`.ts` → `.test.ts`, with optional qualifiers), **or**
+  - the filename becomes a folder (`<name>.ts` → `<name>/`) containing one or
+    more `*.test.ts` files.
 
 ---
 
