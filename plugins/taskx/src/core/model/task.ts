@@ -51,6 +51,20 @@ export type Minutes = number;
  *   If an adapter uses 0-based indexing, it must convert at the boundary.
  */
 export interface TaskOrigin {
+	/**
+	 * Open-world discriminator for the origin semantics.
+	 *
+	 * Examples:
+	 * - "vault-markdown" (a markdown task line in a note)
+	 * - "generated" (a synthetic task produced by TaskX)
+	 *
+	 * Notes:
+	 * - This field exists for provenance, patching strategy, and diagnostics.
+	 * - Core and pipeline logic must treat this as data only and avoid branching
+	 *   on it. Branching is reserved for adapters and patch application.
+	 */
+	kind: string;
+
 	path: string;
 	line?: number;
 }
