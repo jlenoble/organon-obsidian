@@ -118,7 +118,7 @@ Success criterion:
 
 - A growing share of real tasks can be analyzed, fixed, and executed using TaskX.
 
-#### M1.0 — Real task collection + visible sample (first step) 🟡
+#### M1.0 — Real task collection + visible sample (first step) ✅
 
 Intent:
 
@@ -163,7 +163,7 @@ Implementation order (files to touch):
 7. ✅ `src/ui/feed/render-feed.ts`
    - Render the new "Collected" section.
 
-8. 🟡 `tests/` (T1)
+8. ✅ `tests/` (T1)
    - Add at least one contract test that asserts a collected sample is rendered.
 
 Notes:
@@ -172,9 +172,13 @@ Notes:
   not via personal task details.
 - Temporary ids must be detectable as such, to allow later diagnostics.
 
+Status:
+
+- ✅ Achieved
+
 ---
 
-#### M1.1 — Task summaries in the feed (make it inspectable) 🟡
+#### M1.1 — Task summaries in the feed (make it inspectable) ✅
 
 Intent:
 
@@ -203,7 +207,7 @@ Implementation order (files to touch):
    - Render the task summary list (text, optional origin).
    - Keep ids gated behind `RenderFeedOptions.showIds`.
 
-4. 🟡 `tests/contract/` (T1)
+4. ✅ `tests/contract/` (T1)
    - Add a contract test asserting:
      - A "Collected" section exists when tasks exist,
      - It contains the expected number of items,
@@ -214,6 +218,12 @@ Notes:
 - We keep the UI contract **minimal**:
   task id + text + optional origin, nothing more.
 - This work must not introduce new policy. It is about visibility and stability.
+
+Status:
+
+- ✅ Achieved
+
+---
 
 ### T1 — Feature test coverage (keep it safe) 🟡
 
