@@ -233,14 +233,41 @@ Examples:
 
 ### 6.3 Relationship to production files
 
-- Test filenames should **mirror the role** of the production code they protect.
-- Prefer:
-  - `stage-rank.ts` → `stage-rank.test.ts`
-  - `render-feed.ts` → `render-feed.dom.test.ts`
-- Avoid opaque names like:
-  - `test1.ts`, `misc.test.ts`, `pipeline-tests.ts`
+Test files must **mirror the production directory tree**.
 
-The goal is that a test file name answers: **what behavior or contract is being protected?**
+Rule:
+
+> Replace the `src/` prefix with `tests/<kind>/` and keep the rest of the path identical.
+
+Where `<kind>` is one of: `unit`, `contract`, or `scenario`.
+
+Examples:
+
+- `src/core/model/id.ts`
+  → `tests/unit/core/model/id.test.ts`
+
+- `src/core/pipeline/pipeline.ts`
+  → `tests/contract/core/pipeline/pipeline.contract.test.ts`
+
+- `src/ui/feed/render-feed.ts`
+  → `tests/unit/ui/feed/render-feed.dom.test.ts`
+
+Forbidden:
+
+- ❌ `tests/unit/core-model/id.test.ts` (flattened path)
+- ❌ `tests/unit/ui-feed/render-feed.dom.test.ts` (flattened path)
+- ❌ `tests/unit/render-feed.dom.test.ts` (lost hierarchy)
+
+Rationale:
+
+- The test tree must reflect the architecture tree.
+- Navigation between code and tests must be mechanical and unambiguous.
+- There must be no encoding of paths into filenames.
+
+The only difference between a production file and its test is:
+
+- the root (`src/` → `tests/<kind>/`), and
+- the filename suffix (`.ts` → `.test.ts`, possibly with qualifiers such as `.dom` or `.contract`).
 
 ---
 
