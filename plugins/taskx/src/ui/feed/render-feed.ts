@@ -54,6 +54,19 @@ export interface RenderFeedOptions {
 	 * - we keep them optional to avoid clutter for normal usage.
 	 */
 	showIds?: boolean;
+
+	/**
+	 * Whether to append a provenance link for each rendered task summary.
+	 *
+	 * When enabled and TaskSummary.origin.path is available, we append a wiki-link
+	 * shaped label at the end of the task text (e.g. `[[folder/note|note]]`).
+	 *
+	 * Notes:
+	 * - This is a rendering convenience only; it must not affect grouping policy.
+	 * - We do not attempt to "jump to line" here. That is an interaction concern
+	 *   handled in a later step (best-effort).
+	 */
+	showProvenanceLinks?: boolean;
 }
 
 /**
@@ -167,6 +180,12 @@ function renderRecommendationDetails(
 					// The summary text is the default, human-readable surface.
 					li.append(el(doc, "span", { className: "taskx-rec__task-text", text: t.text }));
 
+					// Provenance links are opt-in to keep minimal renders uncluttered.
+					if (opts.showProvenanceLinks !== false && t.origin?.path) {
+						li.append(el(doc, "span", { className: "taskx-rec__task-gap", text: " " }));
+						li.append(renderProvenanceLink(doc, t.origin.path, t.origin.line));
+					}
+
 					// Diagnostics are opt-in to avoid turning ids into a primary UI surface.
 					if (opts.showIds) {
 						li.append(el(doc, "code", { className: "taskx-rec__task-id", text: t.id }));
@@ -250,6 +269,48 @@ function renderRecommendationDetails(
 	}
 
 	return details;
+}
+
+/**
+ * Render a provenance link in a way that remains useful in both Obsidian and tests.
+ *
+ * We keep the *label* wiki-link shaped to match user expectation (`[[path|name]]`),
+ * but we also add Obsidian's conventional `internal-link` class + `data-href` so
+ * Obsidian can attach its own click handling when available.
+ */
+function renderProvenanceLink(doc: Document, path: string, line?: number): HTMLAnchorElement {
+	const { target, label } = normalizeProvenance(path);
+
+	const a = doc.createElement("a");
+	a.className = "taskx-rec__task-link internal-link";
+	a.textContent = `[[${target}|${label}]]`;
+
+	// Best-effort internal-link semantics (Obsidian commonly uses data-href).
+	a.dataset.href = target;
+	a.href = target;
+
+	// Future-facing diagnostics/hooks (pure data; no interaction here yet).
+	a.dataset.taskxOriginPath = path;
+	if (line !== undefined) {
+		a.dataset.taskxOriginLine = String(line);
+	}
+
+	return a;
+}
+
+function normalizeProvenance(path: string): { target: string; label: string } {
+	// We normalize in a string-only way to stay runtime-agnostic (no node path utils).
+	const trimmed = path.trim();
+
+	// Obsidian internal link targets are typically extensionless.
+	const target = trimmed.endsWith(".md") ? trimmed.slice(0, -3) : trimmed;
+
+	// The label is the last path segment, also extensionless.
+	const lastSlash = Math.max(target.lastIndexOf("/"), target.lastIndexOf("\\"));
+	const base = lastSlash >= 0 ? target.slice(lastSlash + 1) : target;
+	const label = base.length > 0 ? base : target;
+
+	return { target, label };
 }
 
 type ElOptions = {
