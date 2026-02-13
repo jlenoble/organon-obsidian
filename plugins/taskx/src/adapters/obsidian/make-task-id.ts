@@ -22,7 +22,8 @@
  */
 
 import { extractTaskId } from "./extract-task-id";
-import { asTaskId, type TaskId } from "../../core/model/id";
+
+import { asTaskId, type TaskId } from "@/core/model/id";
 
 /**
  * Minimal origin information needed to build deterministic temporary ids.

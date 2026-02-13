@@ -20,7 +20,7 @@
 import { Plugin } from "obsidian";
 
 // Feature registration side effects (keep explicit; add new feature imports here).
-import "./features/issues/missing-duration";
+import "@/features/issues/missing-duration";
 import { renderTaskX } from "./entry/render";
 
 export default class TaskXPlugin extends Plugin {

@@ -22,7 +22,8 @@
 import type { App } from "obsidian";
 
 import { makeTaskId } from "./make-task-id";
-import type { TaskEntity } from "../../core/model/task";
+
+import type { TaskEntity } from "@/core/model/task";
 
 /**
  * Collect tasks from the vault using Dataview.

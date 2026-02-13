@@ -14,10 +14,10 @@
  * - Pure: detectors should not mutate tasks or apply patches; they only report issues.
  */
 
-import type { TaskFactsIndex } from "../model/facts";
-import type { Issue } from "../model/issue";
-import type { TaskEntity } from "../model/task";
-import type { TimeContext } from "../model/time";
+import type { TaskFactsIndex } from "@/core/model/facts";
+import type { Issue } from "@/core/model/issue";
+import type { TaskEntity } from "@/core/model/task";
+import type { TimeContext } from "@/core/model/time";
 
 /**
  * IssueDetector detects issues in the current task universe.

@@ -21,7 +21,7 @@
  * - Any decision logic. Grouping, ordering, and policy belong to the pipeline.
  */
 
-import type { Recommendation, RecommendationFeed } from "../../core/model/recommendation";
+import type { Recommendation, RecommendationFeed } from "@/core/model/recommendation";
 
 /**
  * Optional knobs for renderFeed.

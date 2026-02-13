@@ -15,9 +15,9 @@
  *   without changing the pipeline structure.
  */
 
-import type { TaskFactsIndex } from "../model/facts";
-import { buildFactsIndex } from "../model/facts";
-import type { TaskEntity } from "../model/task";
+import type { TaskFactsIndex } from "@/core/model/facts";
+import { buildFactsIndex } from "@/core/model/facts";
+import type { TaskEntity } from "@/core/model/task";
 
 /**
  * Compute derived facts for the current task universe.

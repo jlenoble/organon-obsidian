@@ -16,7 +16,7 @@
  *   the standard clock and timezone resolution.
  */
 
-import type { TimeContext } from "../../core/model/time";
+import type { TimeContext } from "@/core/model/time";
 
 /**
  * Build a TimeContext from the current runtime environment.

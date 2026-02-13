@@ -15,7 +15,7 @@
  * - Depending on Obsidian, Dataview, or Tasks plugin APIs.
  */
 
-import type { TaskEntity } from "../model/task";
+import type { TaskEntity } from "@/core/model/task";
 
 /**
  * Collect tasks from the outside world and normalize them into TaskEntity values.

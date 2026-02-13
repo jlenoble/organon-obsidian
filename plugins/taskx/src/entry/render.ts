@@ -20,11 +20,11 @@
 
 import type { App } from "obsidian";
 
-import { collectTasksFromDataview } from "../adapters/obsidian/collect-tasks";
-import { buildTimeContext } from "../adapters/obsidian/time-context";
-import type { TaskEntity } from "../core/model/task";
-import { runPipeline } from "../core/pipeline/pipeline";
-import { renderFeed, type RenderFeedOptions } from "../ui/feed/render-feed";
+import { collectTasksFromDataview } from "@/adapters/obsidian/collect-tasks";
+import { buildTimeContext } from "@/adapters/obsidian/time-context";
+import type { TaskEntity } from "@/core/model/task";
+import { runPipeline } from "@/core/pipeline/pipeline";
+import { renderFeed, type RenderFeedOptions } from "@/ui/feed/render-feed";
 
 /**
  * Options for the entry renderer.

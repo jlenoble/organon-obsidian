@@ -13,11 +13,11 @@
  * - Deterministic: detectors are executed in registry order (useful for debugging).
  */
 
-import type { TaskFactsIndex } from "../model/facts";
-import type { Issue } from "../model/issue";
-import type { TaskEntity } from "../model/task";
-import type { TimeContext } from "../model/time";
-import { listIssueDetectors } from "../registries/issue-detectors";
+import type { TaskFactsIndex } from "@/core/model/facts";
+import type { Issue } from "@/core/model/issue";
+import type { TaskEntity } from "@/core/model/task";
+import type { TimeContext } from "@/core/model/time";
+import { listIssueDetectors } from "@/core/registries/issue-detectors";
 
 /**
  * Detect issues in the current task universe.

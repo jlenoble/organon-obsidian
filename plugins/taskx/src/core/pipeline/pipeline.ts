@@ -24,9 +24,10 @@ import { stageCollect } from "./stage-collect";
 import { stageIssues } from "./stage-issues";
 import { stageRank } from "./stage-rank";
 import { stageRecommend } from "./stage-recommend";
-import type { RecommendationFeed } from "../model/recommendation";
-import type { TaskEntity } from "../model/task";
-import type { TimeContext } from "../model/time";
+
+import type { RecommendationFeed } from "@/core/model/recommendation";
+import type { TaskEntity } from "@/core/model/task";
+import type { TimeContext } from "@/core/model/time";
 
 /**
  * Run the TaskX pipeline end-to-end and return the UI-ready feed.

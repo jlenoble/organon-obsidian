@@ -14,12 +14,12 @@
  * - Keep scoring simple for now; policy-driven scoring will be introduced later.
  */
 
-import type { TaskFactsIndex } from "../model/facts";
-import { asRecommendationId } from "../model/id";
-import type { Issue } from "../model/issue";
-import type { Recommendation, TaskSummary } from "../model/recommendation";
-import type { TaskEntity } from "../model/task";
-import type { TimeContext } from "../model/time";
+import type { TaskFactsIndex } from "@/core/model/facts";
+import { asRecommendationId } from "@/core/model/id";
+import type { Issue } from "@/core/model/issue";
+import type { Recommendation, TaskSummary } from "@/core/model/recommendation";
+import type { TaskEntity } from "@/core/model/task";
+import type { TimeContext } from "@/core/model/time";
 
 /**
  * Compile issues and basic action suggestions into recommendations.
