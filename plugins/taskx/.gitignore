@@ -5,7 +5,21 @@ package-lock.json
 yarn.lock
 .npmrc
 
-#custom
+# Custom
+
+## Misc.
 dist-types
 temp
 taskx.tgz
+
+## Maintenance docs (opt-in)
+docs/**
+!docs/
+!docs/taskx-architecture.md
+!docs/taskx-comments.md
+!docs/taskx-commits.md
+!docs/taskx-dev-process.md
+!docs/taskx-glossary.md
+!docs/taskx-import-boundaries.md
+!docs/taskx-naming.md
+!docs/taskx-roadmap.md
