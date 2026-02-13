@@ -127,6 +127,25 @@ export type RecommendationVariants = {
 	};
 
 	fix: {
+		/**
+		 * UI-facing task summaries targeted by this fix recommendation.
+		 *
+		 * Notes:
+		 * - This keeps fix recommendations inspectable/actionable in the same way
+		 *   as collected/do-now task lists.
+		 * - For most issue kinds today this will contain one task, but we keep it
+		 *   as an array for future multi-target/global issue flows.
+		 */
+		tasks: TaskSummary[];
+
+		/**
+		 * Candidate fix options proposed for the targeted task context.
+		 *
+		 * Notes:
+		 * - This contains one or more mutually comparable ways to resolve the issue.
+		 * - Items are already prepared for UI rendering and action routing.
+		 * - Ordering is decided by core policy, not by the UI layer.
+		 */
 		fixes: FixCandidate[];
 	};
 
