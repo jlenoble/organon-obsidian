@@ -42,10 +42,11 @@ export function stageRecommend(args: {
 	const recs: Recommendation[] = [];
 	const taskById = new Map(args.tasks.map(task => [task.id, task]));
 
-	// 1) Policy-light collected sample (M1.0 visibility hook)
-	const MAX_COLLECTED = 5;
+	// 1) Policy-light collected recommendation (M1.0 visibility hook)
+	// We emit full collected task context here. Section-size capping is a
+	// ranking/presentation concern and is applied in stage-rank.
 
-	const collectedTasks: TaskSummary[] = args.tasks.slice(0, MAX_COLLECTED).map(t => ({
+	const collectedTasks: TaskSummary[] = args.tasks.map(t => ({
 		id: t.id,
 		text: t.text,
 		origin: { path: t.origin.path, line: t.origin.line },

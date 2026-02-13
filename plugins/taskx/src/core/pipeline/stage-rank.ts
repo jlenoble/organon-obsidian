@@ -25,7 +25,10 @@ import type {
 	Recommendation,
 	RecommendationFeed,
 	RecommendationKind,
-} from "../model/recommendation";
+} from "@/core/model/recommendation";
+
+const DEFAULT_MAX_UNBLOCK_ITEMS = 5;
+const DEFAULT_MAX_COLLECTED_ITEMS = 5;
 
 /**
  * Group and order recommendations into a feed structure for rendering.
@@ -41,12 +44,17 @@ export function stageRank(recs: Recommendation[]): RecommendationFeed {
 
 	const sections: RecommendationFeed["sections"] = [];
 
-	// Early policy: show "collected" first so real tasks are visible immediately.
-	addSection(sections, "Collected", byKind.get("collected") ?? []);
-
-	// Then unblock, then execute.
-	addSection(sections, "Unblock", byKind.get("fix") ?? []);
+	// Priority policy: actionable section first, then bounded unblock, then diagnostics.
+	//
+	// Section-size defaults are centralized here so presentation policy is owned
+	// by ranking, not by recommendation generation stages.
 	addSection(sections, "Do now", byKind.get("do-now") ?? []);
+	addSection(sections, "Unblock", byKind.get("fix") ?? [], {
+		maxItems: DEFAULT_MAX_UNBLOCK_ITEMS,
+	});
+	addSection(sections, "Collected", byKind.get("collected") ?? [], {
+		maxItems: DEFAULT_MAX_COLLECTED_ITEMS,
+	});
 
 	// Any unexpected kinds (future additions) are preserved deterministically at the end.
 	for (const [kind, items] of byKind.entries()) {
@@ -97,14 +105,21 @@ function addSection(
 	sections: RecommendationFeed["sections"],
 	title: string,
 	items: Recommendation[],
+	opts: {
+		maxItems?: number;
+	} = {},
 ): void {
 	if (items.length === 0) {
 		return;
 	}
 
+	const sortedItems = sortWithinSection(items);
+	const visibleItems =
+		typeof opts.maxItems === "number" ? sortedItems.slice(0, opts.maxItems) : sortedItems;
+
 	sections.push({
 		title,
-		items: sortWithinSection(items),
+		items: visibleItems,
 	});
 }
 
