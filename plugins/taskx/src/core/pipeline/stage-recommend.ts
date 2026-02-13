@@ -40,6 +40,7 @@ export function stageRecommend(args: {
 	ctx: TimeContext;
 }): Recommendation[] {
 	const recs: Recommendation[] = [];
+	const taskById = new Map(args.tasks.map(task => [task.id, task]));
 
 	// 1) Policy-light collected sample (M1.0 visibility hook)
 	const MAX_COLLECTED = 5;
@@ -64,6 +65,17 @@ export function stageRecommend(args: {
 
 	// 2) Issue -> "fix" recommendations
 	for (const issue of args.issues) {
+		const targetTask = taskById.get(issue.target);
+		const targetTasks: TaskSummary[] = targetTask
+			? [
+					{
+						id: targetTask.id,
+						text: targetTask.text,
+						origin: { path: targetTask.origin.path, line: targetTask.origin.line },
+					},
+				]
+			: [];
+
 		recs.push({
 			id: asRecommendationId(`rec:fix:${String(issue.id)}`),
 			kind: "fix",
@@ -71,6 +83,7 @@ export function stageRecommend(args: {
 			why: issue.evidence,
 			// Minimal scoring policy for now.
 			score: { urgency: 70, friction: 10, payoff: 60 },
+			tasks: targetTasks,
 			fixes: issue.fixes,
 		});
 	}
