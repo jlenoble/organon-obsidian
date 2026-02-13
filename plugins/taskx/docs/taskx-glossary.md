@@ -405,6 +405,11 @@ Kinds may include:
 - Launching a wizard,
 - Planning or shaping time.
 
+Notes:
+
+- A `fix` recommendation may carry `TaskSummary[]` target context so the UI can
+  show task text and provenance without depending on `TaskEntity`.
+
 ---
 
 ### RecommendationFeed
