@@ -81,6 +81,16 @@ Guidelines:
 - Prefer **stable intent** over current implementation details.
 - If a file is truly trivial, the preamble may be shorter, but it must still exist.
 
+This applies equally to files in:
+
+- `src/core/model/`
+- `src/core/pipeline/`
+- `src/core/registries/`
+- `src/features/`
+- `src/adapters/`
+- `src/ui/`
+- `src/entry/`
+
 ### 1.3 Test files (special case)
 
 Test files are still part of the architecture, but their role is different.
@@ -88,13 +98,16 @@ Test files are still part of the architecture, but their role is different.
 Rules:
 
 - Test files **must** have a preamble.
+
 - The preamble may be **shorter and more direct** than production code.
+
 - The preamble should explain:
   - What behavior or contract is being tested,
-  - At which layer (core, pipeline, UI, adapter),
-  - Whether this is a unit test, contract test, or scenario test.
+  - At which layer (core, pipeline, UI, adapter, feature),
+  - Whether this is a **unit**, **contract**, or **scenario** test (as per the T0/T1/T2 track).
 
 - Test preambles should **not** restate the production file preamble.
+
 - Test comments should focus on **intent of the test**, not on implementation details.
 
 Example:
@@ -134,7 +147,7 @@ Add JSDoc when a symbol:
 - Represents a **domain concept** (e.g., TaskEntity, Issue, Recommendation).
 - Is part of a **public or internal contract** between layers.
 - Has **invariants, expectations, or non-obvious semantics**.
-- Marks an **architectural seam** (pipeline stage, registry, adapter boundary).
+- Marks an **architectural seam** (pipeline stage, registry, adapter boundary, feature entry point).
 
 Do NOT:
 
@@ -193,9 +206,10 @@ export interface RecommendationFeed {
 
 Document functions when they:
 
-- Are part of the **pipeline** or **registry**.
+- Are part of the **pipeline** or **registries**.
 - Implement a **policy or transformation step**.
 - Hide non-trivial decisions or invariants.
+- Form a **boundary** between layers (adapter, feature entry point, UI entry).
 
 Structure:
 
@@ -282,7 +296,9 @@ registry.push(detector);
 3. The preamble starts with **plain English explanation** before any bullet lists.
 4. Any bullet list must be under a **labeled section** (Intent, Goals, Limits, Non-goals, etc.).
 5. Every domain-level type has a JSDoc explaining intent and invariants.
-6. Pipeline stages and registries always document purity and responsibility.
+6. Pipeline stages, registries, adapters, and feature entry points always document
+   purity, side effects, and responsibility.
 7. Inline comments justify **why**, not **what**.
-8. Test files follow the same rules, with a **shorter, test-focused preamble**.
+8. Test files follow the same rules, with a **shorter, test-focused preamble** that states
+   unit/contract/scenario intent.
 9. If a comment becomes false, **fix or remove it immediately**.
