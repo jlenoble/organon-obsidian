@@ -17,7 +17,7 @@ If a term is used in the codebase with a different meaning than what is written 
 ## Index
 
 [A](#a) · [B](#b) · [C](#c) · [D](#d) · [E](#e) · [F](#f) · [G](#g) · H · [I](#i) · J · K · L · M ·
-N · O · [P](#p) · Q · [R](#r) · [S](#s) · [T](#t) · [U](#u) · V · [W](#w) · X · Y · Z
+[N](#n) · O · [P](#p) · Q · [R](#r) · [S](#s) · [T](#t) · [U](#u) · V · [W](#w) · X · Y · Z
 
 ---
 
@@ -33,6 +33,25 @@ Adapters:
 - Collect external data and normalize it into core models,
 - Apply changes (patches) back to the environment,
 - Must not contain core decision logic.
+
+---
+
+### attention (feed section id)
+
+A **feed section identifier** used in `RecommendationFeed`.
+
+Semantics:
+
+- Groups recommendations that require **immediate or heightened attention**
+  (e.g., overdue, due soon, or otherwise critical items).
+- Membership and ordering are decided by the pipeline, not by the UI.
+- The UI renders this section using a human-readable title, but that title is not part
+  of the core contract.
+
+Notes:
+
+- This identifier is stable and part of the UI contract.
+- It must not be confused with any specific display label.
 
 ---
 
@@ -64,6 +83,43 @@ Characteristics:
 ---
 
 ## C
+
+### can-do-now (feed section id)
+
+A **feed section identifier** used in `RecommendationFeed`.
+
+Semantics:
+
+- Groups tasks that are **immediately executable** according to current facts and policy
+  (e.g., leaf, unblocked, duration set, available in time).
+- Membership and ordering are decided by the pipeline, not by the UI.
+- The UI renders this section using a human-readable title, but that title is not part
+  of the core contract.
+
+Notes:
+
+- This identifier is stable and part of the UI contract.
+- It must not be confused with any specific display label.
+
+---
+
+### collected (feed section id)
+
+A **feed section identifier** used in `RecommendationFeed`.
+
+Semantics:
+
+- Groups tasks or recommendations that are shown as **raw or minimally processed
+  collected input** from the vault.
+- This section exists primarily for inspection and diagnostics.
+- Membership and ordering are decided by the pipeline, not by the UI.
+
+Notes:
+
+- This identifier is stable and part of the UI contract.
+- The UI may choose an appropriate human-readable title.
+
+---
 
 ### Core Model
 
@@ -111,6 +167,24 @@ Determinism is required to make refactors safe and failures reproducible.
 
 ---
 
+### do-now (feed section id)
+
+A **feed section identifier** used in `RecommendationFeed`.
+
+Semantics:
+
+- Groups tasks or recommendations that are **currently proposed for immediate execution**
+  by the pipeline under the active policy.
+- This is a policy-driven selection, not a UI filter.
+- Membership and ordering are decided by the pipeline, not by the UI.
+
+Notes:
+
+- This identifier is stable and part of the UI contract.
+- The UI may render it with a human-readable title such as “Do now”.
+
+---
+
 ### Domain Contract
 
 A type or interface in the core model that defines the meaning and structure of a concept
@@ -140,6 +214,26 @@ Responsibilities:
 ---
 
 ## F
+
+### Feed section
+
+A logical grouping inside a `RecommendationFeed`.
+
+Characteristics:
+
+- Identified by a **stable, kebab-case string id** (e.g., `collected`, `do-now`,
+  `attention`, `can-do-now`, `needs-cleanup`).
+- The identifier is part of the **UI contract** and must be treated as stable.
+- Each section may also have a **human-readable title** for display, but that title is
+  not part of the core contract and may change independently.
+- Membership and ordering of sections and their items are decided by the **pipeline**,
+  not by the UI.
+
+Rationale:
+
+- This keeps all decision policy in the core and makes the UI a pure rendering layer.
+
+---
 
 ### FixAction
 
@@ -258,6 +352,26 @@ Characteristics:
 
 ---
 
+## N
+
+### needs-cleanup (feed section id)
+
+A **feed section identifier** used in `RecommendationFeed`.
+
+Semantics:
+
+- Groups tasks that are **not currently executable** and require structural or metadata
+  fixes (e.g., missing duration, blocked, non-leaf, inconsistent state).
+- This section exists to surface work needed to make the system executable.
+- Membership and ordering are decided by the pipeline, not by the UI.
+
+Notes:
+
+- This identifier is stable and part of the UI contract.
+- The UI may render it with a human-readable title such as “Needs cleanup”.
+
+---
+
 ## P
 
 ### Pipeline
@@ -299,7 +413,8 @@ The structured, ordered output of the pipeline intended for rendering.
 
 Characteristics:
 
-- Grouped into semantic sections,
+- Grouped into semantic sections identified by **stable ids** (e.g., `collected`,
+  `do-now`, `attention`, `can-do-now`, `needs-cleanup`),
 - Already ordered by core policy,
 - Treated as authoritative by the UI (no re-ranking or re-grouping in views).
 
