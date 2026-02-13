@@ -8,6 +8,11 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
 	root: __dirname,
+	resolve: {
+		alias: {
+			"@": path.resolve(__dirname, "src"),
+		},
+	},
 	plugins: [react()],
 	build: {
 		outDir: "dist",
