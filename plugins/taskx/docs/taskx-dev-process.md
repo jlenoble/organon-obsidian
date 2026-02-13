@@ -56,22 +56,24 @@ Development follows this high-level progression across two orthogonal tracks:
   even if the data is minimal or stubbed.
 
 - **M1 — Coverage ramp (make it useful)**
-  Add policy-light facts, detectors, and fixes that:
+  Add policy-light facts, detectors, sections, and fixes that:
   - unblock common cases,
   - require minimal strategic choice,
   - increase the proportion of tasks that can reach execution or resolution.
 
-  Examples:
-  - missing-duration detection + simple duration fixes,
-  - obvious blocking dependencies,
-  - simple, mechanical normalizations.
+  Typical examples aligned with the roadmap:
+  - missing-duration detection + minimal duration fixes,
+  - visible actionability diagnostics (blocked / not actionable / executable),
+  - useful feed sections (attention / can-do-now / needs-cleanup),
+  - simple, mechanical patch application back to notes.
 
 - **M2 — Advanced behavior (make it smart)**
   Introduce policy-heavy or interactive features:
   - templates,
   - superblocks,
   - wizards,
-  - sophisticated planning and shaping heuristics.
+  - sophisticated planning and shaping heuristics,
+  - best-effort editor/navigation integrations.
 
 ### Testing milestones (safety)
 
@@ -110,11 +112,12 @@ The goal is **coherence**, not artificial restriction.
 Editing multiple files in a single commit is appropriate when:
 
 - Introducing a new feature that requires:
-  - a new model type + a pipeline stage + a registry entry,
+  - a new model type + a pipeline change + a registry entry,
 - Fixing a bug that spans:
-  - a pipeline stage and its caller,
+  - a pipeline stage and its caller, or core and adapters,
 - Renaming or moving files and updating imports,
 - Adding a new feature module with its detector + registration glue,
+- Adding or extending an adapter (e.g., collection or patch application),
 - Updating documentation that must stay consistent with the code change,
 - Adding tests that are inextricably tied to a new behavior.
 
@@ -136,8 +139,8 @@ If in doubt: split the change.
 
 ## 4) Spec drift check (before starting new work)
 
-Before implementing a new feature or stage, perform a quick consistency check in the
-affected area:
+Before implementing a new feature, stage, or adapter, perform a quick consistency
+check in the affected area:
 
 - Do file preambles and JSDoc match `docs/taskx-comments.md`?
 - Do names and paths match `docs/taskx-naming.md`?
@@ -160,6 +163,7 @@ Tests are required when:
 - Adding or changing **core model** types or invariants,
 - Adding or changing **pipeline** behavior (stages, grouping, ranking),
 - Adding a new **feature** (detector, fix builder, wizard),
+- Adding or changing an **adapter** in a way that affects parsing or patching,
 - Changing UI rendering in a way that affects structure or hooks,
 - Fixing a bug that could reasonably regress.
 
@@ -186,9 +190,12 @@ We test at the layer where the behavior lives:
 
 - **Core model:** unit tests for pure helpers and invariants.
 - **Pipeline:** unit tests per stage, plus a small number of contract tests that
-  assert the shape of `RecommendationFeed`.
+  assert the shape of `RecommendationFeed` and section ordering.
 - **UI:** DOM tests for `renderFeed` output structure and stable hooks.
-- **Adapters:** thin tests for parsing/normalization glue, using stubs and fixtures.
+- **Adapters:** thin tests for parsing/normalization and patch application glue,
+  using stubs and fixtures.
+- **Features:** unit or pipeline-level tests for detectors, fix builders, or wizards,
+  depending on where the logic lives.
 
 ### 5.4 Canonical test layout
 
@@ -241,6 +248,7 @@ Rules:
 3. **Implement the change**
    - Keep the scope minimal but complete.
    - Respect layer boundaries and import rules.
+   - Keep policy in the pipeline and features, and keep the UI a pure view.
    - Prefer explicit, boring code over clever shortcuts.
 
 4. **Add or update tests**
@@ -254,7 +262,7 @@ Rules:
    - Do not let docs drift behind the code.
 
 6. **Write the commit message**
-   - Use the correct prefix (`feat`, `refactor`, `fix`, `docs`, `test`).
+   - Use the correct prefix (`feat`, `refactor`, `fix`, `docs`, `test`, `build`, `chore`).
    - Make the subject precise.
    - Add a body when it adds real explanatory value.
 
