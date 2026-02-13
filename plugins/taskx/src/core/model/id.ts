@@ -102,6 +102,19 @@ export function asFixId(raw: string): FixId {
  * - Some IDs may be produced by hashing later.
  * - We do not want to lock ourselves into one rigid format.
  */
+export function asFixCandidateId(raw: string): FixCandidateId {
+	return raw as FixCandidateId;
+}
+
+/**
+ * Cast helper.
+ *
+ * It is intentionally “dumb”: It does not validate format.
+ * Validation (if desired) should be layered elsewhere, because:
+ * - Some IDs are composite (":" namespaces).
+ * - Some IDs may be produced by hashing later.
+ * - We do not want to lock ourselves into one rigid format.
+ */
 export function asRecommendationId(raw: string): RecommendationId {
 	return raw as RecommendationId;
 }
