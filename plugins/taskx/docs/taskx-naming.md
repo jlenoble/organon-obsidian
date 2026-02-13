@@ -23,7 +23,7 @@ The goals are:
   - ❌ `MissingDuration/`
   - ❌ `stageRecommend.ts`
 
-- Folder names that represent **features** or **IDs** must match the **stable ID** exactly.
+- Folder names that represent **features** or **stable IDs** must match the **stable ID** exactly.
   - Example: `features/issues/missing-duration/`
 
 ### 1.2 TypeScript symbols
@@ -155,7 +155,9 @@ TaskX uses **string IDs with branded types** for safety and extensibility.
 
 ---
 
-## 5) Recommendation kinds (UI contract)
+## 5) Feed contract naming (kinds and sections)
+
+### 5.1 Recommendation kinds (UI contract)
 
 `RecommendationKind` is a **closed set** and uses **kebab-case strings**:
 
@@ -165,6 +167,22 @@ TaskX uses **string IDs with branded types** for safety and extensibility.
 - (later) `plan`
 
 These strings are part of the UI contract and must not be renamed casually.
+
+### 5.2 Feed sections (UI contract)
+
+`RecommendationFeed` groups recommendations into **semantic sections**. Section identifiers must:
+
+- be **kebab-case stable strings**,
+- be treated as part of the UI contract once emitted,
+- not be encoded in CSS classnames in a way that makes renames painful.
+
+Examples of stable section ids used or planned by the roadmap:
+
+- `collected`
+- `do-now`
+- `attention`
+- `can-do-now`
+- `needs-cleanup`
 
 ---
 
@@ -217,19 +235,20 @@ When qualifiers are used, the **ordering rule** is:
 Role and environment qualifiers are **orthogonal**. Neither is more important
 than the other, and either may appear alone or together.
 
-Examples:
+Examples (matching current repository usage):
 
-- Unit test, node:
-  - `facts-index.node.test.ts`
-
-- Contract test, default environment:
-  - `pipeline-feed.contract.test.ts`
-
-- Contract test, DOM:
-  - `render-feed.contract.dom.test.ts`
+- Unit test, default environment:
+  - `id.test.ts`
 
 - Unit test, DOM:
   - `render-feed.dom.test.ts`
+
+- Contract test, default environment:
+  - `pipeline.contract.test.ts`
+
+- Contract test, DOM:
+  - `render.contract.dom.test.ts`
+  - `feed-provenance.contract.dom.test.ts`
 
 ### 6.3 Relationship to production files
 
