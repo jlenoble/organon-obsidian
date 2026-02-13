@@ -243,6 +243,80 @@ Success criterion:
 
 ---
 
+#### M1.3b — Feed priority and unblock cap defaults (UX throughput) 🟡
+
+Intent:
+
+- The feed should surface the most actionable information first.
+- Large unblock lists must not drown immediate execution signals.
+- Ordering and capping policy must remain core-owned (pipeline), not UI-owned.
+
+Deliverables:
+
+- Update ranking/grouping policy so section priority is:
+  - **Do now** first (when non-empty),
+  - then **Unblock**,
+  - then **Collected** (diagnostic tail).
+- Cap visible unblock recommendations by default to **5** items.
+- Keep ordering deterministic and policy-light.
+
+Implementation order (files to touch):
+
+1. 🟡 `src/core/pipeline/stage-rank.ts`
+   - Encode default section order and unblock cap policy.
+   - Keep tie-breaking deterministic.
+
+2. 🟡 `src/core/model/recommendation.ts` (only if needed)
+   - Add minimal contract fields only when strictly required for deterministic capping/ordering.
+
+3. 🟡 `tests/` (T1)
+   - Add/extend contract tests to verify section order and unblock capping behavior.
+
+Success criterion:
+
+- On a busy vault, the first visible section is actionable by default and unblock noise is bounded to 5.
+- UI remains a pure renderer of pipeline decisions.
+
+---
+
+#### M1.3c — Explicit UX toggles and policy seams (settings-ready) 🟡
+
+Intent:
+
+- Introduce explicit, documented seams for display defaults before full Obsidian settings UI.
+- Prevent policy drift by separating:
+  - core ranking policy,
+  - UI visibility toggles,
+  - entry/runtime wiring.
+
+Deliverables:
+
+- Introduce explicit default constants/modules for:
+  - ranking policy defaults (core),
+  - UI visibility defaults (UI/entry).
+- Support minimal toggles such as:
+  - show/hide collected section by default,
+  - preserve existing diagnostics toggles (`showIds`, provenance link behavior).
+- Keep toggles non-policy: they may hide/show sections but must not re-rank recommendations.
+
+Implementation order (files to touch):
+
+1. 🟡 `src/core/pipeline/` (policy module + usage in rank stage)
+   - Centralize ranking defaults (e.g., unblock cap, priority order).
+
+2. 🟡 `src/ui/feed/` and/or `src/entry/` (display default module + wiring)
+   - Centralize render visibility defaults and runtime option mapping.
+
+3. 🟡 `tests/` (T1)
+   - Add coverage that toggles affect visibility only, not ranking semantics.
+
+Success criterion:
+
+- UX defaults are explicit and centralized.
+- Future settings integration can map onto existing seams without refactoring core contracts.
+
+---
+
 #### M1.4 — Actionability breakdown: blocked vs not-actionable vs executable 🟡
 
 Intent:
