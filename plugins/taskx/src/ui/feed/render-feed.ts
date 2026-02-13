@@ -231,6 +231,46 @@ function renderRecommendationDetails(
 				}
 				details.append(fixes);
 			}
+
+			const taskCount = rec.tasks.length;
+			if (taskCount > 0) {
+				// Fix recommendations now carry target TaskSummary values so users can
+				// inspect what the fix applies to using the same text/provenance pattern
+				// as collected and do-now task lists.
+				details.append(
+					el(doc, "div", {
+						className: "taskx-rec__summary",
+						text: taskCount === 1 ? "1 related task" : `${taskCount} related tasks`,
+					}),
+				);
+
+				const tasks = el(doc, "ul", { className: "taskx-rec__tasks" });
+				for (const t of rec.tasks) {
+					const li = el(doc, "li", { className: "taskx-rec__task" });
+					li.append(el(doc, "span", { className: "taskx-rec__task-text", text: t.text }));
+
+					if (opts.showProvenanceLinks !== false && t.origin?.path) {
+						li.append(el(doc, "span", { className: "taskx-rec__task-gap", text: " " }));
+						li.append(renderProvenanceLink(doc, t.origin.path, t.origin.line));
+					}
+
+					if (opts.showIds) {
+						li.append(el(doc, "code", { className: "taskx-rec__task-id", text: t.id }));
+						if (t.origin) {
+							const suffix = t.origin.line ? `:${t.origin.line}` : "";
+							li.append(
+								el(doc, "span", {
+									className: "taskx-rec__task-origin",
+									text: `${t.origin.path}${suffix}`,
+								}),
+							);
+						}
+					}
+
+					tasks.append(li);
+				}
+				details.append(tasks);
+			}
 			break;
 		}
 
