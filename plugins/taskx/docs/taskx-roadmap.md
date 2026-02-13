@@ -99,24 +99,25 @@ Status:
 
 Goal:
 
-- Maximize the proportion of tasks that can flow end-to-end toward execution or resolution.
+- Make TaskX immediately useful for day-to-day decision support by maximizing the
+  proportion of tasks that can flow end-to-end toward execution or resolution.
 
 Focus:
 
 - Policy-light facts and issue detectors,
-- Mechanical, low-risk fixes,
+- Mechanical, low-risk fix candidates,
 - Patch application back to notes,
-- Real task collection from the vault.
+- Visible, explainable “why” for actionability and urgency.
 
-Examples:
+Rule of thumb:
 
-- Missing duration detection + simple duration fixes,
-- Obvious blocking dependencies,
-- Simple normalization and cleanup steps.
+> M1 favors **visible throughput** and **explainable behavior** over sophisticated strategy.
 
 Success criterion:
 
-- A growing share of real tasks can be analyzed, fixed, and executed using TaskX.
+- A growing share of real tasks can be analyzed, explained, fixed, and executed using TaskX.
+
+---
 
 #### M1.0 — Real task collection + visible sample (first step) ✅
 
@@ -135,42 +136,6 @@ Deliverables:
   - a `TaskOrigin` with an explicit `kind`.
 - Show the first 5 collected tasks in the TaskX block output,
   even if they do not match any "do now" policy yet.
-
-Implementation order (files to touch):
-
-1. ✅ `src/core/model/task.ts`
-   - Add `TaskOrigin.kind` and document it as an open-world discriminator.
-
-2. ✅ `src/adapters/obsidian/extract-task-id.ts` (new)
-   - Extract an explicit 🆔 marker from task text when present.
-
-3. ✅ `src/adapters/obsidian/make-task-id.ts` (new)
-   - Build a TaskId from the extracted id or a deterministic temporary id
-     derived from origin (path, line, index).
-
-4. ✅ `src/adapters/obsidian/collect-tasks.ts` (new)
-   - Use Dataview to collect tasks in vault order.
-   - Normalize them into valid TaskEntity objects with id and origin.
-
-5. ✅ `src/core/pipeline/stage-collect.ts`
-   - Replace stub collection with adapter-backed collection.
-
-6. ✅ `src/core/pipeline/stage-recommend.ts` and/or
-   `src/core/pipeline/stage-rank.ts`
-   - Add a lightweight "Collected" section that lists 5 tasks.
-   - Keep this section policy-light and stable.
-
-7. ✅ `src/ui/feed/render-feed.ts`
-   - Render the new "Collected" section.
-
-8. ✅ `tests/` (T1)
-   - Add at least one contract test that asserts a collected sample is rendered.
-
-Notes:
-
-- Repo text must justify this generically (debuggability, throughput),
-  not via personal task details.
-- Temporary ids must be detectable as such, to allow later diagnostics.
 
 Status:
 
@@ -193,39 +158,13 @@ Deliverables:
 - Optionally render origin metadata (path / line) as provenance diagnostics.
 - Keep ids as optional diagnostics (do not remove them; just make them opt-in).
 
-Implementation order (files to touch):
-
-1. ✅ `src/core/model/recommendation.ts`
-   - Introduce a small UI-facing `TaskRef` / `TaskSummary` type.
-   - Use it in the "collected" payload (and optionally "do-now") instead of raw ids.
-
-2. ✅ `src/core/pipeline/stage-recommend.ts`
-   - Populate task summaries from the collected TaskEntity list.
-   - Keep the recommendation contract policy-light and deterministic.
-
-3. ✅ `src/ui/feed/render-feed.ts`
-   - Render the task summary list (text, optional origin).
-   - Keep ids gated behind `RenderFeedOptions.showIds`.
-
-4. ✅ `tests/contract/` (T1)
-   - Add a contract test asserting:
-     - A "Collected" section exists when tasks exist,
-     - It contains the expected number of items,
-     - It is stable and renderable (DOM smoke).
-
-Notes:
-
-- We keep the UI contract **minimal**:
-  task id + text + optional origin, nothing more.
-- This work must not introduce new policy. It is about visibility and stability.
-
 Status:
 
 - ✅ Achieved
 
 ---
 
-### M1.2 — Append smart links for edit convenience ✅
+#### M1.2 — Append smart links for edit convenience ✅
 
 Intent:
 
@@ -243,24 +182,158 @@ Deliverables:
 - Jump-to-line behavior is explicitly **out of scope for M1** and is tracked under M2
   (it depends on Obsidian workspace/editor APIs).
 
-Implementation order (files to touch):
-
-1. ✅ `src/ui/feed/render-feed.ts`
-   - Append an internal link after each task text when `TaskSummary.origin?.path` is present.
-   - Keep a stable DOM structure so contract tests can assert link presence.
-
-2. ✅ `tests/contract/ui/feed/render-feed/feed-provenance.contract.dom.test.ts`
-   - Assert that rendered task items include (or hide) provenance links according to
-     `showProvenanceLinks`, and that the DOM contract is stable and copyable.
-
-Notes:
-
-- Obsidian's wiki links do not natively encode “line number”. We keep the contract generic:
-  “origin path + optional line”, not a specific URI scheme.
-
 Status:
 
 - ✅ Achieved
+
+---
+
+#### M1.3 — First real issue detector: missing-duration 🟡
+
+Intent:
+
+- If "Do now" is empty, the system must explain what is preventing execution.
+- Missing duration is the lowest-risk, highest-coverage “blocker” to detect and surface.
+
+Deliverables:
+
+- Create `src/features/issues/missing-duration/`:
+  - An `IssueDetector` that identifies leaf tasks missing ⏱️ duration.
+  - Structured `Issue` output with stable identifiers and evidence.
+  - A minimal `FixCandidate` (even if the first version is “manual fix” guidance only).
+- Register the detector through `src/core/registries/issue-detectors.ts`.
+- Ensure plugin startup imports feature modules so registration happens at runtime.
+
+Implementation order (files to touch):
+
+1. 🟡 `src/features/issues/missing-duration/` (new)
+   - Implement detector + fix builder + registration entry.
+
+2. 🟡 `src/plugin.ts`
+   - Import the feature module(s) so registries are populated.
+
+3. 🟡 `src/core/pipeline/stage-issues.ts`
+   - Confirm determinism (stable iteration order) when multiple detectors exist.
+
+4. 🟡 `tests/` (T1)
+   - Unit test for the detector.
+   - Contract test that a missing-duration issue results in visible fix/unblock recommendations.
+
+Success criterion:
+
+- A vault with tasks missing duration produces visible “needs duration” output in the feed.
+
+---
+
+#### M1.4 — Actionability breakdown: blocked vs not-actionable vs executable 🟡
+
+Intent:
+
+- The user must be able to answer: “why is Do now empty?”
+- We want clear, explainable reasons derived from facts and dependencies:
+  blocked, missing metadata, non-leaf, not-yet-available, etc.
+
+Constraint:
+
+- `TaskSummary` remains minimal (id + text + optional origin).
+- Diagnostics must be expressed via a separate UI-facing contract attached to recommendations,
+  not embedded inside the raw task summary.
+
+Deliverables:
+
+- Introduce a UI-facing “signals / badges” payload that can be rendered dumbly:
+  - Example categories: overdue/due-soon, blocked, missing-duration, non-leaf, future-start.
+- Emit these signals deterministically from the pipeline (policy-light).
+- Render signals in the feed with stable DOM structure and clear labels.
+
+Implementation order (files to touch):
+
+1. 🟡 `src/core/model/recommendation.ts`
+   - Add a stable UI-facing diagnostic/signal type used by recommendations/sections.
+
+2. 🟡 `src/core/pipeline/stage-analyze.ts` / `src/core/model/facts.ts`
+   - Ensure facts needed for actionability explanation are available and deterministic.
+
+3. 🟡 `src/core/pipeline/stage-recommend.ts`
+   - Attach signals to relevant recommendations (especially do-now and unblock/cleanup).
+
+4. 🟡 `src/ui/feed/render-feed.ts`
+   - Render signals as stable, testable badges/labels.
+
+5. 🟡 `tests/` (T1)
+   - Stage-level unit tests for signal computation.
+   - DOM contract test asserting badge presence and stability.
+
+Success criterion:
+
+- “Do now = 0” is accompanied by visible, specific reasons in the output.
+
+---
+
+#### M1.5 — Useful sections in the feed (attention / can-do-now / needs-cleanup) 🟡
+
+Intent:
+
+- Raw “Collected” is useful for debugging, but not for daily decisions.
+- We want three obvious, explainable lenses that stay policy-light.
+
+Deliverables:
+
+- Add deterministic sections derived from facts/issues/signals:
+  - **Attention**: overdue / due soon / urgent problems.
+  - **Can do now**: executable leaf tasks (duration set, unblocked, available).
+  - **Needs cleanup**: tasks prevented from execution (missing duration, blocked, non-leaf).
+- Establish deterministic sort rules inside each section:
+  - Overdue first, then due date ascending, then duration ascending (when available),
+    with stable tie-breakers.
+
+Implementation order (files to touch):
+
+1. 🟡 `src/core/pipeline/stage-rank.ts`
+   - Group recommendations into the new sections and apply stable ordering.
+
+2. 🟡 `src/core/model/recommendation.ts`
+   - Ensure section identity/kinds remain stable and testable.
+
+3. 🟡 `src/ui/feed/render-feed.ts`
+   - Render the new sections without embedding any policy.
+
+4. 🟡 `tests/` (T1)
+   - Unit tests for ranking/grouping determinism.
+   - Contract test verifying section presence and basic ordering.
+
+Success criterion:
+
+- The TaskX block immediately highlights “important / late / actionable” tasks in a stable way.
+
+---
+
+#### M1.6 — Patch application (minimal) 🟡
+
+Intent:
+
+- M1 features should not remain read-only: we must close the loop by writing back simple fixes.
+- Missing duration is the first target: safe, local, and mechanically applicable.
+
+Deliverables:
+
+- Implement `src/adapters/obsidian/patch-applier.ts`:
+  - Apply a minimal set of `FixAction` plans back to markdown.
+  - Keep patching conservative: local edits, clear failure modes, no silent rewrites.
+- Wire patch application into the minimal interaction surface (M1 scope):
+  - The pipeline can propose fixes; applying them is an explicit user action (no auto-write).
+
+Implementation order (files to touch):
+
+1. 🟡 `src/adapters/obsidian/patch-applier.ts` (new)
+2. 🟡 `src/core/model/fix.ts`
+   - Confirm `FixAction` primitives cover minimal duration insertion.
+3. 🟡 `tests/` (T1)
+   - String/fixture-based patch tests for correctness and safety.
+
+Success criterion:
+
+- At least one mechanical fix can be applied reliably to vault notes (missing-duration insertion).
 
 ---
 
@@ -268,20 +341,59 @@ Status:
 
 Goal:
 
-- Add tests alongside M1 features.
+- Bring coverage up alongside M1 so the system can evolve safely.
+- Target: high confidence on M1 behavior (core, pipeline, adapters, UI), with deterministic tests.
 
 Focus:
 
 - Unit tests for new core and pipeline logic,
-- Contract tests for pipeline behavior,
-- UI tests for new render paths,
-- Adapter tests with thin stubs and fixtures.
+- Contract tests for pipeline-to-UI behavior via entrypoints,
+- Adapter tests with thin stubs and fixtures,
+- Deterministic time fixtures.
 
 Rules:
 
 - No new M1 feature without at least one relevant test.
 - Tests must respect import boundaries, except for explicit contract tests
   that go through public entrypoints only.
+
+Deliverables (in order):
+
+#### T1.0 — Test fixtures and builders 🟡
+
+- Add `tests/fixtures/` (markdown snippets, task samples, expected feeds).
+- Add `tests/builders/` (TaskEntity builders, Facts builders, Recommendation builders).
+- Add a deterministic `TimeContext` fixture to avoid time-dependent flakiness.
+
+#### T1.1 — Core model unit coverage 🟡
+
+- Unit tests for:
+  - `core/model/task.ts` (origin/id invariants),
+  - `core/model/facts.ts` (fact derivations),
+  - `core/model/issue.ts` + `core/model/fix.ts` (shape invariants),
+  - `core/model/recommendation.ts` (contract invariants).
+
+#### T1.2 — Pipeline stage unit coverage 🟡
+
+- Unit tests for:
+  - `stage-analyze.ts` (facts computation),
+  - `stage-issues.ts` (detector orchestration determinism),
+  - `stage-recommend.ts` (issue→recommendation mapping),
+  - `stage-rank.ts` (grouping + stable ordering rules).
+
+#### T1.3 — Adapter unit coverage 🟡
+
+- Unit tests for:
+  - id extraction / id creation,
+  - time context adapter,
+  - patch applier (once M1.6 begins).
+
+#### T1.4 — UI DOM contract coverage 🟡
+
+- DOM contract tests that assert:
+  - each section renders with stable structure,
+  - provenance links remain stable,
+  - diagnostic signals render predictably.
 
 Success criterion:
 
@@ -294,7 +406,7 @@ Success criterion:
 
 Goal:
 
-- Introduce policy-heavy and interactive features.
+- Introduce policy-heavy and interactive features once M1 throughput is solid.
 
 Focus:
 
@@ -314,7 +426,9 @@ Rule of thumb:
 > Prefer work that improves **end-to-end throughput** (M1) over work that expands the
 > **feature surface** (M2), once M0 exists.
 
-#### M2.x — Jump-to-line navigation from task provenance ⛔
+---
+
+#### M2.1 — Jump-to-line navigation from task provenance ⛔
 
 Intent:
 
@@ -333,14 +447,20 @@ Notes:
 
 Goal:
 
-- Extend the test suite to cover M2-level behavior.
+- Extend the test suite to cover M2-level behavior and higher-level integration confidence.
 
 Focus:
 
-- State machine tests for wizards,
-- Scenario tests for planning and shaping,
+- Scenario tests for M2 interactions and complex flows,
 - Higher-level integration tests across pipeline + UI,
 - Regression tests for complex workflows.
+
+Deliverables:
+
+- `tests/scenario/` with curated, deterministic scenarios exercising:
+  - pipeline + renderer end-to-end,
+  - best-effort navigation behavior (where mockable),
+  - wizard state machines (once they exist).
 
 Success criterion:
 
@@ -459,14 +579,16 @@ Planned (M2):
 
 Purpose: **one folder per feature**, matching stable IDs.
 
+Status:
+
+- ⛔ Folder not present yet (introduced in M1.3).
+
 ### Issues (primarily M1)
 
-- 🟡 `features/issues/missing-duration/`
+- 🟡 `features/issues/missing-duration/` (M1.3)
   Detect tasks missing duration and propose fixes.
-- ⛔ `features/issues/missing-dependency/`
-- ⛔ `features/issues/inconsistent-dates/`
-- ⛔ `features/issues/ambiguous-next-step/`
-- ⛔ … (others as needed)
+
+(Other issue features remain out of scope until the first one is solid and end-to-end.)
 
 Each issue feature provides:
 
@@ -495,7 +617,7 @@ Purpose: **bridge the outside world to the core**.
   Collect tasks from Obsidian / Tasks plugin / Dataview and normalize to
   `TaskEntity[]`.
 
-- 🟡 `adapters/obsidian/patch-applier.ts` (M1)
+- 🟡 `adapters/obsidian/patch-applier.ts` (M1.6)
   Apply `FixAction[]` / patch plans back to markdown files.
 
 - ✅ `adapters/obsidian/time-context.ts`
@@ -510,8 +632,10 @@ Purpose: **bridge the outside world to the core**.
 - ✅ `ui/feed/render-feed.ts`
   Render `RecommendationFeed` to an HTMLElement (dumb view).
 
-- 🟡 `ui/feed/render-recommendation-*.ts` (M1/M2)
-  Optional split renderers per kind (fix, do-now, wizard, plan).
+Planned:
+
+- ⛔ `ui/feed/render-recommendation-*.ts` (optional)
+  Optional split renderers per kind (fix, do-now, wizard, plan) once the feed grows.
 
 ### Entry (src/entry)
 
@@ -521,7 +645,12 @@ Purpose: **bridge the outside world to the core**.
 ### Plugin root
 
 - ✅ `plugin.ts`
-  Obsidian plugin entry: register code block, commands, registries, settings.
+  Obsidian plugin entry: register code block and wire entrypoints.
+
+Planned (M1):
+
+- 🟡 Feature registration imports (M1.3+)
+  Plugin startup imports feature modules so registries are populated at runtime.
 
 ---
 
@@ -529,19 +658,19 @@ Purpose: **bridge the outside world to the core**.
 
 Purpose: **protect behavior and contracts** at different scales.
 
-- 🟡 `tests/unit/` (T0/T1)
+- 🟡 `tests/unit/` (T1)
   Unit tests for core model, pipeline stages, UI renderers, and adapters.
 
 - 🟡 `tests/contract/` (T0/T1)
   Cross-layer tests that protect public contracts via entrypoints only.
 
 - ⛔ `tests/scenario/` (T2)
-  Scenario and integration tests for M2-level behavior.
+  Scenario and integration tests for advanced behavior and high-level regression coverage.
 
-- 🟡 `tests/fixtures/` (T0)
+- ⛔ `tests/fixtures/` (T1.0)
   Static test data such as markdown snippets, tasks, and example feeds.
 
-- 🟡 `tests/builders/` (T0)
+- ⛔ `tests/builders/` (T1.0)
   Test helpers to construct domain objects and contexts.
 
 Rules:
