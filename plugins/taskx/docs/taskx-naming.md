@@ -36,6 +36,31 @@ The goals are:
   - `SCREAMING_SNAKE_CASE` for true constants
   - `camelCase` for regular values
 
+### 1.3 Import paths
+
+- Import path style encodes domain boundaries.
+- Use relative imports (`./`, `../`) for local navigation inside one domain.
+- Use `@/` aliases for cross-domain imports.
+
+For import-style purposes, these are distinct domains:
+
+- `core/model/*`
+- `core/pipeline/*`
+- `core/registries/*`
+- `features/*`
+- `adapters/*`
+- `ui/*`
+- `entry/*` and `plugin.ts`
+
+Examples:
+
+- ✅ `src/core/pipeline/stage-recommend.ts` importing `src/core/model/task.ts`
+  uses `@/core/model/task` (cross-domain).
+- ✅ `src/core/pipeline/pipeline.ts` importing `./stage-rank`
+  uses relative import (same domain).
+- ✅ `src/features/issues/missing-duration/index.ts` importing
+  `@/core/registries/issue-detectors` uses `@/` (cross-domain).
+
 ---
 
 ## 2) ID conventions (critical)
@@ -211,6 +236,13 @@ All tests live under a top-level `tests/` directory.
   `RecommendationFeed`, etc.).
 
 Folder names are **semantic** and must not be repurposed.
+
+Test import path style:
+
+- Tests should import production code via `@/` paths.
+- Tests should not import other test files directly.
+- Fixtures and builders are test support domains and should be imported through
+  stable test-root paths, not deep relative traversals.
 
 ### 6.2 Test file suffixes
 

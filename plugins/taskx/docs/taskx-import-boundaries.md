@@ -62,6 +62,24 @@ TaskX is structured around these main areas:
    Tests are not a backdoor to bypass the architecture. They follow the same import rules
    as production code, with the explicit, limited exceptions described in section 4.
 
+6. **Import path style follows domain boundaries**
+   We use import style to make domain boundaries readable at a glance:
+   - use relative imports (`./`, `../`) for local navigation inside the same domain,
+   - use `@/` aliases when crossing from one domain to another.
+
+   Domain list:
+   - `core/model/*`
+   - `core/pipeline/*`
+   - `core/registries/*`
+   - `features/*`
+   - `adapters/*`
+   - `ui/*`
+   - `entry/*` and `plugin.ts`
+
+   Consequence:
+   - `core/pipeline` -> `core/model` is cross-domain and should use `@/core/model/...`.
+   - Sibling and close-neighbor imports inside one domain stay relative.
+
 ---
 
 ## 3) Allowed imports by area
@@ -221,13 +239,26 @@ All tests live under the top-level `tests/` directory and are categorized by int
 
 These categories correspond to the T0/T1/T2 testing track in the roadmap.
 
+### 4.0 Test import path style
+
+- In `tests/`, production imports should use `@/` paths by default.
+- Tests should not import other test files directly.
+- `tests/fixtures/` and `tests/builders/` are test-only support domains and should be
+  imported via stable test-root paths, not via deep relative traversals.
+
+Rationale:
+
+- This keeps test dependencies explicit against production boundaries.
+- It avoids fragile relative paths in deeply nested test files.
+- It reinforces that tests exercise production contracts, not other tests.
+
 ### 4.1 Unit tests (`tests/unit/`)
 
 - Unit tests follow **exactly the same import rules** as the layer they test.
 - Examples:
-  - Core model unit tests import only `src/core/model/*`.
-  - Pipeline unit tests import `src/core/model/*` and `src/core/pipeline/*`, but not adapters or UI.
-  - UI unit tests import `src/ui/*` and UI-facing core contracts, but not the pipeline.
+  - Core model unit tests import only `@/core/model/*`.
+  - Pipeline unit tests import `@/core/model/*` and `@/core/pipeline/*`, but not adapters or UI.
+  - UI unit tests import `@/ui/*` and UI-facing core contracts, but not the pipeline.
 
 Rationale:
 
