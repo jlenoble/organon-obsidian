@@ -8,6 +8,8 @@ Goals:
 - Make intent and scope obvious from the log.
 - Avoid noise and filler text.
 - Keep a clean signal between features, refactors, fixes, tests, and docs.
+- Keep roadmap progress legible (M* product milestones vs T* testing milestones) without
+  encoding milestone ids in subject lines.
 
 General formatting rules:
 
@@ -32,7 +34,7 @@ All commits must start with one of the following prefixes:
 - `🐛 fix(taskx):`
   For correcting a bug or unintended behavior.
 
-- `✅ test(taskx):`
+- `🧪 test(taskx):`
   For tests only:
   - new tests,
   - test refactors,
@@ -80,7 +82,7 @@ Hard boundary rules:
 - If a change can affect **what ends up in the built plugin**, it is `👷 build(taskx):`.
 - If a change affects **only how developers work** and not the built plugin, it is
   `🔧 chore(taskx):`.
-- If a change is **exclusively about tests**, it is `✅ test(taskx):`.
+- If a change is **exclusively about tests**, it is `🧪 test(taskx):`.
 - If a change is **exclusively about documentation**, it is `📝 docs(taskx):`.
 
 The `(taskx)` scope is mandatory and fixed for this repository.
@@ -105,13 +107,14 @@ Rules:
 - Describe **what changes**, not why.
 - Hard limit: keep the subject line **under 80 characters**.
 - Safety target: keep the subject line **under 60 characters**.
+- Do not encode roadmap ids (M1.3, T1.2, etc.) in the subject line.
 
 Examples:
 
 - `✨ feat(taskx): add stage_rank to group recommendations into a feed`
 - `♻️ refactor(taskx): move core model files into core/model directory`
 - `🐛 fix(taskx): handle empty task list in stage_recommend`
-- `✅ test(taskx): add contract tests for pipeline feed shape`
+- `🧪 test(taskx): add contract tests for pipeline feed shape`
 - `📝 docs(taskx): add authoritative naming conventions for TaskX`
 - `👷 build(taskx): update vite config to change output format`
 - `🔧 chore(taskx): update eslint config for test TypeScript parsing`
@@ -193,7 +196,7 @@ This is a structural change only and does not modify runtime behavior.
 
 ```
 
-✅ test(taskx): add pipeline feed contract test
+🧪 test(taskx): add pipeline feed contract test
 
 Snapshot the RecommendationFeed shape to catch accidental grouping or ordering
 changes during refactors.
@@ -227,12 +230,52 @@ when building the do-now recommendation.
 
 ```
 
+### 3.4 Roadmap context (M* / T* milestones)
+
+TaskX progress is tracked along two orthogonal tracks:
+
+- **M\*** milestones: product/capability evolution
+- **T\*** milestones: test infrastructure and coverage
+
+Commit messages should **not** include milestone ids in the subject line.
+However, the body may mention milestone context when it improves future readability.
+
+Guidelines:
+
+- Prefer short, factual phrasing:
+  - “This implements M1.3 …”
+  - “This contributes to T1.2 …”
+- Keep the reference tied to **what this commit actually does**.
+- Use milestone context to clarify **scope** and **non-goals**, not to plan future work.
+
+Example:
+
+```
+
+This implements M1.3:
+
+- Adds the first issue detector (missing-duration).
+- Registers it at plugin startup.
+
+This also contributes to T1:
+
+- Adds a unit test for the detector.
+
+This does not yet introduce patch application (planned for M1.6).
+
+```
+
 ---
 
 ## 4) What commit messages should NOT do
 
 - Do not include implementation details better suited for code comments.
-- Do not include TODO lists or future plans.
+- Do not include TODO lists or speculative future plans.
+
+  Milestone context and explicit non-goals are allowed when they describe the
+  boundaries of the current change (see 3.4), but the commit message must not
+  become a planning document.
+
 - Do not mix multiple unrelated changes in one commit.
 - Do not use vague summaries like “cleanup”, “misc”, “wip”.
 
