@@ -203,25 +203,43 @@ Deliverables:
   - A minimal `FixCandidate` (even if the first version is “manual fix” guidance only).
 - Register the detector through `src/core/registries/issue-detectors.ts`.
 - Ensure plugin startup imports feature modules so registration happens at runtime.
+- Ensure each `fix` recommendation carries the target `TaskSummary` so the UI can
+  show:
+  - task text,
+  - and provenance smart link(s), consistent with Collected / Do now rendering.
 
 Implementation order (files to touch):
 
-1. 🟡 `src/features/issues/missing-duration/` (new)
+1. ✅ `src/features/issues/missing-duration/` (new)
    - Implement detector + fix builder + registration entry.
 
-2. 🟡 `src/plugin.ts`
+2. ✅ `src/plugin.ts`
    - Import the feature module(s) so registries are populated.
 
-3. 🟡 `src/core/pipeline/stage-issues.ts`
+3. ✅ `src/core/pipeline/stage-issues.ts`
    - Confirm determinism (stable iteration order) when multiple detectors exist.
 
-4. 🟡 `tests/` (T1)
+4. ✅ `tests/` (T1)
    - Unit test for the detector.
    - Contract test that a missing-duration issue results in visible fix/unblock recommendations.
+
+5. 🟡 `src/core/model/recommendation.ts` + `src/core/pipeline/stage-recommend.ts`
+   - Extend the `fix` recommendation payload with target `TaskSummary[]` (or equivalent
+     minimal task context), populated from issue targets.
+
+6. 🟡 `src/ui/feed/render-feed.ts`
+   - Render fix recommendation task context with the same readability/provenance conventions
+     used by Collected / Do now task lists.
+
+7. 🟡 `tests/` (T1)
+   - Add/extend DOM and contract coverage to verify fix recommendations render task text and
+     smart provenance links.
 
 Success criterion:
 
 - A vault with tasks missing duration produces visible “needs duration” output in the feed.
+- Missing-duration fix recommendations are directly actionable in the UI because they include
+  task text and source-link context, not fix metadata alone.
 
 ---
 
