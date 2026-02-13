@@ -12,13 +12,22 @@
 
 import { describe, expect, it } from "vitest";
 
-import { asFixId, asIssueId, asRecommendationId, asTaskId } from "@/core/model/id";
+import {
+	asFixCandidateId,
+	asFixId,
+	asIssueId,
+	asRecommendationId,
+	asTaskId,
+} from "@/core/model/id";
 
 describe("core/model/id cast helpers", () => {
 	it("returns the original string value at runtime", () => {
 		expect(asTaskId("task:1")).toBe("task:1");
 		expect(asIssueId("missing-duration:task:1")).toBe("missing-duration:task:1");
 		expect(asFixId("fix:set-duration-15m")).toBe("fix:set-duration-15m");
+		expect(asFixCandidateId("fixcand:missing-duration:task:1:fix:set-duration-15m")).toBe(
+			"fixcand:missing-duration:task:1:fix:set-duration-15m",
+		);
 		expect(asRecommendationId("rec:do-now:shallow")).toBe("rec:do-now:shallow");
 	});
 });
