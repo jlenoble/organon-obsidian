@@ -28,9 +28,10 @@ TaskX is structured around these main areas:
 
 4. **Features** — `src/features/`
    Concrete implementations of issues, wizards, policies, templates, etc.
+   (Introduced progressively starting with M1 feature work, per the roadmap.)
 
 5. **Adapters** — `src/adapters/`
-   Bridges to Obsidian, Dataview, Tasks plugin, filesystem, time, etc.
+   Bridges to Obsidian, Dataview, Tasks plugin, filesystem, time, patch application, etc.
 
 6. **UI** — `src/ui/`
    Rendering and interaction code. Consumes only UI contracts from the core.
@@ -51,7 +52,8 @@ TaskX is structured around these main areas:
 
 3. **UI is a consumer, not a decision-maker**
    UI code renders `RecommendationFeed` and triggers actions, but does not re-implement
-   ranking, grouping, or planning policy.
+   ranking, grouping, diagnostics, or planning policy. All such decisions live in the
+   core pipeline and features.
 
 4. **Features plug into registries, not into the pipeline directly**
    The pipeline only knows about registries, never about concrete feature modules.
@@ -145,7 +147,7 @@ Must NOT import:
 
 Rationale:
 
-- Features provide implementations and register themselves, but do not control
+- Features provide concrete implementations and register themselves, but do not control
   orchestration or rendering.
 
 ---
@@ -165,8 +167,9 @@ Must NOT import:
 
 Rationale:
 
-- Adapters are the boundary with the outside world and may depend on the core,
-  but should not entangle UI and environment concerns by default.
+- Adapters are the boundary with the outside world and may depend on the core.
+- They are responsible for collection, normalization, and patch application, but should
+  not entangle UI and environment concerns by default.
 
 ---
 
@@ -215,6 +218,8 @@ All tests live under the top-level `tests/` directory and are categorized by int
 - `tests/scenario/`
 - `tests/fixtures/`
 - `tests/builders/`
+
+These categories correspond to the T0/T1/T2 testing track in the roadmap.
 
 ### 4.1 Unit tests (`tests/unit/`)
 
