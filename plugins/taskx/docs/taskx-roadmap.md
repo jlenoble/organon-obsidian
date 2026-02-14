@@ -364,7 +364,7 @@ Implementation order (files to touch):
 1. ✅ `src/core/model/recommendation.ts`
    - Add a stable UI-facing diagnostic/signal type used by recommendations/sections.
 
-2. 🟡 `docs/taskx-glossary.md` + `docs/taskx-naming.md` (+ roadmap status refresh as needed)
+2. ✅ `docs/taskx-glossary.md` + `docs/taskx-naming.md` (+ roadmap status refresh as needed)
    - Contract the umbrella concept for recommendation signals.
    - Add per-signal stable IDs and explicit correspondence rules to existing contract IDs.
 
@@ -674,7 +674,7 @@ Purpose: define the **stable language** of the system.
 
 - ✅ `id.ts`
   Branded ID types and casting helpers (TaskId, IssueId, FixId, FixCandidateId,
-  RecommendationId).
+  RecommendationId, RecommendationSignalId).
 
 - ✅ `task.ts`
   Canonical `TaskEntity` and `TaskOrigin` (tool-agnostic task representation).
@@ -692,7 +692,8 @@ Purpose: define the **stable language** of the system.
   `Issue` and `IssueSeverity` (structured problem reports).
 
 - ✅ `recommendation.ts`
-  `Recommendation`, `RecommendationKind`, and `RecommendationFeed` (UI contract).
+  `Recommendation`, `RecommendationKind`, `RecommendationSignal`, and
+  `RecommendationFeed` (UI contract).
 
 Planned (M2):
 

@@ -109,22 +109,29 @@ TaskX uses **string IDs with branded types** for safety and extensibility.
   - `rec:fix:<issueId>`
   - `rec:do-now:shallow`
 
+- `RecommendationSignalId`
+  Identifies a recommendation signal token in the feed diagnostics.
+  Typical values:
+  - `blocked`
+  - `missing-duration`
+  - `overdue`
+
 ---
 
 ## 3) Feature naming
 
 ### 3.1 Issues
 
-- Each issue kind has a **stable kebab-case ID**.
+- Each issue kind uses a **stable kebab-case token**.
   - Examples:
     - `missing-duration`
     - `inconsistent-dates`
     - `depends-cycle`
 
-- Folder name **must equal** the issue ID:
+- Folder name **must equal** the issue-kind token:
   - `features/issues/missing-duration/`
 
-- Detectors should use IDs like:
+- Instance `IssueId` values typically compose from issue-kind token + task target:
   - `missing-duration:<taskId>`
 
 ### 3.2 Wizards
@@ -186,6 +193,7 @@ TaskX uses **string IDs with branded types** for safety and extensibility.
 
 `RecommendationKind` is a **closed set** and uses **kebab-case strings**:
 
+- `collected`
 - `fix`
 - `do-now`
 - (later) `wizard`
