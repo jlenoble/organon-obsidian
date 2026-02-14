@@ -1,17 +1,55 @@
-# Taskx
+# TaskX
 
-Experimental hierarchical task engine
+TaskX is an Obsidian plugin that turns collected tasks into a structured,
+action-oriented recommendation feed.
 
-- Not to be published or distributed, tailored to local dev laptop file hierarchy
-- Run rushx build && rushx copy to test in dev vault
+Current architecture:
+- core model (`src/core/model`)
+- core pipeline (`src/core/pipeline`)
+- registries (`src/core/registries`)
+- feature modules (`src/features`)
+- Obsidian adapters (`src/adapters`)
+- UI renderer (`src/ui`)
+- entry wiring (`src/entry`, `src/plugin.ts`)
 
-## Usage
+The normative project contract lives in `docs/`, especially:
+- `docs/taskx-roadmap.md`
+- `docs/taskx-architecture.md`
+- `docs/taskx-import-boundaries.md`
+- `docs/taskx-naming.md`
+- `docs/taskx-dev-process.md`
 
-In a dataviewjs block, run:
+## Status
 
-```js
-const taskx = app.plugins.plugins["obsidian-taskx"];
-taskx.dv = dv;
-taskx.doThis();
-taskx.doThat();
+- This project is under active local development.
+- It is not intended for public publication/distribution at this stage.
+
+## Usage In Obsidian
+
+TaskX is rendered from a `taskx` code block:
+
+````md
+```taskx
 ```
+````
+
+The plugin executes the pipeline and renders the resulting
+`RecommendationFeed` into the code block output.
+
+## Development
+
+From `plugins/taskx`:
+
+```bash
+npm run build
+npm test
+```
+
+In the monorepo workflow:
+
+```bash
+rushx build
+rushx copy
+```
+
+`rushx copy` updates the dev-vault plugin folder used for manual Obsidian checks.
