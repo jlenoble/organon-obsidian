@@ -137,6 +137,22 @@ Notes:
 
 ---
 
+### collected (recommendation kind)
+
+A **recommendation kind identifier** used in `Recommendation.kind`.
+
+Semantics:
+
+- Represents a policy-light recommendation carrying sampled task context for inspection.
+
+Notes:
+
+- This kind identifier is stable and part of the UI contract.
+- This token is shared with feed section id `collected`, but kind and section are
+  different contracts.
+
+---
+
 ### Core Model
 
 The set of types under `src/core/model/` that define the language of the system:
@@ -198,6 +214,22 @@ Notes:
 
 - This identifier is stable and part of the UI contract.
 - The UI may render it with a human-readable title such as “Do now”.
+
+---
+
+### do-now (recommendation kind)
+
+A **recommendation kind identifier** used in `Recommendation.kind`.
+
+Semantics:
+
+- Represents recommendations proposing immediate execution of task summaries.
+
+Notes:
+
+- This kind identifier is stable and part of the UI contract.
+- This token is shared with feed section id `do-now`, but kind and section are
+  different contracts.
 
 ---
 
@@ -265,6 +297,14 @@ Rationale:
 
 - This keeps all decision policy in the core and makes the UI a pure rendering layer.
 
+Current stable feed section ids:
+
+- [attention](#attention-feed-section-id)
+- [can-do-now](#can-do-now-feed-section-id)
+- [collected](#collected-feed-section-id)
+- [do-now](#do-now-feed-section-id)
+- [needs-cleanup](#needs-cleanup-feed-section-id)
+
 ---
 
 ### FixAction
@@ -281,6 +321,22 @@ Examples:
 Important:
 
 - A FixAction describes _what_ should change, not _how_ files are edited.
+
+---
+
+### fix (recommendation kind)
+
+A **recommendation kind identifier** used in `Recommendation.kind`.
+
+Semantics:
+
+- Represents recommendations focused on unblocking work via `FixCandidate[]`.
+- Carries targeted `TaskSummary[]` context for human-readable inspection.
+
+Notes:
+
+- This kind identifier is stable and part of the UI contract.
+- It is distinct from feed section ids: section placement is ranking policy.
 
 ---
 
@@ -400,6 +456,38 @@ Characteristics:
 
 ---
 
+### Issue kind (stable token namespace)
+
+A stable identifier for an issue family.
+
+Contract:
+
+- Issue kind tokens are kebab-case values used to classify issue semantics.
+- They are not interchangeable with `IssueId` (instance ids).
+- There is no dedicated branded `IssueKindId` type in the core model at this stage.
+
+Current stable issue kind tokens:
+
+- [missing-duration](#missing-duration-issue-kind-token)
+
+---
+
+### IssueId
+
+A branded stable identifier for an issue instance in the core model.
+
+Typical shape:
+
+- `<issue-kind>:<taskId>`
+- `<issue-kind>:global`
+
+Notes:
+
+- `IssueId` is not interchangeable with `TaskId`, `FixId`, `FixCandidateId`,
+  `RecommendationId`, or `RecommendationSignalId`.
+
+---
+
 ## M
 
 ### missing-duration (recommendation signal id)
@@ -415,6 +503,22 @@ Correspondence:
 
 - Semantically aligned with issue kind `missing-duration`.
 - May contribute to `needs-cleanup`.
+
+---
+
+### missing-duration (issue kind token)
+
+A **stable issue kind token** used by issue detection/features.
+
+Semantics:
+
+- Identifies the issue family where a task lacks duration metadata required by
+  current executability policy.
+
+Correspondence:
+
+- Semantically aligned with recommendation signal id `missing-duration`.
+- Does not imply mandatory recommendation kind or section mapping by itself.
 
 ---
 
@@ -512,6 +616,40 @@ Notes:
 
 ---
 
+### RecommendationId
+
+A branded stable identifier for one rendered recommendation item.
+
+Typical shape:
+
+- `rec:fix:<issueId>`
+- `rec:do-now:shallow`
+- `rec:collected:sample`
+
+Notes:
+
+- `RecommendationId` identifies an item instance, not a recommendation kind.
+- It is not interchangeable with other branded id types.
+
+---
+
+### RecommendationKind
+
+The stable discriminant union used by `Recommendation.kind`.
+
+Current stable values:
+
+- [collected](#collected-recommendation-kind)
+- [do-now](#do-now-recommendation-kind)
+- [fix](#fix-recommendation-kind)
+
+Notes:
+
+- Recommendation kinds are core/UI contract values.
+- They are orthogonal to feed section ids: ranking policy decides section placement.
+
+---
+
 ### RecommendationSignal
 
 A compact, UI-facing diagnostic badge attached to a recommendation.
@@ -541,6 +679,35 @@ Correspondence rules:
   a kind does not define which signals must exist.
 
 Initial stable signal ids:
+
+- [blocked](#blocked-recommendation-signal-id)
+- [due-soon](#due-soon-recommendation-signal-id)
+- [future-start](#future-start-recommendation-signal-id)
+- [missing-duration](#missing-duration-recommendation-signal-id)
+- [non-leaf](#non-leaf-recommendation-signal-id)
+- [overdue](#overdue-recommendation-signal-id)
+
+---
+
+### RecommendationSignalId
+
+A branded stable identifier type for `RecommendationSignal.id`.
+
+Examples:
+
+- `blocked`
+- `missing-duration`
+- `non-leaf`
+- `future-start`
+- `due-soon`
+- `overdue`
+
+Notes:
+
+- This id family is dedicated to signal semantics and is not interchangeable with
+  other branded id types.
+
+Current stable signal ids:
 
 - [blocked](#blocked-recommendation-signal-id)
 - [due-soon](#due-soon-recommendation-signal-id)
@@ -631,6 +798,22 @@ Does not represent:
 - Planning decisions,
 - Priorities,
 - Execution strategy.
+
+---
+
+### TaskId
+
+A branded stable identifier for a task instance in the pipeline.
+
+Characteristics:
+
+- Uniquely identifies a task across collection, analysis, issue detection, and
+  recommendation compilation in a run.
+- Used for cross-stage joins and issue targeting.
+
+Notes:
+
+- `TaskId` is not interchangeable with other branded id families.
 
 ---
 
