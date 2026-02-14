@@ -669,6 +669,10 @@ Stages (in order):
 - ✅ `stage-rank.ts`
   Group and order `Recommendation[]` into a `RecommendationFeed`.
 
+- ✅ `rank-policy.ts`
+  Centralized default ranking/display policy constants for section priority and
+  default capping behavior.
+
 - ✅ `pipeline.ts`
   Orchestrate all stages end-to-end and return the final feed.
 
@@ -685,11 +689,11 @@ Purpose: **one folder per feature**, matching stable IDs.
 
 Status:
 
-- ⛔ Folder not present yet (introduced in M1.3).
+- ✅ Feature folder present.
 
 ### Issues (primarily M1)
 
-- 🟡 `features/issues/missing-duration/` (M1.3)
+- ✅ `features/issues/missing-duration/` (M1.3)
   Detect tasks missing duration and propose fixes.
 
 (Other issue features remain out of scope until the first one is solid and end-to-end.)
@@ -746,6 +750,10 @@ Planned:
 - ✅ `entry/render.ts`
   Glue code: run pipeline, pass feed to renderer.
 
+- ✅ `entry/render-defaults.ts`
+  Settings-ready entry defaults seam for render visibility and diagnostics
+  behavior.
+
 ### Plugin root
 
 - ✅ `plugin.ts`
@@ -753,7 +761,7 @@ Planned:
 
 Planned (M1):
 
-- 🟡 Feature registration imports (M1.3+)
+- ✅ Feature registration imports (M1.3+)
   Plugin startup imports feature modules so registries are populated at runtime.
 
 ---
