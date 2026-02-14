@@ -22,8 +22,15 @@ import type { App } from "obsidian";
 
 import { collectTasksFromDataview } from "@/adapters/obsidian/collect-tasks";
 import { buildTimeContext } from "@/adapters/obsidian/time-context";
+import type { RecommendationFeed } from "@/core/model/recommendation";
 import type { TaskEntity } from "@/core/model/task";
 import { runPipeline } from "@/core/pipeline/pipeline";
+import {
+	DEFAULT_COLLECTED_VISIBILITY_MODE,
+	DEFAULT_SHOW_IDS,
+	DEFAULT_SHOW_PROVENANCE_LINKS,
+	type CollectedVisibilityMode,
+} from "@/entry/render-defaults";
 import { renderFeed, type RenderFeedOptions } from "@/ui/feed/render-feed";
 
 /**
@@ -35,6 +42,7 @@ import { renderFeed, type RenderFeedOptions } from "@/ui/feed/render-feed";
  */
 export interface RenderTaskXOptions extends RenderFeedOptions {
 	app: App;
+	collectedVisibility?: CollectedVisibilityMode;
 
 	/**
 	 * Override TimeContext construction.
@@ -69,7 +77,13 @@ export async function renderTaskX(opts: RenderTaskXOptions): Promise<HTMLElement
 	const collect = opts.collect ?? buildDefaultCollector(opts.app);
 
 	const feed = await runPipeline({ ctx, collect });
-	return renderFeed(feed, opts);
+	const visibleFeed = applyCollectedVisibility(feed, opts.collectedVisibility);
+
+	return renderFeed(visibleFeed, {
+		...opts,
+		showIds: opts.showIds ?? DEFAULT_SHOW_IDS,
+		showProvenanceLinks: opts.showProvenanceLinks ?? DEFAULT_SHOW_PROVENANCE_LINKS,
+	});
 }
 
 /**
@@ -110,4 +124,25 @@ function getDataviewApi(app?: App): unknown | null {
 	const dv = (plugins?.["dataview"] as { api?: unknown } | undefined) ?? null;
 
 	return dv?.api ?? null;
+}
+
+function applyCollectedVisibility(
+	feed: RecommendationFeed,
+	mode: CollectedVisibilityMode = DEFAULT_COLLECTED_VISIBILITY_MODE,
+): RecommendationFeed {
+	if (mode === "always") {
+		return feed;
+	}
+
+	const hasActionableSection = feed.sections.some(
+		section => section.title === "Do now" || section.title === "Unblock",
+	);
+
+	if (mode === "never" || (mode === "auto" && hasActionableSection)) {
+		return {
+			sections: feed.sections.filter(section => section.title !== "Collected"),
+		};
+	}
+
+	return feed;
 }
