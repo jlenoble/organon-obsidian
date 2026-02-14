@@ -21,26 +21,38 @@ import { asRecommendationId, asTaskId } from "@/core/model/id";
 import type { RecommendationFeed } from "@/core/model/recommendation";
 import { renderFeed } from "@/ui/feed/render-feed";
 
-function makeFeed(kind: "collected" | "do-now"): RecommendationFeed {
+function makeFeed(kind: "collected" | "do-now" | "fix"): RecommendationFeed {
+	const base = {
+		kind,
+		id: asRecommendationId(`rec:${kind}:test`),
+		title:
+			kind === "collected"
+				? "Collected sample"
+				: kind === "do-now"
+					? "Execute now"
+					: "Unblock a task",
+		why: ["baseline test"],
+		score: { urgency: 0, friction: 0, payoff: 0 },
+		tasks: [
+			{
+				id: asTaskId("task:a"),
+				text: "task a",
+				origin: { path: "folder/note.md", line: 12 },
+			},
+		],
+	};
+
 	return {
 		sections: [
 			{
-				title: kind === "collected" ? "Collected" : "Do now",
+				title: kind === "collected" ? "Collected" : kind === "do-now" ? "Do now" : "Unblock",
 				items: [
-					{
-						kind,
-						id: asRecommendationId(`rec:${kind}:test`),
-						title: kind === "collected" ? "Collected sample" : "Execute now",
-						why: ["baseline test"],
-						score: { urgency: 0, friction: 0, payoff: 0 },
-						tasks: [
-							{
-								id: asTaskId("task:a"),
-								text: "task a",
-								origin: { path: "folder/note.md", line: 12 },
-							},
-						],
-					} as unknown as RecommendationFeed["sections"][number]["items"][number],
+					(kind === "fix"
+						? {
+								...base,
+								fixes: [],
+							}
+						: base) as unknown as RecommendationFeed["sections"][number]["items"][number],
 				],
 			},
 		],
@@ -84,6 +96,17 @@ describe("ui/feed renderFeed", () => {
 
 	it("renders provenance links for do-now task summaries", () => {
 		const root = renderFeed(makeFeed("do-now"), { doc: document });
+
+		const link = root.querySelector(".taskx-rec__task-link") as HTMLAnchorElement | null;
+		expect(link).not.toBeNull();
+
+		expect(link?.textContent).toBe("note");
+		expect(link?.dataset.href).toBe("folder/note");
+		expect(link?.dataset.taskxWiki).toBe("[[folder/note|note]]");
+	});
+
+	it("renders provenance links for fix recommendation task summaries", () => {
+		const root = renderFeed(makeFeed("fix"), { doc: document });
 
 		const link = root.querySelector(".taskx-rec__task-link") as HTMLAnchorElement | null;
 		expect(link).not.toBeNull();
