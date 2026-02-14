@@ -358,6 +358,8 @@ Deliverables:
   - Add naming guidance for signal IDs and signal-to-domain correspondence rules.
 - Emit these signals deterministically from the pipeline (policy-light).
 - Render signals in the feed with stable DOM structure and clear labels.
+- Ensure signals are visually/semantically distinct from `why` rationale text,
+  so users can clearly identify badges vs explanations.
 
 Implementation order (files to touch):
 
@@ -376,14 +378,17 @@ Implementation order (files to touch):
 
 5. 🟡 `src/ui/feed/render-feed.ts`
    - Render signals as stable, testable badges/labels.
+   - Keep a dedicated signal container/markup distinct from rationale bullet lists.
 
 6. 🟡 `tests/` (T1)
    - Stage-level unit tests for signal computation.
    - DOM contract test asserting badge presence and stability.
+   - DOM contract test asserting signals are distinguishable from `why` text.
 
 Success criterion:
 
 - “Do now = 0” is accompanied by visible, specific reasons in the output.
+- Signal badges are clearly distinguishable from rationale bullets in rendered output.
 
 ---
 
