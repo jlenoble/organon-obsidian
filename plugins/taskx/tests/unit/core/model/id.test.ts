@@ -17,6 +17,7 @@ import {
 	asFixId,
 	asIssueId,
 	asRecommendationId,
+	asRecommendationSignalId,
 	asTaskId,
 } from "@/core/model/id";
 
@@ -29,5 +30,6 @@ describe("core/model/id cast helpers", () => {
 			"fixcand:missing-duration:task:1:fix:set-duration-15m",
 		);
 		expect(asRecommendationId("rec:do-now:shallow")).toBe("rec:do-now:shallow");
+		expect(asRecommendationSignalId("missing-duration")).toBe("missing-duration");
 	});
 });
