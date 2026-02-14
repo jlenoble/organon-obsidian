@@ -90,11 +90,10 @@ export function stageRecommend(args: {
 	}
 
 	// 3) One minimal "do-now" recommendation (our first “block-like” suggestion)
-	const MAX_DO_NOW = 5;
-
+	// We emit full executable context here. Section-size capping is applied in
+	// stage-rank as presentation policy.
 	const executableTasks: TaskSummary[] = args.tasks
 		.filter(t => args.facts.byId.get(t.id)?.isExecutableNow)
-		.slice(0, MAX_DO_NOW)
 		.map(t => ({
 			id: t.id,
 			text: t.text,

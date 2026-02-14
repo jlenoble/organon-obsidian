@@ -21,14 +21,18 @@
  * - Feature-specific grouping rules beyond the recommendation kind.
  */
 
+import {
+	DEFAULT_SECTION_PRIORITY,
+	MAX_COLLECTED_TASKS,
+	MAX_DO_NOW_TASKS,
+	MAX_UNBLOCK_ITEMS,
+} from "./rank-policy";
+
 import type {
 	Recommendation,
 	RecommendationFeed,
 	RecommendationKind,
 } from "@/core/model/recommendation";
-
-const DEFAULT_MAX_UNBLOCK_ITEMS = 5;
-const DEFAULT_MAX_COLLECTED_ITEMS = 5;
 
 /**
  * Group and order recommendations into a feed structure for rendering.
@@ -48,17 +52,23 @@ export function stageRank(recs: Recommendation[]): RecommendationFeed {
 	//
 	// Section-size defaults are centralized here so presentation policy is owned
 	// by ranking, not by recommendation generation stages.
-	addSection(sections, "Do now", byKind.get("do-now") ?? []);
+	addSection(
+		sections,
+		"Do now",
+		capTaskSummariesByKind(byKind.get("do-now") ?? [], "do-now", MAX_DO_NOW_TASKS),
+	);
 	addSection(sections, "Unblock", byKind.get("fix") ?? [], {
-		maxItems: DEFAULT_MAX_UNBLOCK_ITEMS,
+		maxItems: MAX_UNBLOCK_ITEMS,
 	});
-	addSection(sections, "Collected", byKind.get("collected") ?? [], {
-		maxItems: DEFAULT_MAX_COLLECTED_ITEMS,
-	});
+	addSection(
+		sections,
+		"Collected",
+		capTaskSummariesByKind(byKind.get("collected") ?? [], "collected", MAX_COLLECTED_TASKS),
+	);
 
 	// Any unexpected kinds (future additions) are preserved deterministically at the end.
 	for (const [kind, items] of byKind.entries()) {
-		if (kind === "collected" || kind === "fix" || kind === "do-now") {
+		if (DEFAULT_SECTION_PRIORITY.includes(kind)) {
 			continue;
 		}
 
@@ -170,4 +180,28 @@ function kindToTitle(kind: RecommendationKind): string {
 		.split("-")
 		.map(w => (w.length > 0 ? w[0].toUpperCase() + w.slice(1) : w))
 		.join(" ");
+}
+
+/**
+ * Cap task-summary lists carried by recommendations of a given kind.
+ *
+ * Notes:
+ * - This policy is owned by ranking/presentation, not recommendation generation.
+ * - We keep recommendation identity/metadata unchanged and only trim task summaries.
+ */
+function capTaskSummariesByKind(
+	items: Recommendation[],
+	kind: "collected" | "do-now",
+	maxTasks: number,
+): Recommendation[] {
+	return items.map(item => {
+		if (item.kind !== kind) {
+			return item;
+		}
+
+		return {
+			...item,
+			tasks: item.tasks.slice(0, maxTasks),
+		};
+	});
 }
