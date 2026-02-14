@@ -287,7 +287,7 @@ Status:
 
 ---
 
-#### M1.3c — Explicit UX toggles and policy seams (settings-ready) 🟡
+#### M1.3c — Explicit UX toggles and policy seams (settings-ready) ✅
 
 Intent:
 
@@ -312,16 +312,20 @@ Implementation order (files to touch):
 1. ✅ `src/core/pipeline/` (policy module + usage in rank stage)
    - Centralize ranking defaults (e.g., unblock cap, priority order).
 
-2. 🟡 `src/ui/feed/` and/or `src/entry/` (display default module + wiring)
+2. ✅ `src/ui/feed/` and/or `src/entry/` (display default module + wiring)
    - Centralize render visibility defaults and runtime option mapping.
 
-3. 🟡 `tests/` (T1)
+3. ✅ `tests/` (T1)
    - Add coverage that toggles affect visibility only, not ranking semantics.
 
 Success criterion:
 
 - UX defaults are explicit and centralized.
 - Future settings integration can map onto existing seams without refactoring core contracts.
+
+Status:
+
+- ✅ Achieved
 
 ---
 
