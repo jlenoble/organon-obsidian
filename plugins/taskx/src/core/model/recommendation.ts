@@ -81,6 +81,41 @@ export interface RecommendationScore {
 }
 
 /**
+ * Stable UI-facing diagnostic signal attached to a recommendation.
+ *
+ * Purpose:
+ * - Explain actionability and urgency with compact, render-ready badges.
+ * - Keep explanation data separate from TaskSummary so task summaries remain minimal.
+ *
+ * Notes:
+ * - This is a display contract, not a ranking primitive.
+ * - Section placement and ordering stay owned by stage-rank policy.
+ */
+export interface RecommendationSignal {
+	/**
+	 * Stable machine id used for DOM hooks and policy-to-UI mapping.
+	 *
+	 * Examples:
+	 * - "blocked"
+	 * - "missing-duration"
+	 * - "non-leaf"
+	 * - "future-start"
+	 * - "due-soon"
+	 * - "overdue"
+	 */
+	id: string;
+
+	/**
+	 * Short, user-facing badge text.
+	 *
+	 * Example:
+	 * - "Blocked"
+	 * - "Missing duration"
+	 */
+	label: string;
+}
+
+/**
  * Fields common to all recommendation variants.
  *
  * Notes:
@@ -107,6 +142,16 @@ export interface RecommendationBase {
 
 	/** Scoring signals for ranking and grouping policies. */
 	score: RecommendationScore;
+
+	/**
+	 * Optional, UI-facing actionability/urgency diagnostics.
+	 *
+	 * Rationale:
+	 * - Recommendations can explain why an item is actionable (or not) without
+	 *   expanding TaskSummary or leaking pipeline internals to the renderer.
+	 * - This field is optional to preserve backward-compatible feed rendering.
+	 */
+	signals?: RecommendationSignal[];
 }
 
 /**
