@@ -12,6 +12,7 @@
  *
  * Scope:
  * - "Collected" appears when tasks exist.
+ * - "Do now" is prioritized before "Collected" by ranking policy.
  * - The collected list is capped (5 items) for a deterministic sample.
  * - Diagnostics (ids) are not shown unless explicitly enabled.
  */
@@ -22,15 +23,14 @@ import { asTaskId } from "@/core/model/id";
 import type { TaskEntity } from "@/core/model/task";
 import { renderTaskX } from "@/entry/render";
 
-function makeTask(i: number): TaskEntity {
+function makeTask(i: number, opts: { duration?: number } = {}): TaskEntity {
 	return {
 		id: asTaskId(`task:${i}`),
 		origin: { kind: "vault-markdown", path: `note-${i}.md`, line: i },
 		text: `Task ${i}`,
 		status: "todo",
 		tags: new Set(),
-		// We keep duration undefined here so the minimal do-now policy remains empty.
-		duration: undefined,
+		duration: opts.duration,
 		dates: {},
 		raw: { markdown: `- [ ] Task ${i}` },
 	};
@@ -38,7 +38,7 @@ function makeTask(i: number): TaskEntity {
 
 describe("entry/render renderTaskX Collected contract", () => {
 	it('renders a "Collected" section with a stable 5-item sample', async () => {
-		const tasks = [1, 2, 3, 4, 5, 6, 7, 8].map(makeTask);
+		const tasks = [1, 2, 3, 4, 5, 6, 7, 8].map(i => makeTask(i));
 
 		const root = await renderTaskX({
 			// We never use the app when collect/buildCtx are injected, but the entry
@@ -63,8 +63,8 @@ describe("entry/render renderTaskX Collected contract", () => {
 		);
 
 		// With collected tasks and no issues, we expect exactly two sections:
-		// "Collected" then "Do now".
-		expect(sectionTitles).toEqual(["Collected", "Do now"]);
+		// "Do now" then "Collected".
+		expect(sectionTitles).toEqual(["Do now", "Collected"]);
 
 		const collectedSection = root.querySelector(".taskx-feed__section");
 		expect(collectedSection).toBeTruthy();
@@ -79,5 +79,26 @@ describe("entry/render renderTaskX Collected contract", () => {
 
 		// Id diagnostics must not appear unless explicitly enabled.
 		expect(root.querySelectorAll(".taskx-rec__task-id")).toHaveLength(0);
+	});
+
+	it("caps do-now tasks to 5 by default", async () => {
+		const tasks = [1, 2, 3, 4, 5, 6, 7, 8].map(i => makeTask(i, { duration: 15 }));
+
+		const root = await renderTaskX({
+			app: {} as never,
+			buildCtx: () => ({
+				now: new Date("2026-02-12T00:00:00.000Z"),
+				tz: "Europe/Paris",
+			}),
+			collect: async () => tasks,
+			showIds: false,
+		});
+
+		const doNowTaskTexts = Array.from(
+			root.querySelectorAll(".taskx-rec__do-now .taskx-rec__task-text"),
+		).map(n => n.textContent ?? "");
+
+		expect(doNowTaskTexts).toHaveLength(5);
+		expect(doNowTaskTexts).toEqual(["Task 1", "Task 2", "Task 3", "Task 4", "Task 5"]);
 	});
 });
