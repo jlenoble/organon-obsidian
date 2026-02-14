@@ -412,6 +412,69 @@ Success criterion:
 
 ---
 
+#### M1.5b — Apply missing-duration fixes from the feed (narrow interaction loop) 🟡
+
+Intent:
+
+- Reduce friction between “Unblock” diagnosis and actual note updates.
+- Keep the interaction explicit and conservative (no auto-write, no bulk-magic).
+- Validate that M1 recommendations solve real-world workflow pain, not only visibility.
+
+Deliverables:
+
+- Add a minimal interaction path to apply a selected missing-duration fix from feed output.
+- Scope to one fix action type initially: `set-duration`.
+- Keep user intent explicit (click/confirm style), with clear success/failure feedback.
+
+Implementation order (files to touch):
+
+1. 🟡 `src/ui/feed/render-feed.ts`
+   - Add stable action hooks for fix application controls.
+
+2. 🟡 `src/entry/` + `src/adapters/obsidian/patch-applier.ts`
+   - Wire action dispatch to conservative patch application.
+
+3. 🟡 `tests/` (T1)
+   - Contract tests for interaction-to-patch flow and failure safety.
+
+Success criterion:
+
+- From an Unblock recommendation, a user can apply duration fixes without manual
+  note hunting via smart links.
+
+---
+
+#### M1.5c — Duration rollup for parent tasks via `partOf` tree reuse 🟡
+
+Intent:
+
+- Ensure parent task durations stay meaningful once leaf durations are set.
+- Reuse existing `partOf` relation groundwork rather than rebuilding hierarchy logic.
+
+Deliverables:
+
+- Compute/update parent task duration from child durations in the `partOf` tree.
+- Define deterministic rollup semantics (sum of executable child durations unless overridden).
+- Preserve manual override behavior where explicitly encoded (if present in source format).
+
+Implementation order (files to touch):
+
+1. 🟡 `src/core/model/facts.ts` and/or `src/core/pipeline/stage-analyze.ts`
+   - Add deterministic rollup facts based on `partOf` structure.
+
+2. 🟡 `src/adapters/obsidian/patch-applier.ts` (if write-back is part of this step)
+   - Apply rolled-up duration updates conservatively.
+
+3. 🟡 `tests/` (T1)
+   - Unit/contract tests for rollup correctness, overrides, and edge cases.
+
+Success criterion:
+
+- After leaf durations are set, parent tasks reflect coherent rolled-up duration
+  values and no longer remain structurally under-specified.
+
+---
+
 #### M1.6 — Patch application (minimal) 🟡
 
 Intent:
