@@ -149,6 +149,10 @@ function renderRecommendation(
 		item.append(whyList);
 	}
 
+	if (rec.signals && rec.signals.length > 0) {
+		item.append(renderSignals(doc, rec.signals));
+	}
+
 	item.append(renderRecommendationDetails(doc, rec, opts));
 
 	return item;
@@ -331,6 +335,24 @@ function renderRecommendationDetails(
 	}
 
 	return details;
+}
+
+function renderSignals(
+	doc: Document,
+	signals: NonNullable<Recommendation["signals"]>,
+): HTMLElement {
+	const list = el(doc, "ul", { className: "taskx-rec__signals" });
+
+	for (const signal of signals) {
+		const badge = el(doc, "li", {
+			className: "taskx-rec__signal",
+			text: signal.label,
+		});
+		badge.dataset.taskxSignalId = signal.id;
+		list.append(badge);
+	}
+
+	return list;
 }
 
 /**
