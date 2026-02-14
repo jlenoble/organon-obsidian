@@ -25,13 +25,14 @@ import type { TimeContext } from "@/core/model/time";
  * Compile issues and basic action suggestions into recommendations.
  *
  * Current minimal behavior:
- * 1) Emit one "collected" recommendation listing up to N collected task ids.
+ * 1) Emit one "collected" recommendation carrying collected task summaries.
  * 2) For each issue, emit a "fix" recommendation containing the issue fixes.
- * 3) Emit one "do-now" recommendation listing up to N executable tasks.
+ * 3) Emit one "do-now" recommendation carrying executable task summaries.
  *
  * Notes:
  * - "collected" is policy-light and exists to validate real task throughput.
  * - "do-now" stays intentionally shallow and will evolve with later planning.
+ * - Section/task capping and section ordering are ranking concerns (stage-rank).
  */
 export function stageRecommend(args: {
 	tasks: TaskEntity[];

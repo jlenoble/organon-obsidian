@@ -1,5 +1,5 @@
 /**
- * tests/contract/core/pipeline/pipeline-missing-duration.contract.test.ts
+ * tests/contract/core/pipeline/pipeline/missing-duration.contract.test.ts
  *
  * This file defines a contract test for the first issue feature integration:
  * when a task is missing duration, the pipeline output must expose a visible

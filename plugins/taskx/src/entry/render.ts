@@ -10,7 +10,9 @@
  * - Render that feed into a plain HTMLElement subtree (UI boundary).
  *
  * Invariants:
- * - We do not implement feature logic or policy here. The pipeline decides.
+ * - We do not implement feature logic, ranking policy, or recommendation policy here.
+ * - Entry-level visibility defaults may be applied, but they must not re-rank or
+ *   reinterpret pipeline decisions.
  * - We do not attach elements to the DOM. Callers manage mounting/unmounting.
  *
  * Non-goals:

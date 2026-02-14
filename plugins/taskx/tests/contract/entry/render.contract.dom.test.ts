@@ -1,7 +1,7 @@
 /**
  * tests/contract/entry/render.contract.dom.test.ts
  *
- * This contract test protects an M1.0/M1.1-level invariant of the public entry API:
+ * This contract test protects M1-level invariants of the public entry API:
  * when tasks are collected, entry-level visibility defaults are applied deterministically
  * and the rendered output remains stable and inspectable.
  *
