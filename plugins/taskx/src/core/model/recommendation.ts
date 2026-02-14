@@ -2,7 +2,7 @@
  * core/model/recommendation.ts
  *
  * This file defines the UI-facing contract of the TaskX core:
- * the Recommendation and RecommendationFeed structures.
+ * the Recommendation, RecommendationSignal, and RecommendationFeed structures.
  *
  * Conceptually:
  * - Issues report problems.
@@ -13,6 +13,7 @@
  * - The UI must not depend on TaskEntity, Issue, or Fix internals.
  * - The UI consumes RecommendationFeed as-is (no re-ranking, no regrouping).
  * - Recommendation is a discriminated union on `kind` to prevent impossible states.
+ * - RecommendationSignal.id is a stable machine identifier (RecommendationSignalId).
  *
  * Non-goals:
  * - Rendering logic (ui/*).
@@ -56,6 +57,10 @@ export interface TaskSummary {
  * - "collected": a policy-light sample of tasks collected from the vault
  * - "fix": apply or review a proposed fix
  * - "do-now": execute one or more tasks now
+ *
+ * Note:
+ * - Some kind tokens may also be used as feed section ids (e.g., "collected", "do-now"),
+ *   but these remain distinct contract surfaces.
  *
  * Expected later additions (M2 examples):
  * - "wizard": interactive resolution (decomposition, planning)

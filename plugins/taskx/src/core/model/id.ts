@@ -10,8 +10,11 @@
  * - Minimal: no hashing, no persistence, no heavy helpers yet—just the branded types and casts.
  *
  * Naming conventions (stable, never rename later):
- * - Stable IDs are kebab-case strings when they represent keys (e.g., "missing-duration").
- * - Composite IDs may use ":" as a namespace delimiter (e.g., "missing-duration:<taskId>").
+ * - Branded instance IDs in this file are strings (TaskId, IssueId, etc.).
+ * - Some related domain namespaces use stable kebab-case tokens
+ *   (e.g., issue kind "missing-duration", signal token "blocked").
+ * - Composite IDs may use ":" as a namespace delimiter
+ *   (e.g., "missing-duration:<taskId>").
  *
  * Note:
  * - Branding is compile-time only; at runtime all IDs are strings.
@@ -29,7 +32,7 @@ export type Brand<TBase, TBrand extends string> = TBase & {
 /** Canonical task identifier (stable across pipeline stages). */
 export type TaskId = Brand<string, "TaskId">;
 
-/** Issue identifier (usually "issue-id:<taskId>" or "issue-id:global"). */
+/** Issue instance identifier (usually "<issue-kind>:<taskId>" or "<issue-kind>:global"). */
 export type IssueId = Brand<string, "IssueId">;
 
 /**
