@@ -24,10 +24,10 @@ export const DEFAULT_SECTION_PRIORITY: readonly RecommendationKind[] = [
 ];
 
 /** Default max number of fix recommendations shown in the Unblock section. */
-export const MAX_UNBLOCK_ITEMS = 5;
+export const MAX_UNBLOCK_RECOMMENDATIONS = 5;
 
 /** Default max number of task summaries shown inside collected recommendations. */
-export const MAX_COLLECTED_TASKS = 5;
+export const MAX_COLLECTED_TASK_SUMMARIES = 5;
 
 /** Default max number of task summaries shown inside do-now recommendations. */
-export const MAX_DO_NOW_TASKS = 5;
+export const MAX_DO_NOW_TASK_SUMMARIES = 5;

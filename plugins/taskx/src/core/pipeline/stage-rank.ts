@@ -23,9 +23,9 @@
 
 import {
 	DEFAULT_SECTION_PRIORITY,
-	MAX_COLLECTED_TASKS,
-	MAX_DO_NOW_TASKS,
-	MAX_UNBLOCK_ITEMS,
+	MAX_COLLECTED_TASK_SUMMARIES,
+	MAX_DO_NOW_TASK_SUMMARIES,
+	MAX_UNBLOCK_RECOMMENDATIONS,
 } from "./rank-policy";
 
 import type {
@@ -55,15 +55,19 @@ export function stageRank(recs: Recommendation[]): RecommendationFeed {
 	addSection(
 		sections,
 		"Do now",
-		capTaskSummariesByKind(byKind.get("do-now") ?? [], "do-now", MAX_DO_NOW_TASKS),
+		capTaskSummariesByKind(byKind.get("do-now") ?? [], "do-now", MAX_DO_NOW_TASK_SUMMARIES),
 	);
 	addSection(sections, "Unblock", byKind.get("fix") ?? [], {
-		maxItems: MAX_UNBLOCK_ITEMS,
+		maxItems: MAX_UNBLOCK_RECOMMENDATIONS,
 	});
 	addSection(
 		sections,
 		"Collected",
-		capTaskSummariesByKind(byKind.get("collected") ?? [], "collected", MAX_COLLECTED_TASKS),
+		capTaskSummariesByKind(
+			byKind.get("collected") ?? [],
+			"collected",
+			MAX_COLLECTED_TASK_SUMMARIES,
+		),
 	);
 
 	// Any unexpected kinds (future additions) are preserved deterministically at the end.
