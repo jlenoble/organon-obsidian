@@ -342,29 +342,42 @@ Constraint:
 - `TaskSummary` remains minimal (id + text + optional origin).
 - Diagnostics must be expressed via a separate UI-facing contract attached to recommendations,
   not embedded inside the raw task summary.
+- Signal identifiers are stable contract IDs:
+  - `RecommendationSignal.id` is machine-readable and must remain stable over time.
+  - Signal IDs must be documented under one umbrella concept and individually enumerated.
+  - Any correspondence between signal IDs and other stable IDs (issue kinds, section ids,
+    recommendation kinds) must be explicitly contracted in docs.
 
 Deliverables:
 
 - Introduce a UI-facing “signals / badges” payload that can be rendered dumbly:
   - Example categories: overdue/due-soon, blocked, missing-duration, non-leaf, future-start.
+- Define the signal ID contract and documentation source of truth:
+  - Add an umbrella glossary entry for recommendation signals.
+  - Add per-signal glossary entries with semantics and stability expectations.
+  - Add naming guidance for signal IDs and signal-to-domain correspondence rules.
 - Emit these signals deterministically from the pipeline (policy-light).
 - Render signals in the feed with stable DOM structure and clear labels.
 
 Implementation order (files to touch):
 
-1. 🟡 `src/core/model/recommendation.ts`
+1. ✅ `src/core/model/recommendation.ts`
    - Add a stable UI-facing diagnostic/signal type used by recommendations/sections.
 
-2. 🟡 `src/core/pipeline/stage-analyze.ts` / `src/core/model/facts.ts`
+2. 🟡 `docs/taskx-glossary.md` + `docs/taskx-naming.md` (+ roadmap status refresh as needed)
+   - Contract the umbrella concept for recommendation signals.
+   - Add per-signal stable IDs and explicit correspondence rules to existing contract IDs.
+
+3. 🟡 `src/core/pipeline/stage-analyze.ts` / `src/core/model/facts.ts`
    - Ensure facts needed for actionability explanation are available and deterministic.
 
-3. 🟡 `src/core/pipeline/stage-recommend.ts`
+4. 🟡 `src/core/pipeline/stage-recommend.ts`
    - Attach signals to relevant recommendations (especially do-now and unblock/cleanup).
 
-4. 🟡 `src/ui/feed/render-feed.ts`
+5. 🟡 `src/ui/feed/render-feed.ts`
    - Render signals as stable, testable badges/labels.
 
-5. 🟡 `tests/` (T1)
+6. 🟡 `tests/` (T1)
    - Stage-level unit tests for signal computation.
    - DOM contract test asserting badge presence and stability.
 
