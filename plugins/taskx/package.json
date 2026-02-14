@@ -1,6 +1,6 @@
 {
 	"name": "@organon/obsidian-taskx",
-	"description": "Experimental hierarchical task engine",
+	"description": "Task recommendation feed for Obsidian",
 	"version": "0.0.1",
 	"main": "dist/main.js",
 	"types": "dist-types/main.d.ts",

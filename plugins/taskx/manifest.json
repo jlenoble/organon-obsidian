@@ -4,6 +4,6 @@
   "version": "0.0.1",
   "minAppVersion": "1.5.0",
   "author": "Jason Lenoble",
-  "description": "Experimental hierarchical task engine",
-  "dependencies": ["dataview", "obsidian-tasks-plugin"]
+  "description": "Task recommendation feed for Obsidian",
+  "dependencies": ["dataview"]
 }
