@@ -16,8 +16,8 @@ If a term is used in the codebase with a different meaning than what is written 
 
 ## Index
 
-[A](#a) · [B](#b) · [C](#c) · [D](#d) · [E](#e) · [F](#f) · [G](#g) · H · [I](#i) · J · K · L · M ·
-[N](#n) · O · [P](#p) · Q · [R](#r) · [S](#s) · [T](#t) · [U](#u) · V · [W](#w) · X · Y · Z
+[A](#a) · [B](#b) · [C](#c) · [D](#d) · [E](#e) · [F](#f) · [G](#g) · H · [I](#i) · J · K · L · [M](#m) ·
+[N](#n) · [O](#o) · [P](#p) · Q · [R](#r) · [S](#s) · [T](#t) · [U](#u) · V · [W](#w) · X · Y · Z
 
 ---
 
@@ -66,6 +66,22 @@ Note:
 - In TaskX, blocks are not hard scheduling primitives.
 - They are conceptual units used by planning and recommendation logic.
 - The formalized concept for recurring or structural blocks is **Superblock**.
+
+---
+
+### blocked (recommendation signal id)
+
+A **recommendation signal identifier** used in `RecommendationSignal`.
+
+Semantics:
+
+- Indicates execution is prevented by unresolved dependency constraints.
+- Typical source is dependency/graph facts from analysis.
+
+Correspondence:
+
+- May contribute to `needs-cleanup`.
+- No required 1:1 section mapping.
 
 ---
 
@@ -182,6 +198,22 @@ Notes:
 
 - This identifier is stable and part of the UI contract.
 - The UI may render it with a human-readable title such as “Do now”.
+
+---
+
+### due-soon (recommendation signal id)
+
+A **recommendation signal identifier** used in `RecommendationSignal`.
+
+Semantics:
+
+- Indicates urgency is elevated because due time is near.
+- Typical source is due-date proximity facts.
+
+Correspondence:
+
+- May contribute to `attention`.
+- No required 1:1 section mapping.
 
 ---
 
@@ -308,6 +340,22 @@ Characteristics:
 
 ---
 
+### future-start (recommendation signal id)
+
+A **recommendation signal identifier** used in `RecommendationSignal`.
+
+Semantics:
+
+- Indicates a task is not yet available because its start window is in the future.
+- Typical source is time-window facts.
+
+Correspondence:
+
+- May contribute to `needs-cleanup` or future planning surfaces.
+- No required 1:1 section mapping.
+
+---
+
 ## G
 
 ### Glossary
@@ -352,6 +400,24 @@ Characteristics:
 
 ---
 
+## M
+
+### missing-duration (recommendation signal id)
+
+A **recommendation signal identifier** used in `RecommendationSignal`.
+
+Semantics:
+
+- Indicates required duration metadata is missing under current executability policy.
+- Typical source is missing-duration issue detection and related facts.
+
+Correspondence:
+
+- Semantically aligned with issue kind `missing-duration`.
+- May contribute to `needs-cleanup`.
+
+---
+
 ## N
 
 ### needs-cleanup (feed section id)
@@ -369,6 +435,40 @@ Notes:
 
 - This identifier is stable and part of the UI contract.
 - The UI may render it with a human-readable title such as “Needs cleanup”.
+
+---
+
+### non-leaf (recommendation signal id)
+
+A **recommendation signal identifier** used in `RecommendationSignal`.
+
+Semantics:
+
+- Indicates a task is not directly executable because decomposition is still required.
+- Typical source is hierarchy/leaf-ness facts.
+
+Correspondence:
+
+- May contribute to `needs-cleanup`.
+- No required 1:1 section mapping.
+
+---
+
+## O
+
+### overdue (recommendation signal id)
+
+A **recommendation signal identifier** used in `RecommendationSignal`.
+
+Semantics:
+
+- Indicates due time has passed and urgency is elevated.
+- Typical source is due-date facts.
+
+Correspondence:
+
+- May contribute to `attention`.
+- No required 1:1 section mapping.
 
 ---
 
@@ -409,6 +509,45 @@ Notes:
 
 - A `fix` recommendation may carry `TaskSummary[]` target context so the UI can
   show task text and provenance without depending on `TaskEntity`.
+
+---
+
+### RecommendationSignal
+
+A compact, UI-facing diagnostic badge attached to a recommendation.
+
+Represents:
+
+- “Why this recommendation is actionable, blocked, or urgent”.
+
+Contract:
+
+- A signal has:
+  - a stable machine id (`RecommendationSignalId`),
+  - a short display label.
+- `RecommendationSignal.id` is part of the cross-layer contract (core -> UI -> tests)
+  and must be treated as stable once introduced.
+- Signal IDs are a dedicated namespace and are not interchangeable with
+  `IssueId`, `FixId`, `RecommendationId`, or feed section ids.
+
+Correspondence rules:
+
+- A signal may correspond semantically to an issue kind or a fact, but this is not
+  implicit and must be documented explicitly.
+- When a signal expresses the same user-facing problem as an issue kind, the preferred
+  convention is to reuse the same kebab-case token (example: `missing-duration`).
+- Feed section ids are aggregation buckets; they do not imply a 1:1 mapping with signals.
+- Recommendation kinds (`fix`, `do-now`, `collected`, etc.) and signal ids are orthogonal:
+  a kind does not define which signals must exist.
+
+Initial stable signal ids:
+
+- [blocked](#blocked-recommendation-signal-id)
+- [due-soon](#due-soon-recommendation-signal-id)
+- [future-start](#future-start-recommendation-signal-id)
+- [missing-duration](#missing-duration-recommendation-signal-id)
+- [non-leaf](#non-leaf-recommendation-signal-id)
+- [overdue](#overdue-recommendation-signal-id)
 
 ---
 
