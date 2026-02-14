@@ -14,6 +14,8 @@
  * - Keep scoring simple for now; policy-driven scoring will be introduced later.
  */
 
+import { collectSignalsForTaskIds } from "./recommendation-signals";
+
 import type { TaskFactsIndex } from "@/core/model/facts";
 import { asRecommendationId } from "@/core/model/id";
 import type { Issue } from "@/core/model/issue";
@@ -85,6 +87,7 @@ export function stageRecommend(args: {
 			why: issue.evidence,
 			// Minimal scoring policy for now.
 			score: { urgency: 70, friction: 10, payoff: 60 },
+			signals: collectSignalsForTaskIds([issue.target], args.facts, args.ctx),
 			tasks: targetTasks,
 			fixes: issue.fixes,
 		});
@@ -107,6 +110,11 @@ export function stageRecommend(args: {
 		title: "Do now (shallow block)",
 		why: ["These tasks appear executable under the current minimal policy (todo + duration set)."],
 		score: { urgency: 40, friction: 5, payoff: 35 },
+		signals: collectSignalsForTaskIds(
+			executableTasks.map(t => t.id),
+			args.facts,
+			args.ctx,
+		),
 		tasks: executableTasks,
 	});
 
