@@ -200,6 +200,28 @@ export interface RecommendationFeed {
 }
 ```
 
+### 2.4 Field-level IntelliSense rule (required for contract fields)
+
+When an exported interface/type field is part of a contract and requires
+discoverability in editors, each field must have its own JSDoc block.
+
+Use this rule especially for:
+
+- Core model contract properties,
+- Recommendation payload fields used by UI/tests,
+- Any field with semantics that are not obvious from its TypeScript type.
+
+Required style:
+
+- Prefer one JSDoc block per field over one shared block covering many fields.
+- Keep wording specific to that field.
+- Avoid relying on a preceding “group comment” if we want per-field hover docs.
+
+Rationale:
+
+- VS Code and other TypeScript editors provide better per-property IntelliSense
+  when each field has dedicated JSDoc.
+
 ---
 
 ## 3) Function documentation
