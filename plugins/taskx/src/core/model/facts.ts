@@ -17,7 +17,7 @@
  */
 
 import type { TaskId } from "./id";
-import type { TaskEntity } from "./task";
+import type { ISODate, TaskEntity } from "./task";
 
 /**
  * TaskFacts are computed properties about a specific task.
@@ -27,6 +27,9 @@ import type { TaskEntity } from "./task";
  * - Facts are “observations”, not “recommendations”.
  */
 export interface TaskFacts {
+	/** Status projection kept in facts for stage-local policy composition. */
+	status: TaskEntity["status"];
+
 	/**
 	 * Whether the task is considered a leaf for the purpose of duration and executability logic.
 	 *
@@ -44,6 +47,48 @@ export interface TaskFacts {
 	 * - A missing duration is a common blocker; detectors will use this fact.
 	 */
 	hasDuration: boolean;
+
+	/**
+	 * Task start-date projection copied from TaskEntity.
+	 *
+	 * Notes:
+	 * - Preserved in facts so downstream stages can remain fact-driven.
+	 * - Time-relative interpretation (e.g., future-start) is decided later with TimeContext.
+	 */
+	startDate?: ISODate;
+
+	/**
+	 * Task due-date projection copied from TaskEntity.
+	 *
+	 * Notes:
+	 * - Preserved in facts so downstream stages can remain fact-driven.
+	 * - Time-relative interpretation (e.g., due-soon/overdue) is decided later with TimeContext.
+	 */
+	dueDate?: ISODate;
+
+	/** True when a task has an explicit start-date constraint. */
+	hasStartDate: boolean;
+
+	/** True when a task has an explicit due-date constraint. */
+	hasDueDate: boolean;
+
+	/**
+	 * Whether the task is blocked by dependencies.
+	 *
+	 * Notes:
+	 * - This is a placeholder fact for M1.4 wiring.
+	 * - It remains false until dependency graph facts are introduced.
+	 */
+	isBlocked: boolean;
+
+	/**
+	 * Whether the task is not directly executable because decomposition is still required.
+	 *
+	 * Notes:
+	 * - This mirrors isLeaf for now and gives downstream stages a stable
+	 *   actionability-focused fact name.
+	 */
+	isNonLeaf: boolean;
 
 	/**
 	 * Whether the task is executable “now” under the current minimal policy.
@@ -93,8 +138,15 @@ export function buildFactsIndex(tasks: TaskEntity[]): TaskFactsIndex {
 			typeof t.duration === "number" && Number.isFinite(t.duration) && t.duration > 0;
 
 		byId.set(t.id, {
+			status: t.status,
 			isLeaf: true,
 			hasDuration,
+			startDate: t.dates.start,
+			dueDate: t.dates.due,
+			hasStartDate: typeof t.dates.start === "string" && t.dates.start.length > 0,
+			hasDueDate: typeof t.dates.due === "string" && t.dates.due.length > 0,
+			isBlocked: false,
+			isNonLeaf: false,
 			isExecutableNow: t.status === "todo" && hasDuration,
 		});
 	}
