@@ -188,7 +188,7 @@ Status:
 
 ---
 
-#### M1.3 — First real issue detector: missing-duration 🟡
+#### M1.3 — First real issue detector: missing-duration ✅
 
 Intent:
 
@@ -223,15 +223,15 @@ Implementation order (files to touch):
    - Unit test for the detector.
    - Contract test that a missing-duration issue results in visible fix/unblock recommendations.
 
-5. 🟡 `src/core/model/recommendation.ts` + `src/core/pipeline/stage-recommend.ts`
+5. ✅ `src/core/model/recommendation.ts` + `src/core/pipeline/stage-recommend.ts`
    - Extend the `fix` recommendation payload with target `TaskSummary[]` (or equivalent
      minimal task context), populated from issue targets.
 
-6. 🟡 `src/ui/feed/render-feed.ts`
+6. ✅ `src/ui/feed/render-feed.ts`
    - Render fix recommendation task context with the same readability/provenance conventions
      used by Collected / Do now task lists.
 
-7. 🟡 `tests/` (T1)
+7. ✅ `tests/` (T1)
    - Add/extend DOM and contract coverage to verify fix recommendations render task text and
      smart provenance links.
 
@@ -241,9 +241,13 @@ Success criterion:
 - Missing-duration fix recommendations are directly actionable in the UI because they include
   task text and source-link context, not fix metadata alone.
 
+Status:
+
+- ✅ Achieved
+
 ---
 
-#### M1.3b — Feed priority and unblock cap defaults (UX throughput) 🟡
+#### M1.3b — Feed priority and unblock cap defaults (UX throughput) ✅
 
 Intent:
 
@@ -262,20 +266,24 @@ Deliverables:
 
 Implementation order (files to touch):
 
-1. 🟡 `src/core/pipeline/stage-rank.ts`
+1. ✅ `src/core/pipeline/stage-rank.ts`
    - Encode default section order and unblock cap policy.
    - Keep tie-breaking deterministic.
 
-2. 🟡 `src/core/model/recommendation.ts` (only if needed)
+2. ✅ `src/core/model/recommendation.ts` (only if needed)
    - Add minimal contract fields only when strictly required for deterministic capping/ordering.
 
-3. 🟡 `tests/` (T1)
+3. ✅ `tests/` (T1)
    - Add/extend contract tests to verify section order and unblock capping behavior.
 
 Success criterion:
 
 - On a busy vault, the first visible section is actionable by default and unblock noise is bounded to 5.
 - UI remains a pure renderer of pipeline decisions.
+
+Status:
+
+- ✅ Achieved
 
 ---
 
@@ -301,7 +309,7 @@ Deliverables:
 
 Implementation order (files to touch):
 
-1. 🟡 `src/core/pipeline/` (policy module + usage in rank stage)
+1. ✅ `src/core/pipeline/` (policy module + usage in rank stage)
    - Centralize ranking defaults (e.g., unblock cap, priority order).
 
 2. 🟡 `src/ui/feed/` and/or `src/entry/` (display default module + wiring)
