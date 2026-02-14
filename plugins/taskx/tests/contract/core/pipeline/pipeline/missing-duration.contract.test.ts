@@ -62,5 +62,72 @@ describe("core/pipeline missing-duration contract", () => {
 		);
 
 		expect(withDurationFix).toBe(true);
+
+		// M1.3 follow-up contract: fix recommendations carry target task summaries
+		// so the UI can render text/provenance without TaskEntity lookups.
+		expect(fixItems[0].tasks).toHaveLength(1);
+		expect(fixItems[0].tasks[0].text).toBe("Task without duration");
+		expect(fixItems[0].tasks[0].origin?.path).toBe("inbox.md");
+	});
+
+	it("caps unblock section to 5 recommendations by default", async () => {
+		const ctx: TimeContext = {
+			now: new Date("2026-02-13T00:00:00.000Z"),
+			tz: "Europe/Paris",
+		};
+
+		const tasks = Array.from({ length: 8 }, (_v, i) =>
+			makeTaskMissingDuration(`task:missing-duration:${i + 1}`),
+		);
+
+		const feed = await runPipeline({
+			ctx,
+			collect: async () => tasks,
+		});
+
+		const unblock = feed.sections.find(section => section.title === "Unblock");
+		expect(unblock).toBeTruthy();
+		expect(unblock?.items).toHaveLength(5);
+	});
+
+	it("caps do-now task summaries to 5 by default", async () => {
+		const ctx: TimeContext = {
+			now: new Date("2026-02-13T00:00:00.000Z"),
+			tz: "Europe/Paris",
+		};
+
+		const tasks: TaskEntity[] = Array.from({ length: 8 }, (_v, i) => ({
+			id: asTaskId(`task:executable:${i + 1}`),
+			origin: { kind: "vault-markdown", path: "do-now.md", line: i + 1 },
+			text: `Executable task ${i + 1}`,
+			status: "todo",
+			tags: new Set<string>(),
+			duration: 15,
+			dates: {},
+			raw: { markdown: `- [ ] Executable task ${i + 1}` },
+		}));
+
+		const feed = await runPipeline({
+			ctx,
+			collect: async () => tasks,
+		});
+
+		const doNow = feed.sections
+			.flatMap(section => section.items)
+			.find(item => item.kind === "do-now");
+
+		expect(doNow).toBeTruthy();
+		if (!doNow || doNow.kind !== "do-now") {
+			return;
+		}
+
+		expect(doNow.tasks).toHaveLength(5);
+		expect(doNow.tasks.map(task => task.text)).toEqual([
+			"Executable task 1",
+			"Executable task 2",
+			"Executable task 3",
+			"Executable task 4",
+			"Executable task 5",
+		]);
 	});
 });
