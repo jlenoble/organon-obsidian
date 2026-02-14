@@ -54,6 +54,9 @@ export type FixCandidateId = Brand<string, "FixCandidateId">;
 /** Recommendation identifier (stable key for a recommendation item in the feed). */
 export type RecommendationId = Brand<string, "RecommendationId">;
 
+/** Recommendation signal identifier (stable machine id for UI diagnostic badges). */
+export type RecommendationSignalId = Brand<string, "RecommendationSignalId">;
+
 /**
  * Cast helper.
  *
@@ -117,4 +120,17 @@ export function asFixCandidateId(raw: string): FixCandidateId {
  */
 export function asRecommendationId(raw: string): RecommendationId {
 	return raw as RecommendationId;
+}
+
+/**
+ * Cast helper.
+ *
+ * It is intentionally “dumb”: It does not validate format.
+ * Validation (if desired) should be layered elsewhere, because:
+ * - Some IDs are composite (":" namespaces).
+ * - Some IDs may be produced by hashing later.
+ * - We do not want to lock ourselves into one rigid format.
+ */
+export function asRecommendationSignalId(raw: string): RecommendationSignalId {
+	return raw as RecommendationSignalId;
 }

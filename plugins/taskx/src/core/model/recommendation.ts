@@ -20,7 +20,7 @@
  */
 
 import type { FixCandidate } from "./fix";
-import type { RecommendationId, TaskId } from "./id";
+import type { RecommendationId, RecommendationSignalId, TaskId } from "./id";
 
 /**
  * Minimal, UI-facing task summary.
@@ -103,7 +103,7 @@ export interface RecommendationSignal {
 	 * - "due-soon"
 	 * - "overdue"
 	 */
-	id: string;
+	id: RecommendationSignalId;
 
 	/**
 	 * Short, user-facing badge text.
