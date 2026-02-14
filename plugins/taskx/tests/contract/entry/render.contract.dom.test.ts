@@ -2,8 +2,8 @@
  * tests/contract/entry/render.contract.dom.test.ts
  *
  * This contract test protects an M1.0/M1.1-level invariant of the public entry API:
- * when tasks are collected, the rendered output must include a "Collected" section
- * that is human-inspectable and stable.
+ * when tasks are collected, entry-level visibility defaults are applied deterministically
+ * and the rendered output remains stable and inspectable.
  *
  * Contract:
  * - We exercise the system via the public entrypoint `renderTaskX`.
@@ -11,9 +11,9 @@
  * - We assert only public, UI-consumable structure and stable DOM output.
  *
  * Scope:
- * - "Collected" appears when tasks exist.
- * - "Do now" is prioritized before "Collected" by ranking policy.
- * - The collected list is capped (5 items) for a deterministic sample.
+ * - With default `collectedVisibility: "auto"`, Collected is hidden when actionable
+ *   sections are present.
+ * - "Do now" is prioritized by ranking policy.
  * - Diagnostics (ids) are not shown unless explicitly enabled.
  */
 
@@ -37,7 +37,7 @@ function makeTask(i: number, opts: { duration?: number } = {}): TaskEntity {
 }
 
 describe("entry/render renderTaskX Collected contract", () => {
-	it('renders a "Collected" section with a stable 5-item sample', async () => {
+	it('hides "Collected" by default when actionable sections are present', async () => {
 		const tasks = [1, 2, 3, 4, 5, 6, 7, 8].map(i => makeTask(i));
 
 		const root = await renderTaskX({
@@ -62,23 +62,58 @@ describe("entry/render renderTaskX Collected contract", () => {
 			n => n.textContent ?? "",
 		);
 
-		// With collected tasks and no issues, we expect exactly two sections:
-		// "Do now" then "Collected".
-		expect(sectionTitles).toEqual(["Do now", "Collected"]);
+		// Default `auto` mode hides Collected when actionable sections are present.
+		expect(sectionTitles).toEqual(["Do now"]);
+		expect(root.querySelectorAll(".taskx-rec__collected")).toHaveLength(0);
 
-		const collectedSection = root.querySelector(".taskx-feed__section");
-		expect(collectedSection).toBeTruthy();
+		// Id diagnostics must not appear unless explicitly enabled.
+		expect(root.querySelectorAll(".taskx-rec__task-id")).toHaveLength(0);
+	});
+
+	it('shows "Collected" when collectedVisibility is "always"', async () => {
+		const tasks = [1, 2, 3, 4, 5, 6, 7, 8].map(i => makeTask(i));
+
+		const root = await renderTaskX({
+			app: {} as never,
+			buildCtx: () => ({
+				now: new Date("2026-02-12T00:00:00.000Z"),
+				tz: "Europe/Paris",
+			}),
+			collect: async () => tasks,
+			collectedVisibility: "always",
+		});
+
+		const sectionTitles = Array.from(root.querySelectorAll(".taskx-feed__section-title")).map(
+			n => n.textContent ?? "",
+		);
+
+		expect(sectionTitles).toEqual(["Do now", "Collected"]);
 
 		const collectedTaskTexts = Array.from(
 			root.querySelectorAll(".taskx-rec__collected .taskx-rec__task-text"),
 		).map(n => n.textContent ?? "");
-
-		// The collected sample is capped at 5 for stability.
 		expect(collectedTaskTexts).toHaveLength(5);
-		expect(collectedTaskTexts).toEqual(["Task 1", "Task 2", "Task 3", "Task 4", "Task 5"]);
+	});
 
-		// Id diagnostics must not appear unless explicitly enabled.
-		expect(root.querySelectorAll(".taskx-rec__task-id")).toHaveLength(0);
+	it('hides "Collected" when collectedVisibility is "never"', async () => {
+		const tasks = [1, 2, 3, 4, 5, 6, 7, 8].map(i => makeTask(i));
+
+		const root = await renderTaskX({
+			app: {} as never,
+			buildCtx: () => ({
+				now: new Date("2026-02-12T00:00:00.000Z"),
+				tz: "Europe/Paris",
+			}),
+			collect: async () => tasks,
+			collectedVisibility: "never",
+		});
+
+		const sectionTitles = Array.from(root.querySelectorAll(".taskx-feed__section-title")).map(
+			n => n.textContent ?? "",
+		);
+
+		expect(sectionTitles).toEqual(["Do now"]);
+		expect(root.querySelectorAll(".taskx-rec__collected")).toHaveLength(0);
 	});
 
 	it("caps do-now tasks to 5 by default", async () => {
