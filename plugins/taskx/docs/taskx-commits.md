@@ -137,7 +137,10 @@ Rationale:
 
 - Hard limit: wrap all lines at **100 characters maximum**.
 - Safety target: aim for **80 characters maximum** per line.
-- Use **short paragraphs or bullet points**.
+- Prefer short sentences in plain English.
+- Avoid over-coordination and packed paragraphs.
+- Make each unrelated point plainly distinguishable from others
+  (separate sentence, bullet, or paragraph).
 - Do **not** pad with text just to reach a certain length.
 - Prefer:
   - what was introduced or changed,
