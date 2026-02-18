@@ -123,19 +123,15 @@ Examples:
 
 ## 3) Body (when and how to write it)
 
-### 3.1 When a body is required
+### 3.1 Body is mandatory
 
-Add a body when:
+Every commit message must include a body.
 
-- The change is architectural or structural.
-- The intent is not obvious from the subject line.
-- There are important **boundaries, invariants, or non-goals** to record.
-- Future readers might ask “why was this done this way?”.
+Rationale:
 
-A body is **optional** when:
-
-- The change is trivial and self-explanatory.
-- The subject line fully captures the intent and impact.
+- Preserve explicit intent and boundaries in history.
+- Keep decisions auditable even for small changes.
+- Avoid ambiguous one-line commits.
 
 ### 3.2 Body style rules
 
@@ -184,11 +180,14 @@ This is a structural change only and does not modify runtime behavior.
 
 ```
 
-**Docs (short, no body required, unless large documentation piece):**
+**Docs (with body):**
 
 ```
 
 📝 docs(taskx): fix typos in taskx-naming.md
+
+Fix spelling and wording errors to improve readability.
+No meaning or policy changes.
 
 ```
 
@@ -214,19 +213,25 @@ when building the do-now recommendation.
 
 ```
 
-**Build (short, no body required for small tweaks):**
+**Build (with body):**
 
 ```
 
 👷 build(taskx): adjust build output directory
 
+Change output directory configuration in the build pipeline.
+This affects emitted artifact paths only.
+
 ```
 
-**Chore (short, no body required for small tweaks):**
+**Chore (with body):**
 
 ```
 
 🔧 chore(taskx): update prettier config
+
+Update formatting rules for repository consistency.
+No runtime or build-output behavior changes.
 
 ```
 
