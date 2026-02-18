@@ -390,6 +390,24 @@ Success criterion:
 - “Do now = 0” is accompanied by visible, specific reasons in the output.
 - Signal badges are clearly distinguishable from rationale bullets in rendered output.
 
+#### M1.4b — Dev debug mirror for rendered block state (follow-up, implicit) 🟡
+
+Intent:
+
+- Improve debugging feedback loops by persisting the rendered block state to disk
+  during development.
+
+Constraints:
+
+- The mirror is debug-only and must not change ranking/recommendation policy.
+- The mirror is gated by a dedicated boolean flag.
+- Default behavior: enabled in dev mode.
+
+Implementation note:
+
+- Write a sanitized mirror file of block content to local disk when the debug
+  mirror flag is `true`.
+
 ---
 
 #### M1.5 — Useful sections in the feed (attention / can-do-now / needs-cleanup) 🟡
