@@ -145,7 +145,8 @@ check in the affected area:
 - Do file preambles and JSDoc match `docs/taskx-comments.md`?
 - Do names and paths match `docs/taskx-naming.md`?
 - Are import directions consistent with `docs/taskx-import-boundaries.md`?
-- Do responsibilities still match `docs/taskx-roadmap.md`?
+- Do responsibilities still match roadmap flow and structure docs?
+  (`docs/taskx-roadmap-milestones.md` and `docs/taskx-roadmap-structure.md`)
 
 If cheap, **fix drift immediately** in a small preliminary refactor.
 If not, record the discrepancy explicitly and plan a dedicated correction step.
@@ -233,7 +234,8 @@ Rules:
 
 ## 6) Standard workflow for adding or changing code
 
-1. **Consult the roadmap** (`docs/taskx-roadmap.md`)
+1. **Consult the roadmap** (`docs/taskx-roadmap-milestones.md` and
+   `docs/taskx-roadmap-structure.md`)
    - Identify the next file or area to work on, with priority given to:
      - maintaining the vertical slice,
      - or increasing end-to-end coverage.

@@ -306,7 +306,8 @@ registry.push(detector);
 - Do not describe **temporary states** or TODOs as architecture.
 - Do not explain **history** (“we used to…”).
 - Do not encode **UI instructions** in core logic comments.
-- Do not duplicate information that belongs in `docs/taskx-roadmap.md` or
+- Do not duplicate information that belongs in roadmap docs
+  (`docs/taskx-roadmap-milestones.md` / `docs/taskx-roadmap-structure.md`) or
   `docs/taskx-naming.md`.
 
 ---
