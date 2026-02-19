@@ -1,22 +1,11 @@
-# TaskX — Architecture Roadmap
+# TaskX — Roadmap
 
-This index keeps roadmap entrypoint compatibility while separating two distinct
-purposes that were previously mixed in one file.
+This file is the main roadmap entrypoint.
 
-## 1) Milestones and priorities (roadmap flow)
+## Milestones and progression
 
-- `docs/taskx-roadmap-milestones.md`
+- `docs/roadmap/taskx-roadmap.md`
 
-This file contains milestone progression and implementation status
-(`M*`/`T*` tracks).
-
-## 2) Structure and extension reference (static map)
+## Structure and extension reference (legacy for now)
 
 - `docs/taskx-roadmap-structure.md`
-
-This file contains architecture layers, folder responsibilities, and extension
-rules.
-
-## Rule
-
-When you want to consult the roadmap, consult both files above.

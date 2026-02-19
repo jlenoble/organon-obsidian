@@ -4,7 +4,7 @@ This document defines the **foundational architectural principles** of TaskX.
 
 It complements:
 
-- `docs/taskx-roadmap-milestones.md` (milestone flow and status),
+- `docs/taskx-roadmap.md` (milestone flow and status),
 - `docs/taskx-roadmap-structure.md` (what exists and where),
 - `docs/taskx-import-boundaries.md` (who may depend on whom),
 - `docs/taskx-dev-process.md` (how we evolve the codebase).
