@@ -29,4 +29,4 @@ SORT historical_order ASC
 ## Cross-layer handoff
 
 - Main active work is expected in Layer 1 unless a regression forces Layer 0 changes.
-- Global priorities live in [[plugins/taskx/docs/roadmap/layers/orchestration.md|layers/orchestration.md]].
+- Global priorities live in [[layers/orchestration.md]].

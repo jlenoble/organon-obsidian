@@ -29,4 +29,4 @@ SORT historical_order ASC
 ## Cross-layer handoff
 
 - Arbitration with Layer 1 happens in
-  [[plugins/taskx/docs/roadmap/layers/orchestration.md|layers/orchestration.md]].
+  [[layers/orchestration.md]].

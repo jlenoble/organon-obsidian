@@ -44,4 +44,4 @@ LIMIT 5
 ## Cross-layer handoff
 
 - If Layer 2 is activated in parallel, arbitration happens in
-  [[plugins/taskx/docs/roadmap/layers/orchestration.md|layers/orchestration.md]].
+  [[layers/orchestration.md]].

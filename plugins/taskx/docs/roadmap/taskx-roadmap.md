@@ -43,7 +43,7 @@ No M* milestone should advance significantly without its corresponding T* suppor
 
 See extracted 0th-layer note:
 
-- [[plugins/taskx/docs/roadmap/layers/layer0/README.md|0th-layer.md]]
+- [[layers/layer0/README.md]]
 
 ---
 
@@ -51,7 +51,7 @@ See extracted 0th-layer note:
 
 See extracted 0th-layer note:
 
-- [[plugins/taskx/docs/roadmap/layers/layer0/README.md|0th-layer.md]]
+- [[layers/layer0/README.md]]
 
 ---
 
@@ -59,25 +59,28 @@ See extracted 0th-layer note:
 
 See extracted 1st-layer note:
 
-- [[plugins/taskx/docs/roadmap/layers/layer1/README.md|1st-layer.md]]
+- [[layers/layer1/README.md]]
 
 ---
+
 ### T1 — Feature test coverage (keep it safe) 🟡
 
 See extracted 1st-layer note:
 
-- [[plugins/taskx/docs/roadmap/layers/layer1/README.md|1st-layer.md]]
+- [[layers/layer1/README.md]]
 
 ---
+
 ### M2 — Advanced behavior (make it smart) ⛔
 
 See extracted 2nd-layer note:
 
-- [[plugins/taskx/docs/roadmap/layers/layer2/README.md|2nd-layer.md]]
+- [[layers/layer2/README.md]]
 
 ---
+
 ### T2 — Advanced behavior tests (keep it sane) ⛔
 
 See extracted 2nd-layer note:
 
-- [[plugins/taskx/docs/roadmap/layers/layer2/README.md|2nd-layer.md]]
+- [[layers/layer2/README.md]]

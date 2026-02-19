@@ -47,13 +47,13 @@
 
 ## Layer orchestration
 
-- [[plugins/taskx/docs/roadmap/layers/layer0/orchestration.md|orchestration.md]]
+- [[layers/layer0/orchestration.md|orchestration.md]]
 
 ## Step notes
 
-- [[plugins/taskx/docs/roadmap/layers/layer0/M0.md|M0.md]]
-- [[plugins/taskx/docs/roadmap/layers/layer0/T0.md|T0.md]]
+- [[layers/layer0/M0.md|M0.md]]
+- [[layers/layer0/T0.md|T0.md]]
 
 ## Cross-layer orchestration
 
-- [[plugins/taskx/docs/roadmap/layers/orchestration.md|layers/orchestration.md]]
+- [[layers/orchestration.md]]

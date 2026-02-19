@@ -14,9 +14,9 @@
 
 ## Layer map
 
-- Layer 0 orchestration: [[plugins/taskx/docs/roadmap/layers/layer0/orchestration.md|layer0/orchestration.md]]
-- Layer 1 orchestration: [[plugins/taskx/docs/roadmap/layers/layer1/orchestration.md|layer1/orchestration.md]]
-- Layer 2 orchestration: [[plugins/taskx/docs/roadmap/layers/layer2/orchestration.md|layer2/orchestration.md]]
+- Layer 0 orchestration: [[layers/layer0/orchestration.md|layer0/orchestration.md]]
+- Layer 1 orchestration: [[layers/layer1/orchestration.md|layer1/orchestration.md]]
+- Layer 2 orchestration: [[layers/layer2/orchestration.md|layer2/orchestration.md]]
 
 ## Cross-layer active steps (dynamic)
 

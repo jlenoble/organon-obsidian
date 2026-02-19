@@ -50,7 +50,7 @@
 
 ## Layer orchestration
 
-- [[plugins/taskx/docs/roadmap/layers/layer2/orchestration.md|orchestration.md]]
+- [[layers/layer2/orchestration.md|orchestration.md]]
 
 ## Step files in this layer
 
@@ -63,4 +63,4 @@ SORT historical_order ASC
 
 ## Cross-layer orchestration
 
-- [[plugins/taskx/docs/roadmap/layers/orchestration.md|layers/orchestration.md]]
+- [[layers/orchestration.md]]
