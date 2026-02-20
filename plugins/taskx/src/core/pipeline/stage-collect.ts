@@ -8,11 +8,13 @@
  * collected is an adapter concern decided at the entry boundary.
  *
  * Scope:
- * - Invoke a caller-provided collector and return its TaskEntity[] output.
+ * - Invoke a caller-provided collector and return TaskEntity[] output.
+ * - Optionally apply a dev-only tagged subset filter when explicitly enabled.
  *
  * Non-goals:
  * - Implementing the collector here.
  * - Depending on Obsidian, Dataview, or Tasks plugin APIs.
+ * - Changing ranking/recommendation policy.
  */
 
 import type { TaskEntity } from "@/core/model/task";
@@ -24,6 +26,8 @@ import type { TaskEntity } from "@/core/model/task";
  * - The collector is injected from the entry boundary (Obsidian runtime).
  * - We keep this stage async to avoid mixing sync/async across adapters.
  * - Downstream stages operate on the collected array synchronously.
+ * - When debug subset mode is enabled and no tagged tasks match, we fall back
+ *   to the baseline collected set to preserve normal feed utility.
  */
 export async function stageCollect(args: {
 	collect: () => Promise<TaskEntity[]>;

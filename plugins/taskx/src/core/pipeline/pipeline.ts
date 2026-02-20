@@ -35,6 +35,8 @@ import type { TimeContext } from "@/core/model/time";
  * The caller provides:
  * - ctx: the TimeContext (the only source of "now")
  * - collect: an async collector function that returns TaskEntity values
+ * - enableDebugSubsetMode: optional dev-only subset filter toggle
+ * - debugSubsetTag: optional selector tag token used when subset mode is enabled
  *
  * Notes:
  * - Adapters and entry points are responsible for selecting a collection

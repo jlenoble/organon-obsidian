@@ -27,9 +27,16 @@ export const TASKX_LOCAL_DEBUG_CONFIG_PATH = "plugins/taskx/temp/taskx.local.jso
  * - Unknown keys are ignored by parser logic.
  */
 export interface TaskXLocalDebugConfig {
+	/** Enable debug feed file mirroring for local development loops. */
 	enableDebugFeedMirror?: boolean;
+
+	/** Vault-relative output path used when debug feed mirroring is enabled. */
 	debugFeedMirrorPath?: string;
+
+	/** Enable debug subset mode for tag-scoped task focus. */
 	enableDebugSubsetMode?: boolean;
+
+	/** Selector tag token for debug subset mode (with or without leading `#`). */
 	debugSubsetTag?: string;
 }
 
