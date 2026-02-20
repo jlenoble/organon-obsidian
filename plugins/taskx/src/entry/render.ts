@@ -29,6 +29,8 @@ import type { TaskEntity } from "@/core/model/task";
 import { runPipeline } from "@/core/pipeline/pipeline";
 import {
 	DEFAULT_COLLECTED_VISIBILITY_MODE,
+	DEFAULT_DEBUG_FEED_MIRROR_PATH,
+	DEFAULT_ENABLE_DEBUG_FEED_MIRROR,
 	DEFAULT_SHOW_IDS,
 	DEFAULT_SHOW_PROVENANCE_LINKS,
 	type CollectedVisibilityMode,
@@ -45,6 +47,8 @@ import { renderFeed, type RenderFeedOptions } from "@/ui/feed/render-feed";
 export interface RenderTaskXOptions extends RenderFeedOptions {
 	app: App;
 	collectedVisibility?: CollectedVisibilityMode;
+	enableDebugFeedMirror?: boolean;
+	debugFeedMirrorPath?: string;
 
 	/**
 	 * Override TimeContext construction.
@@ -80,6 +84,14 @@ export async function renderTaskX(opts: RenderTaskXOptions): Promise<HTMLElement
 
 	const feed = await runPipeline({ ctx, collect });
 	const visibleFeed = applyCollectedVisibility(feed, opts.collectedVisibility);
+	const enableDebugFeedMirror = opts.enableDebugFeedMirror ?? DEFAULT_ENABLE_DEBUG_FEED_MIRROR;
+	const debugFeedMirrorPath = opts.debugFeedMirrorPath ?? DEFAULT_DEBUG_FEED_MIRROR_PATH;
+
+	await maybeMirrorFeedDebugOutput({
+		enabled: enableDebugFeedMirror,
+		path: debugFeedMirrorPath,
+		feed: visibleFeed,
+	});
 
 	return renderFeed(visibleFeed, {
 		...opts,
@@ -147,4 +159,18 @@ function applyCollectedVisibility(
 	}
 
 	return feed;
+}
+
+/**
+ * Entry-level seam for debug feed mirroring.
+ *
+ * This no-op hook lets entry wiring resolve mirror policy now, while the actual
+ * file write implementation is introduced at the adapter boundary.
+ */
+async function maybeMirrorFeedDebugOutput(_params: {
+	enabled: boolean;
+	path: string;
+	feed: RecommendationFeed;
+}): Promise<void> {
+	return;
 }
