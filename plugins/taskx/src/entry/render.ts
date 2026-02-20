@@ -45,9 +45,16 @@ import { renderFeed, type RenderFeedOptions } from "@/ui/feed/render-feed";
  * - `app` is required to access Obsidian runtime facilities (plugins, vault).
  */
 export interface RenderTaskXOptions extends RenderFeedOptions {
+	/** Obsidian runtime app handle used by entry adapters and collectors. */
 	app: App;
+
+	/** UI-only visibility mode for the Collected section at render time. */
 	collectedVisibility?: CollectedVisibilityMode;
+
+	/** Enable dev-only debug mirroring of rendered feed output to a local file. */
 	enableDebugFeedMirror?: boolean;
+
+	/** Target path for debug feed mirror output when mirroring is enabled. */
 	debugFeedMirrorPath?: string;
 
 	/**
