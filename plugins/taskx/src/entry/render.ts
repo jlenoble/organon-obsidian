@@ -24,6 +24,7 @@ import type { App } from "obsidian";
 
 import { collectTasksFromDataview } from "@/adapters/obsidian/collect-tasks";
 import { writeDebugFeedMirror } from "@/adapters/obsidian/debug-feed-mirror";
+import { loadTaskXLocalDebugConfig } from "@/adapters/obsidian/local-debug-config";
 import { buildTimeContext } from "@/adapters/obsidian/time-context";
 import type { RecommendationFeed } from "@/core/model/recommendation";
 import type { TaskEntity } from "@/core/model/task";
@@ -89,11 +90,18 @@ export async function renderTaskX(opts: RenderTaskXOptions): Promise<HTMLElement
 	const ctx = ctxBuilder();
 
 	const collect = opts.collect ?? buildDefaultCollector(opts.app);
+	const localDebugConfig = await loadTaskXLocalDebugConfig(opts.app);
 
 	const feed = await runPipeline({ ctx, collect });
 	const visibleFeed = applyCollectedVisibility(feed, opts.collectedVisibility);
-	const enableDebugFeedMirror = opts.enableDebugFeedMirror ?? DEFAULT_ENABLE_DEBUG_FEED_MIRROR;
-	const debugFeedMirrorPath = opts.debugFeedMirrorPath ?? DEFAULT_DEBUG_FEED_MIRROR_PATH;
+	const enableDebugFeedMirror =
+		opts.enableDebugFeedMirror ??
+		localDebugConfig?.enableDebugFeedMirror ??
+		DEFAULT_ENABLE_DEBUG_FEED_MIRROR;
+	const debugFeedMirrorPath =
+		opts.debugFeedMirrorPath ??
+		localDebugConfig?.debugFeedMirrorPath ??
+		DEFAULT_DEBUG_FEED_MIRROR_PATH;
 	const rendered = renderFeed(visibleFeed, {
 		...opts,
 		showIds: opts.showIds ?? DEFAULT_SHOW_IDS,
