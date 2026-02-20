@@ -217,6 +217,26 @@ Examples of stable section ids used or planned by the roadmap:
 - `can-do-now`
 - `needs-cleanup`
 
+### 5.3 Debug subset identifiers (M1.4c contract)
+
+Debug subset focus introduces stable identifiers at the entry/debug seam.
+
+Rules:
+
+- The selector tag token is fixed as `taskx-debug` (rendered in notes as
+  `#taskx-debug`).
+- Do not introduce aliases (`debug`, `taskx_debug`, etc.) for the same contract.
+- Option keys used in entry/local debug config must stay explicit and stable:
+  - `enableDebugSubsetMode`
+  - `debugSubsetTag`
+- Defaults should point to the canonical selector token (`taskx-debug`).
+
+Rationale:
+
+- A single canonical token avoids accidental split subsets across vault notes.
+- Stable option keys keep local debug config and future settings migration
+  predictable.
+
 ---
 
 ## 6) Test directories and file naming
