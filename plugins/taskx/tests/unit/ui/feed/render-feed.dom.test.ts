@@ -15,7 +15,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { asRecommendationId, asTaskId } from "@/core/model/id";
+import { asRecommendationId, asRecommendationSignalId, asTaskId } from "@/core/model/id";
 import type { RecommendationFeed } from "@/core/model/recommendation";
 import { renderFeed } from "@/ui/feed/render-feed";
 
@@ -79,5 +79,47 @@ describe("ui/feed renderFeed", () => {
 			n => n.textContent,
 		);
 		expect(taskTexts).toEqual(["task a", "task b"]);
+	});
+
+	it("renders signals separately from why rationale list", () => {
+		const feed: RecommendationFeed = {
+			sections: [
+				{
+					title: "Do now",
+					items: [
+						{
+							kind: "do-now",
+							id: asRecommendationId("rec:do-now:signals"),
+							title: "Execute now",
+							why: ["No tasks are currently executable under the minimal do-now policy."],
+							score: { urgency: 1, friction: 2, payoff: 3 },
+							signals: [
+								{
+									id: asRecommendationSignalId("missing-duration"),
+									label: "Missing duration",
+								},
+							],
+							tasks: [],
+						},
+					],
+				},
+			],
+		};
+
+		const root = renderFeed(feed, { doc: document });
+		const rec = root.querySelector("li.taskx-rec");
+		expect(rec).not.toBeNull();
+
+		const why = rec?.querySelector(".taskx-rec__why");
+		const signals = rec?.querySelector(".taskx-rec__signals");
+		expect(why).not.toBeNull();
+		expect(signals).not.toBeNull();
+
+		// Contract: rationale bullets and signal badges are different containers.
+		expect(why).not.toBe(signals);
+		expect(why?.querySelectorAll("li")).toHaveLength(1);
+		expect(signals?.querySelectorAll(".taskx-rec__signal")).toHaveLength(1);
+		expect(signals?.textContent).toContain("Missing duration");
+		expect(why?.textContent).toContain("No tasks are currently executable");
 	});
 });
