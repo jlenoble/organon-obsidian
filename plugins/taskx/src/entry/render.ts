@@ -113,6 +113,9 @@ export async function renderTaskX(opts: RenderTaskXOptions): Promise<HTMLElement
 		DEFAULT_ENABLE_DEBUG_SUBSET_MODE;
 	const debugSubsetTag =
 		opts.debugSubsetTag ?? localDebugConfig?.debugSubsetTag ?? DEFAULT_DEBUG_SUBSET_TAG;
+	const debugIndicatorText = enableDebugSubsetMode
+		? `Debug subset mode active (${formatDebugTagLabel(debugSubsetTag)})`
+		: undefined;
 
 	const feed = await runPipeline({
 		ctx,
@@ -125,6 +128,7 @@ export async function renderTaskX(opts: RenderTaskXOptions): Promise<HTMLElement
 		...opts,
 		showIds: opts.showIds ?? DEFAULT_SHOW_IDS,
 		showProvenanceLinks: opts.showProvenanceLinks ?? DEFAULT_SHOW_PROVENANCE_LINKS,
+		debugIndicatorText,
 	});
 
 	await maybeMirrorFeedDebugOutput({
@@ -227,4 +231,12 @@ async function maybeMirrorFeedDebugOutput(params: {
 
 function serializeDebugMirrorContent(root: HTMLElement): string {
 	return root.outerHTML;
+}
+
+function formatDebugTagLabel(tag: string): string {
+	const trimmed = tag.trim();
+	if (trimmed.length === 0) {
+		return "#taskx-debug";
+	}
+	return trimmed.startsWith("#") ? trimmed : `#${trimmed}`;
 }
