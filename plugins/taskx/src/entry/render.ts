@@ -32,7 +32,9 @@ import { runPipeline } from "@/core/pipeline/pipeline";
 import {
 	DEFAULT_COLLECTED_VISIBILITY_MODE,
 	DEFAULT_DEBUG_FEED_MIRROR_PATH,
+	DEFAULT_DEBUG_SUBSET_TAG,
 	DEFAULT_ENABLE_DEBUG_FEED_MIRROR,
+	DEFAULT_ENABLE_DEBUG_SUBSET_MODE,
 	DEFAULT_SHOW_IDS,
 	DEFAULT_SHOW_PROVENANCE_LINKS,
 	type CollectedVisibilityMode,
@@ -58,6 +60,12 @@ export interface RenderTaskXOptions extends RenderFeedOptions {
 
 	/** Target path for debug feed mirror output when mirroring is enabled. */
 	debugFeedMirrorPath?: string;
+
+	/** Enable dev-only debug subset mode for tagged task focus. */
+	enableDebugSubsetMode?: boolean;
+
+	/** Canonical tag token used to select debug subset tasks (without `#`). */
+	debugSubsetTag?: string;
 
 	/**
 	 * Override TimeContext construction.
@@ -102,6 +110,20 @@ export async function renderTaskX(opts: RenderTaskXOptions): Promise<HTMLElement
 		opts.debugFeedMirrorPath ??
 		localDebugConfig?.debugFeedMirrorPath ??
 		DEFAULT_DEBUG_FEED_MIRROR_PATH;
+	const localDebugSubsetConfig = localDebugConfig as {
+		enableDebugSubsetMode?: boolean;
+		debugSubsetTag?: string;
+	} | null;
+	const enableDebugSubsetMode =
+		opts.enableDebugSubsetMode ??
+		localDebugSubsetConfig?.enableDebugSubsetMode ??
+		DEFAULT_ENABLE_DEBUG_SUBSET_MODE;
+	const debugSubsetTag =
+		opts.debugSubsetTag ?? localDebugSubsetConfig?.debugSubsetTag ?? DEFAULT_DEBUG_SUBSET_TAG;
+	// M1.4c-T2 entry wiring: values are resolved here and consumed by stage-collect
+	// once filtering logic is introduced in M1.4c-T3.
+	void enableDebugSubsetMode;
+	void debugSubsetTag;
 	const rendered = renderFeed(visibleFeed, {
 		...opts,
 		showIds: opts.showIds ?? DEFAULT_SHOW_IDS,
