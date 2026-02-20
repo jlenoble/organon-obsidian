@@ -43,4 +43,4 @@ export const DEFAULT_SHOW_PROVENANCE_LINKS = true;
 export const DEFAULT_ENABLE_DEBUG_FEED_MIRROR = false;
 
 /** Default output path for the debug feed mirror file. */
-export const DEFAULT_DEBUG_FEED_MIRROR_PATH = "plugins/taskx/temp/task_feed.md";
+export const DEFAULT_DEBUG_FEED_MIRROR_PATH = "plugins/taskx/temp/task_feed.html";
