@@ -177,13 +177,13 @@ describe("entry/render renderTaskX Collected contract", () => {
 			}),
 			collect: async () => tasks,
 			enableDebugFeedMirror: true,
-			debugFeedMirrorPath: "plugins/taskx/temp/task_feed.md",
+			debugFeedMirrorPath: "plugins/taskx/temp/task_feed.html",
 		});
 
 		expect(writeDebugFeedMirrorMock).toHaveBeenCalledTimes(1);
 		expect(writeDebugFeedMirrorMock).toHaveBeenCalledWith(
 			expect.objectContaining({
-				path: "plugins/taskx/temp/task_feed.md",
+				path: "plugins/taskx/temp/task_feed.html",
 			}),
 		);
 
