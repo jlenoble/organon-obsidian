@@ -52,6 +52,7 @@ export async function collectTasksFromDataview(args: {
 					text: string;
 					completed: boolean;
 					line: number;
+					tags?: unknown;
 				}>;
 			};
 		}>;
@@ -92,7 +93,7 @@ export async function collectTasksFromDataview(args: {
 				origin,
 				text: t.text,
 				status: t.completed ? "done" : "todo",
-				tags: new Set<string>(),
+				tags: extractNormalizedTags(t.tags),
 				dates: {},
 				raw: {
 					markdown: rawMarkdown,
@@ -105,4 +106,42 @@ export async function collectTasksFromDataview(args: {
 	}
 
 	return out;
+}
+
+function extractNormalizedTags(rawTags: unknown): Set<string> {
+	if (!Array.isArray(rawTags)) {
+		return new Set<string>();
+	}
+
+	const out = new Set<string>();
+	for (const value of rawTags) {
+		const normalized = normalizeTagToken(readTagToken(value));
+		if (normalized) {
+			out.add(normalized);
+		}
+	}
+	return out;
+}
+
+function readTagToken(value: unknown): string {
+	if (typeof value === "string") {
+		return value;
+	}
+
+	if (value && typeof value === "object") {
+		const maybeTag = (value as { tag?: unknown }).tag;
+		if (typeof maybeTag === "string") {
+			return maybeTag;
+		}
+	}
+
+	return "";
+}
+
+function normalizeTagToken(input: string): string {
+	const trimmed = input.trim().toLowerCase();
+	if (trimmed.length === 0) {
+		return "";
+	}
+	return trimmed.startsWith("#") ? trimmed.slice(1) : trimmed;
 }
