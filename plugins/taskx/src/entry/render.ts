@@ -99,9 +99,6 @@ export async function renderTaskX(opts: RenderTaskXOptions): Promise<HTMLElement
 
 	const collect = opts.collect ?? buildDefaultCollector(opts.app);
 	const localDebugConfig = await loadTaskXLocalDebugConfig(opts.app);
-
-	const feed = await runPipeline({ ctx, collect });
-	const visibleFeed = applyCollectedVisibility(feed, opts.collectedVisibility);
 	const enableDebugFeedMirror =
 		opts.enableDebugFeedMirror ??
 		localDebugConfig?.enableDebugFeedMirror ??
@@ -110,20 +107,20 @@ export async function renderTaskX(opts: RenderTaskXOptions): Promise<HTMLElement
 		opts.debugFeedMirrorPath ??
 		localDebugConfig?.debugFeedMirrorPath ??
 		DEFAULT_DEBUG_FEED_MIRROR_PATH;
-	const localDebugSubsetConfig = localDebugConfig as {
-		enableDebugSubsetMode?: boolean;
-		debugSubsetTag?: string;
-	} | null;
 	const enableDebugSubsetMode =
 		opts.enableDebugSubsetMode ??
-		localDebugSubsetConfig?.enableDebugSubsetMode ??
+		localDebugConfig?.enableDebugSubsetMode ??
 		DEFAULT_ENABLE_DEBUG_SUBSET_MODE;
 	const debugSubsetTag =
-		opts.debugSubsetTag ?? localDebugSubsetConfig?.debugSubsetTag ?? DEFAULT_DEBUG_SUBSET_TAG;
-	// M1.4c-T2 entry wiring: values are resolved here and consumed by stage-collect
-	// once filtering logic is introduced in M1.4c-T3.
-	void enableDebugSubsetMode;
-	void debugSubsetTag;
+		opts.debugSubsetTag ?? localDebugConfig?.debugSubsetTag ?? DEFAULT_DEBUG_SUBSET_TAG;
+
+	const feed = await runPipeline({
+		ctx,
+		collect,
+		enableDebugSubsetMode,
+		debugSubsetTag,
+	});
+	const visibleFeed = applyCollectedVisibility(feed, opts.collectedVisibility);
 	const rendered = renderFeed(visibleFeed, {
 		...opts,
 		showIds: opts.showIds ?? DEFAULT_SHOW_IDS,
