@@ -29,6 +29,8 @@ export const TASKX_LOCAL_DEBUG_CONFIG_PATH = "plugins/taskx/temp/taskx.local.jso
 export interface TaskXLocalDebugConfig {
 	enableDebugFeedMirror?: boolean;
 	debugFeedMirrorPath?: string;
+	enableDebugSubsetMode?: boolean;
+	debugSubsetTag?: string;
 }
 
 type VaultAdapterLike = {
@@ -81,10 +83,15 @@ function parseLocalDebugConfig(raw: string): TaskXLocalDebugConfig | null {
 			typeof obj.enableDebugFeedMirror === "boolean" ? obj.enableDebugFeedMirror : undefined;
 		const debugFeedMirrorPath =
 			typeof obj.debugFeedMirrorPath === "string" ? obj.debugFeedMirrorPath : undefined;
+		const enableDebugSubsetMode =
+			typeof obj.enableDebugSubsetMode === "boolean" ? obj.enableDebugSubsetMode : undefined;
+		const debugSubsetTag = typeof obj.debugSubsetTag === "string" ? obj.debugSubsetTag : undefined;
 
 		return {
 			enableDebugFeedMirror,
 			debugFeedMirrorPath,
+			enableDebugSubsetMode,
+			debugSubsetTag,
 		};
 	} catch {
 		return null;
