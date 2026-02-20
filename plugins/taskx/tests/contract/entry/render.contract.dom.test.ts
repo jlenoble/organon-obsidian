@@ -31,13 +31,13 @@ vi.mock("@/adapters/obsidian/debug-feed-mirror", () => ({
 	writeDebugFeedMirror: writeDebugFeedMirrorMock,
 }));
 
-function makeTask(i: number, opts: { duration?: number } = {}): TaskEntity {
+function makeTask(i: number, opts: { duration?: number; tags?: string[] } = {}): TaskEntity {
 	return {
 		id: asTaskId(`task:${i}`),
 		origin: { kind: "vault-markdown", path: `note-${i}.md`, line: i },
 		text: `Task ${i}`,
 		status: "todo",
-		tags: new Set(),
+		tags: new Set(opts.tags ?? []),
 		duration: opts.duration,
 		dates: {},
 		raw: { markdown: `- [ ] Task ${i}` },
@@ -213,5 +213,74 @@ describe("entry/render renderTaskX Collected contract", () => {
 
 		expect(root.querySelectorAll(".taskx-feed__section-title")).toHaveLength(1);
 		expect(writeDebugFeedMirrorMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("shows no debug subset indicator when debug subset mode is disabled", async () => {
+		const tasks = [1, 2, 3].map(i => makeTask(i, { duration: 15 }));
+
+		const root = await renderTaskX({
+			app: {} as never,
+			buildCtx: () => ({
+				now: new Date("2026-02-12T00:00:00.000Z"),
+				tz: "Europe/Paris",
+			}),
+			collect: async () => tasks,
+			enableDebugSubsetMode: false,
+		});
+
+		expect(root.querySelector(".taskx-feed__debug-indicator")).toBeNull();
+	});
+
+	it("shows debug subset indicator and keeps only tagged tasks when matches exist", async () => {
+		const tasks = [
+			makeTask(1, { duration: 15, tags: ["taskx-debug"] }),
+			makeTask(2, { duration: 15 }),
+			makeTask(3, { duration: 15, tags: ["#taskx-debug"] }),
+		];
+
+		const root = await renderTaskX({
+			app: {} as never,
+			buildCtx: () => ({
+				now: new Date("2026-02-12T00:00:00.000Z"),
+				tz: "Europe/Paris",
+			}),
+			collect: async () => tasks,
+			enableDebugSubsetMode: true,
+			debugSubsetTag: "taskx-debug",
+		});
+
+		const indicator = root.querySelector(".taskx-feed__debug-indicator");
+		expect(indicator?.textContent).toContain("Debug subset mode active");
+		expect(indicator?.textContent).toContain("#taskx-debug");
+
+		const doNowTaskTexts = Array.from(
+			root.querySelectorAll(".taskx-rec__do-now .taskx-rec__task-text"),
+		).map(n => n.textContent ?? "");
+
+		expect(doNowTaskTexts).toEqual(["Task 1", "Task 3"]);
+	});
+
+	it("keeps debug indicator and falls back to baseline output when no tags match", async () => {
+		const tasks = [1, 2, 3].map(i => makeTask(i, { duration: 15 }));
+
+		const root = await renderTaskX({
+			app: {} as never,
+			buildCtx: () => ({
+				now: new Date("2026-02-12T00:00:00.000Z"),
+				tz: "Europe/Paris",
+			}),
+			collect: async () => tasks,
+			enableDebugSubsetMode: true,
+			debugSubsetTag: "taskx-debug",
+		});
+
+		const indicator = root.querySelector(".taskx-feed__debug-indicator");
+		expect(indicator?.textContent).toContain("Debug subset mode active");
+
+		const doNowTaskTexts = Array.from(
+			root.querySelectorAll(".taskx-rec__do-now .taskx-rec__task-text"),
+		).map(n => n.textContent ?? "");
+
+		expect(doNowTaskTexts).toEqual(["Task 1", "Task 2", "Task 3"]);
 	});
 });
