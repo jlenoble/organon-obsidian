@@ -207,6 +207,5 @@ async function maybeMirrorFeedDebugOutput(params: {
 }
 
 function serializeDebugMirrorContent(root: HTMLElement): string {
-	const visibleText = root.textContent ?? "";
-	return visibleText.trim();
+	return root.outerHTML;
 }
