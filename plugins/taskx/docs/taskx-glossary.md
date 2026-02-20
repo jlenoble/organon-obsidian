@@ -199,6 +199,26 @@ Determinism is required to make refactors safe and failures reproducible.
 
 ---
 
+### debug-subset-mode (entry debug mode)
+
+A dev-only, opt-in visibility mode used to focus TaskX output on a tagged task
+subset during implementation and debugging loops.
+
+Semantics:
+
+- When enabled and at least one task has the `#taskx-debug` tag, the collected
+  input is reduced to that tagged subset.
+- When enabled and no tagged tasks are found, the feed falls back to baseline
+  (non-subset) behavior.
+- In both enabled cases, the UI must show a visible active-mode indicator.
+
+Boundary:
+
+- This mode is a visibility seam and must not redefine ranking or recommendation
+  policy.
+
+---
+
 ### do-now (feed section id)
 
 A **feed section identifier** used in `RecommendationFeed`.
@@ -784,6 +804,25 @@ Used for:
 ---
 
 ## T
+
+### taskx-debug (debug subset tag)
+
+A stable, namespaced task tag token used by `debug-subset-mode` to select the
+temporary focus subset.
+
+Semantics:
+
+- Token form is exactly `#taskx-debug`.
+- Selection is opt-in and only active when `debug-subset-mode` is enabled.
+- Removing the tag from all tasks restores baseline feed content while keeping
+  debug mode visibly active until mode is switched off.
+
+Notes:
+
+- This tag is intended for development focus steering, not long-term task
+  taxonomy.
+
+---
 
 ### TaskEntity
 
