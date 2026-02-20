@@ -67,6 +67,15 @@ export interface RenderFeedOptions {
 	 *   handled in a later step (best-effort).
 	 */
 	showProvenanceLinks?: boolean;
+
+	/**
+	 * Optional debug-mode indicator text rendered above feed sections.
+	 *
+	 * Notes:
+	 * - This is a visibility-only signal from entry/runtime.
+	 * - It must not affect recommendation grouping or ordering.
+	 */
+	debugIndicatorText?: string;
 }
 
 /**
@@ -81,6 +90,15 @@ export function renderFeed(feed: RecommendationFeed, opts: RenderFeedOptions = {
 	const doc = opts.doc ?? document;
 
 	const root = el(doc, "div", { className: "taskx-feed" });
+
+	if (opts.debugIndicatorText) {
+		root.append(
+			el(doc, "div", {
+				className: "taskx-feed__debug-indicator",
+				text: opts.debugIndicatorText,
+			}),
+		);
+	}
 
 	// An empty feed is a valid outcome. We render a short, non-error placeholder.
 	if (feed.sections.length === 0) {
