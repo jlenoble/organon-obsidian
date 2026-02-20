@@ -51,6 +51,10 @@
 - Step internals live only in step files.
 - Ordering, active focus, and history live in orchestration only.
 - Runtime sloting remains dynamic and external to this roadmap note.
+- `historical_order` is a single, layer-wide sequence shared by both `M1` and
+  `T1` step files.
+- New step creation must assign `historical_order` as max(existing in layer1)
+  + 1 after checking both `M1` and `T1` tracks.
 
 ## Layer orchestration
 
