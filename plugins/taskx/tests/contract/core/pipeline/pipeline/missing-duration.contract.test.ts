@@ -68,6 +68,15 @@ describe("core/pipeline missing-duration contract", () => {
 		expect(fixItems[0].tasks).toHaveLength(1);
 		expect(fixItems[0].tasks[0].text).toBe("Task without duration");
 		expect(fixItems[0].tasks[0].origin?.path).toBe("inbox.md");
+
+		// M1.4 contract: when do-now is empty, do-now should carry blocker signals
+		// from non-executable todo tasks to explain empty executability.
+		const doNow = allItems.find(item => item.kind === "do-now");
+		expect(doNow).toBeTruthy();
+		if (doNow && doNow.kind === "do-now") {
+			expect(doNow.tasks).toHaveLength(0);
+			expect(doNow.signals?.map(signal => signal.id)).toContain("missing-duration");
+		}
 	});
 
 	it("caps unblock section to 5 recommendations by default", async () => {
