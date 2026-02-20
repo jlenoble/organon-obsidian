@@ -27,6 +27,40 @@ import type { TaskEntity } from "@/core/model/task";
  */
 export async function stageCollect(args: {
 	collect: () => Promise<TaskEntity[]>;
+	enableDebugSubsetMode?: boolean;
+	debugSubsetTag?: string;
 }): Promise<TaskEntity[]> {
-	return args.collect();
+	const tasks = await args.collect();
+
+	if (!args.enableDebugSubsetMode) {
+		return tasks;
+	}
+
+	const subsetTag = normalizeTagToken(args.debugSubsetTag);
+	if (!subsetTag) {
+		return tasks;
+	}
+
+	const subset = tasks.filter(task => hasTagToken(task, subsetTag));
+	return subset.length > 0 ? subset : tasks;
+}
+
+function hasTagToken(task: TaskEntity, token: string): boolean {
+	for (const tag of task.tags) {
+		if (normalizeTagToken(tag) === token) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function normalizeTagToken(input?: string): string {
+	if (!input) {
+		return "";
+	}
+	const trimmed = input.trim().toLowerCase();
+	if (trimmed.length === 0) {
+		return "";
+	}
+	return trimmed.startsWith("#") ? trimmed.slice(1) : trimmed;
 }
