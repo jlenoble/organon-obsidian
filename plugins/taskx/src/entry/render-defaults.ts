@@ -44,3 +44,15 @@ export const DEFAULT_ENABLE_DEBUG_FEED_MIRROR = false;
 
 /** Default output path for the debug feed mirror file. */
 export const DEFAULT_DEBUG_FEED_MIRROR_PATH = "plugins/taskx/temp/task_feed.html";
+
+/**
+ * Whether debug subset mode is enabled by default.
+ *
+ * Notes:
+ * - This is disabled by default.
+ * - Local development can opt in via explicit runtime or local config overrides.
+ */
+export const DEFAULT_ENABLE_DEBUG_SUBSET_MODE = false;
+
+/** Canonical tag token used to select the debug subset when mode is enabled. */
+export const DEFAULT_DEBUG_SUBSET_TAG = "taskx-debug";
