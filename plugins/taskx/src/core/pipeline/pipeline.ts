@@ -43,8 +43,14 @@ import type { TimeContext } from "@/core/model/time";
 export async function runPipeline(args: {
 	ctx: TimeContext;
 	collect: () => Promise<TaskEntity[]>;
+	enableDebugSubsetMode?: boolean;
+	debugSubsetTag?: string;
 }): Promise<RecommendationFeed> {
-	const tasks = await stageCollect({ collect: args.collect });
+	const tasks = await stageCollect({
+		collect: args.collect,
+		enableDebugSubsetMode: args.enableDebugSubsetMode,
+		debugSubsetTag: args.debugSubsetTag,
+	});
 	const facts = stageAnalyze(tasks);
 	const issues = stageIssues({ tasks, facts, ctx: args.ctx });
 	const recs = stageRecommend({ tasks, facts, issues, ctx: args.ctx });
