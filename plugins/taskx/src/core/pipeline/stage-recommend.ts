@@ -96,25 +96,31 @@ export function stageRecommend(args: {
 	// 3) One minimal "do-now" recommendation (our first “block-like” suggestion)
 	// We emit full executable context here. Section-size capping is applied in
 	// stage-rank as presentation policy.
-	const executableTasks: TaskSummary[] = args.tasks
-		.filter(t => args.facts.byId.get(t.id)?.isExecutableNow)
-		.map(t => ({
-			id: t.id,
-			text: t.text,
-			origin: { path: t.origin.path, line: t.origin.line },
-		}));
+
+	const executableTaskEntities = args.tasks.filter(t => args.facts.byId.get(t.id)?.isExecutableNow);
+	const executableTasks: TaskSummary[] = executableTaskEntities.map(t => ({
+		id: t.id,
+		text: t.text,
+		origin: { path: t.origin.path, line: t.origin.line },
+	}));
+	const blockedTodoTaskIds = args.tasks
+		.filter(task => task.status === "todo" && !args.facts.byId.get(task.id)?.isExecutableNow)
+		.map(task => task.id);
+	const doNowSignalSourceIds =
+		executableTaskEntities.length > 0
+			? executableTaskEntities.map(task => task.id)
+			: blockedTodoTaskIds;
 
 	recs.push({
 		id: asRecommendationId("rec:do-now:shallow"),
 		kind: "do-now",
 		title: "Do now (shallow block)",
-		why: ["These tasks appear executable under the current minimal policy (todo + duration set)."],
+		why:
+			executableTaskEntities.length > 0
+				? ["These tasks appear executable under the current minimal policy (todo + duration set)."]
+				: ["No tasks are currently executable under the minimal do-now policy."],
 		score: { urgency: 40, friction: 5, payoff: 35 },
-		signals: collectSignalsForTaskIds(
-			executableTasks.map(t => t.id),
-			args.facts,
-			args.ctx,
-		),
+		signals: collectSignalsForTaskIds(doNowSignalSourceIds, args.facts, args.ctx),
 		tasks: executableTasks,
 	});
 
