@@ -23,6 +23,7 @@
 import type { App } from "obsidian";
 
 import { collectTasksFromDataview } from "@/adapters/obsidian/collect-tasks";
+import { writeDebugFeedMirror } from "@/adapters/obsidian/debug-feed-mirror";
 import { buildTimeContext } from "@/adapters/obsidian/time-context";
 import type { RecommendationFeed } from "@/core/model/recommendation";
 import type { TaskEntity } from "@/core/model/task";
@@ -93,18 +94,20 @@ export async function renderTaskX(opts: RenderTaskXOptions): Promise<HTMLElement
 	const visibleFeed = applyCollectedVisibility(feed, opts.collectedVisibility);
 	const enableDebugFeedMirror = opts.enableDebugFeedMirror ?? DEFAULT_ENABLE_DEBUG_FEED_MIRROR;
 	const debugFeedMirrorPath = opts.debugFeedMirrorPath ?? DEFAULT_DEBUG_FEED_MIRROR_PATH;
-
-	await maybeMirrorFeedDebugOutput({
-		enabled: enableDebugFeedMirror,
-		path: debugFeedMirrorPath,
-		feed: visibleFeed,
-	});
-
-	return renderFeed(visibleFeed, {
+	const rendered = renderFeed(visibleFeed, {
 		...opts,
 		showIds: opts.showIds ?? DEFAULT_SHOW_IDS,
 		showProvenanceLinks: opts.showProvenanceLinks ?? DEFAULT_SHOW_PROVENANCE_LINKS,
 	});
+
+	await maybeMirrorFeedDebugOutput({
+		enabled: enableDebugFeedMirror,
+		path: debugFeedMirrorPath,
+		app: opts.app,
+		rendered,
+	});
+
+	return rendered;
 }
 
 /**
@@ -171,13 +174,31 @@ function applyCollectedVisibility(
 /**
  * Entry-level seam for debug feed mirroring.
  *
- * This no-op hook lets entry wiring resolve mirror policy now, while the actual
- * file write implementation is introduced at the adapter boundary.
+ * Entry resolves mirror policy and delegates best-effort persistence to the
+ * Obsidian adapter boundary.
+ *
+ * Notes:
+ * - This seam must not affect pipeline ranking or recommendation semantics.
+ * - Mirror write failures must never block rendering.
  */
-async function maybeMirrorFeedDebugOutput(_params: {
+async function maybeMirrorFeedDebugOutput(params: {
 	enabled: boolean;
 	path: string;
-	feed: RecommendationFeed;
+	app: App;
+	rendered: HTMLElement;
 }): Promise<void> {
-	return;
+	if (!params.enabled) {
+		return;
+	}
+
+	await writeDebugFeedMirror({
+		app: params.app,
+		path: params.path,
+		content: serializeDebugMirrorContent(params.rendered),
+	});
+}
+
+function serializeDebugMirrorContent(root: HTMLElement): string {
+	const visibleText = root.textContent ?? "";
+	return visibleText.trim();
 }
