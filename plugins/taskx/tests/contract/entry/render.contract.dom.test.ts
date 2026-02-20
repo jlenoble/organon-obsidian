@@ -17,11 +17,19 @@
  * - Diagnostics (ids) are not shown unless explicitly enabled.
  */
 
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { asTaskId } from "@/core/model/id";
 import type { TaskEntity } from "@/core/model/task";
 import { renderTaskX } from "@/entry/render";
+
+const { writeDebugFeedMirrorMock } = vi.hoisted(() => ({
+	writeDebugFeedMirrorMock: vi.fn(),
+}));
+
+vi.mock("@/adapters/obsidian/debug-feed-mirror", () => ({
+	writeDebugFeedMirror: writeDebugFeedMirrorMock,
+}));
 
 function makeTask(i: number, opts: { duration?: number } = {}): TaskEntity {
 	return {
@@ -37,6 +45,11 @@ function makeTask(i: number, opts: { duration?: number } = {}): TaskEntity {
 }
 
 describe("entry/render renderTaskX Collected contract", () => {
+	beforeEach(() => {
+		writeDebugFeedMirrorMock.mockReset();
+		writeDebugFeedMirrorMock.mockResolvedValue({ ok: true });
+	});
+
 	it('hides "Collected" by default when actionable sections are present', async () => {
 		const tasks = [1, 2, 3, 4, 5, 6, 7, 8].map(i => makeTask(i));
 
@@ -135,5 +148,70 @@ describe("entry/render renderTaskX Collected contract", () => {
 
 		expect(doNowTaskTexts).toHaveLength(5);
 		expect(doNowTaskTexts).toEqual(["Task 1", "Task 2", "Task 3", "Task 4", "Task 5"]);
+	});
+
+	it("does not mirror output when debug feed mirror is disabled", async () => {
+		const tasks = [1, 2, 3].map(i => makeTask(i, { duration: 15 }));
+
+		await renderTaskX({
+			app: {} as never,
+			buildCtx: () => ({
+				now: new Date("2026-02-12T00:00:00.000Z"),
+				tz: "Europe/Paris",
+			}),
+			collect: async () => tasks,
+			enableDebugFeedMirror: false,
+		});
+
+		expect(writeDebugFeedMirrorMock).not.toHaveBeenCalled();
+	});
+
+	it("mirrors rendered output when debug feed mirror is enabled", async () => {
+		const tasks = [1, 2, 3].map(i => makeTask(i, { duration: 15 }));
+
+		await renderTaskX({
+			app: {} as never,
+			buildCtx: () => ({
+				now: new Date("2026-02-12T00:00:00.000Z"),
+				tz: "Europe/Paris",
+			}),
+			collect: async () => tasks,
+			enableDebugFeedMirror: true,
+			debugFeedMirrorPath: "plugins/taskx/temp/task_feed.md",
+		});
+
+		expect(writeDebugFeedMirrorMock).toHaveBeenCalledTimes(1);
+		expect(writeDebugFeedMirrorMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				path: "plugins/taskx/temp/task_feed.md",
+			}),
+		);
+
+		const firstCallParams = writeDebugFeedMirrorMock.mock.calls[0][0] as {
+			content: string;
+		};
+		expect(firstCallParams.content).toContain("Do now");
+		expect(firstCallParams.content).toContain("Task 1");
+	});
+
+	it("keeps rendering when mirror write reports failure", async () => {
+		const tasks = [1, 2, 3].map(i => makeTask(i, { duration: 15 }));
+		writeDebugFeedMirrorMock.mockResolvedValueOnce({
+			ok: false,
+			error: new Error("write failed"),
+		});
+
+		const root = await renderTaskX({
+			app: {} as never,
+			buildCtx: () => ({
+				now: new Date("2026-02-12T00:00:00.000Z"),
+				tz: "Europe/Paris",
+			}),
+			collect: async () => tasks,
+			enableDebugFeedMirror: true,
+		});
+
+		expect(root.querySelectorAll(".taskx-feed__section-title")).toHaveLength(1);
+		expect(writeDebugFeedMirrorMock).toHaveBeenCalledTimes(1);
 	});
 });
